@@ -1,9 +1,52 @@
 import Head from "next/head";
-import Image from "next/image";
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
+
+type SceneStatus = {
+  scene: string;
+  cut: string;
+  take: string;
+};
+
+const defaultScene = (): SceneStatus => ({
+  scene: "1",
+  cut: "1",
+  take: "1",
+});
 
 export default function Home() {
   const [theme, setTheme] = useState<"light" | "dark" | null>(null);
+
+  const [currentScene, setCurrentScene] = useState<SceneStatus | null>(null);
+
+  useEffect(() => {
+    // load current scene
+
+    const l = localStorage.getItem("currentScene");
+    if (l) {
+      try {
+        const parsed = JSON.parse(l);
+        if (parsed.scene && parsed.cut && parsed.take) {
+          setCurrentScene(parsed);
+        } else {
+          setCurrentScene(defaultScene());
+        }
+        return;
+      } catch (e) {
+        console.error("aaaa");
+        console.error(e);
+        setCurrentScene(defaultScene());
+      }
+    }
+
+    setCurrentScene(defaultScene());
+  }, []);
+
+  useEffect(() => {
+    if (!currentScene) return;
+
+    // save
+    localStorage.setItem("currentScene", JSON.stringify(currentScene));
+  }, [currentScene]);
 
   useEffect(() => {
     // On page load or when changing themes, best to add inline in `head` to avoid FOUC
@@ -28,7 +71,7 @@ export default function Home() {
     }
   }, [theme]);
 
-  if (theme === null) {
+  if (theme === null || currentScene === null) {
     return (
       <>
         <div>loading</div>
@@ -64,9 +107,27 @@ export default function Home() {
         </div>
 
         <div className="py-10 grow flex flex-col px-6 justify-between">
-          <Section name={"S"} status={"1"} />
-          <Section name={"C"} status={"1"} />
-          <Section name={"T"} status={"2"} />
+          <Section
+            name={"S"}
+            status={currentScene.scene}
+            onNewStatus={(s) =>
+              setCurrentScene((before) => ({ ...before!, scene: s }))
+            }
+          />
+          <Section
+            name={"C"}
+            status={currentScene.cut}
+            onNewStatus={(s) =>
+              setCurrentScene((before) => ({ ...before!, cut: s }))
+            }
+          />
+          <Section
+            name={"T"}
+            status={currentScene.take}
+            onNewStatus={(s) =>
+              setCurrentScene((before) => ({ ...before!, take: s }))
+            }
+          />
           <div className="w-full"></div>
         </div>
       </div>
@@ -74,9 +135,28 @@ export default function Home() {
   );
 }
 
-const Section = ({ name, status }: { name: string; status: string }) => {
+const Section = ({
+  name,
+  status,
+  onNewStatus,
+}: {
+  name: string;
+  status: string;
+  onNewStatus: (status: string) => void;
+}) => {
+  const onClick = useCallback(() => {
+    const r = prompt("New status");
+    if (!r) return;
+    if (r === "") return;
+
+    onNewStatus(r);
+  }, [onNewStatus]);
+
   return (
-    <div className={"border-4 border-black dark:border-white"}>
+    <div
+      className={"border-4 border-black dark:border-white cursor-pointer"}
+      onClick={onClick}
+    >
       <div className="flex items-center">
         <div className="border-r-[1px] border-black dark:border-white">
           <div className="text-[50px] font-bold px-5 py-10 min-w-[80px] text-center">
@@ -85,7 +165,7 @@ const Section = ({ name, status }: { name: string; status: string }) => {
         </div>
 
         <div className="grow justify-center">
-          <div className="text-center text-[75px] font-bold">{status}</div>
+          <div className="text-center text-[100px] font-bold">{status}</div>
         </div>
       </div>
     </div>
