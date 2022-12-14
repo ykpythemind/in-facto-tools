@@ -88,7 +88,7 @@ export default function Home() {
       </Head>
 
       <div className="pt-3 px-2 flex flex-col min-h-screen">
-        <div className="grow-0 flex items-center">
+        <div className="grow-0 mb-3 flex items-center">
           <div>
             <h1 className="text-lg">facinko</h1>
           </div>
@@ -106,9 +106,10 @@ export default function Home() {
           </div>
         </div>
 
-        <div className="py-10 grow flex flex-col px-6 justify-between">
+        <div className="py-1 grow  flex flex-col px-6 justify-between">
           <Section
             name={"S"}
+            detailName={"Scene"}
             status={currentScene.scene}
             onNewStatus={(s) =>
               setCurrentScene((before) => ({ ...before!, scene: s }))
@@ -116,6 +117,7 @@ export default function Home() {
           />
           <Section
             name={"C"}
+            detailName={"Cut"}
             status={currentScene.cut}
             onNewStatus={(s) =>
               setCurrentScene((before) => ({ ...before!, cut: s }))
@@ -123,6 +125,7 @@ export default function Home() {
           />
           <Section
             name={"T"}
+            detailName={"Take"}
             status={currentScene.take}
             onNewStatus={(s) =>
               setCurrentScene((before) => ({ ...before!, take: s }))
@@ -137,20 +140,22 @@ export default function Home() {
 
 const Section = ({
   name,
+  detailName,
   status,
   onNewStatus,
 }: {
   name: string;
+  detailName: string;
   status: string;
   onNewStatus: (status: string) => void;
 }) => {
   const onClick = useCallback(() => {
-    const r = prompt("New status");
+    const r = prompt(`New status for ${detailName}`);
     if (!r) return;
     if (r === "") return;
 
     onNewStatus(r);
-  }, [onNewStatus]);
+  }, [onNewStatus, detailName]);
 
   return (
     <div
