@@ -1,5 +1,5 @@
 import Head from "next/head";
-import { useCallback, useEffect, useState } from "react";
+import { forwardRef, useCallback, useEffect, useRef, useState } from "react";
 
 type SceneStatus = {
   scene: string;
@@ -17,6 +17,7 @@ export default function Home() {
   const [theme, setTheme] = useState<"light" | "dark" | null>(null);
 
   const [currentScene, setCurrentScene] = useState<SceneStatus | null>(null);
+  const ref: React.MutableRefObject<HTMLDialogElement | null> = useRef(null);
 
   useEffect(() => {
     // load current scene
@@ -71,6 +72,18 @@ export default function Home() {
     }
   }, [theme]);
 
+  const showModal = useCallback(() => {
+    if (ref.current) {
+      ref.current.showModal();
+    }
+  }, []);
+
+  const closeModal = useCallback(() => {
+    if (ref.current) {
+      ref.current.close();
+    }
+  }, []);
+
   if (theme === null || currentScene === null) {
     return (
       <>
@@ -89,7 +102,7 @@ export default function Home() {
 
       <div className="pt-3 px-2 flex flex-col min-h-screen">
         <div className="grow-0 mb-3 flex items-center">
-          <div>
+          <div className="">
             <h1 className="text-lg">facinko</h1>
           </div>
           <div className="ml-auto">
@@ -106,7 +119,7 @@ export default function Home() {
           </div>
         </div>
 
-        <div className="py-1 grow  flex flex-col px-6 justify-between">
+        <div className="pt-3 grow grid gap-10 grid-cols-1 grid-rows-3 landscape:grid-cols-3 landscape:grid-rows-1 px-6 ">
           <Section
             name={"S"}
             detailName={"Scene"}
@@ -114,6 +127,7 @@ export default function Home() {
             onNewStatus={(s) =>
               setCurrentScene((before) => ({ ...before!, scene: s }))
             }
+            onClick={showModal}
           />
           <Section
             name={"C"}
@@ -122,6 +136,7 @@ export default function Home() {
             onNewStatus={(s) =>
               setCurrentScene((before) => ({ ...before!, cut: s }))
             }
+            onClick={showModal}
           />
           <Section
             name={"T"}
@@ -130,41 +145,68 @@ export default function Home() {
             onNewStatus={(s) =>
               setCurrentScene((before) => ({ ...before!, take: s }))
             }
+            onClick={showModal}
           />
           <div className="w-full"></div>
         </div>
+
+        <div className="grow-0  pb-5 flex items-center">
+          <div className="">-</div>
+          <div className="ml-auto"></div>
+        </div>
       </div>
+
+      <Dialog ref={ref} onRequireClosing={closeModal} />
     </div>
   );
 }
+
+const Dialog = forwardRef<HTMLDialogElement, { onRequireClosing: () => void }>(
+  (props, ref) => {
+    const stopPropagation = useCallback(
+      (e: React.MouseEvent<HTMLDivElement, MouseEvent>) => {
+        e.stopPropagation();
+      },
+      []
+    );
+
+    return (
+      <dialog ref={ref} onClick={props.onRequireClosing}>
+        <div className={"dialog-body"} onClick={stopPropagation}>
+          hello
+        </div>
+      </dialog>
+    );
+  }
+);
+Dialog.displayName = "Dialog";
 
 const Section = ({
   name,
   detailName,
   status,
   onNewStatus,
+  onClick,
 }: {
   name: string;
   detailName: string;
   status: string;
   onNewStatus: (status: string) => void;
+  onClick: () => void;
 }) => {
-  const onClick = useCallback(() => {
-    const r = prompt(`New status for ${detailName}`);
-    if (!r) return;
-    if (r === "") return;
-
-    onNewStatus(r);
-  }, [onNewStatus, detailName]);
+  // const onClick = useCallback(() => {
+  //   const r = prompt(`New status for ${detailName}`);
+  //   if (!r) return;
+  //   if (r === "") return;
+  //
+  //   onNewStatus(r);
+  // }, [onNewStatus, detailName]);
 
   return (
-    <div
-      className={"border-4 border-black dark:border-white cursor-pointer"}
-      onClick={onClick}
-    >
-      <div className="flex items-center">
-        <div className="border-r-[1px] border-black dark:border-white">
-          <div className="text-[50px] font-bold px-5 py-10 min-w-[80px] text-center">
+    <div className={"w-full flex landscape:block"} onClick={onClick}>
+      <div className="flex items-center landscape:flex-col w-full border-4 border-black dark:border-white cursor-pointer ">
+        <div className="min-h-full flex items-center border-r-[1px] landscape:border-r-0 border-black dark:border-white">
+          <div className="text-[50px] font-bold px-5 min-w-[80px] text-center">
             {name}
           </div>
         </div>
