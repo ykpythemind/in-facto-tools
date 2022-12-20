@@ -7,6 +7,8 @@ type SceneStatus = {
   take: string;
 };
 
+type SceneType = "scene" | "cut" | "take";
+
 const defaultScene = (): SceneStatus => ({
   scene: "1",
   cut: "1",
@@ -72,9 +74,20 @@ export default function Home() {
     }
   }, [theme]);
 
-  const showModal = useCallback(() => {
+  const [modalType, setModalType] = useState<SceneType>("scene");
+  let modalContentStatus = currentScene?.scene;
+
+  if (modalType === "cut") {
+    modalContentStatus = currentScene?.cut;
+  }
+  if (modalType === "take") {
+    modalContentStatus = currentScene?.take;
+  }
+
+  const showModal = useCallback((modalType: SceneType) => {
     if (ref.current) {
       ref.current.showModal();
+      setModalType(modalType);
     }
   }, []);
 
@@ -124,28 +137,19 @@ export default function Home() {
             name={"S"}
             detailName={"Scene"}
             status={currentScene.scene}
-            onNewStatus={(s) =>
-              setCurrentScene((before) => ({ ...before!, scene: s }))
-            }
-            onClick={showModal}
+            onClick={() => showModal("scene")}
           />
           <Section
             name={"C"}
             detailName={"Cut"}
             status={currentScene.cut}
-            onNewStatus={(s) =>
-              setCurrentScene((before) => ({ ...before!, cut: s }))
-            }
-            onClick={showModal}
+            onClick={() => showModal(`cut`)}
           />
           <Section
             name={"T"}
             detailName={"Take"}
             status={currentScene.take}
-            onNewStatus={(s) =>
-              setCurrentScene((before) => ({ ...before!, take: s }))
-            }
-            onClick={showModal}
+            onClick={() => showModal(`take`)}
           />
           <div className="w-full"></div>
         </div>
@@ -156,36 +160,119 @@ export default function Home() {
         </div>
       </div>
 
-      <Dialog ref={ref} onRequireClosing={closeModal} />
+      <Dialog
+        modalType={modalType}
+        currentStatus={modalContentStatus}
+        ref={ref}
+        onRequireClosing={closeModal}
+        onNewStatus={(status) => {
+          // dirty
+          switch (modalType) {
+            case "scene":
+              setCurrentScene((before) => ({ ...before!, scene: status }));
+              break;
+            case "take":
+              setCurrentScene((before) => ({ ...before!, take: status }));
+              break;
+            case "cut":
+              setCurrentScene((before) => ({ ...before!, cut: status }));
+              break;
+            default:
+              break;
+          }
+        }}
+      />
     </div>
   );
 }
 
-const Dialog = forwardRef<HTMLDialogElement, { onRequireClosing: () => void }>(
-  (props, ref) => {
-    const stopPropagation = useCallback(
-      (e: React.MouseEvent<HTMLDivElement, MouseEvent>) => {
-        e.stopPropagation();
-      },
-      []
-    );
-
-    return (
-      <dialog ref={ref} onClick={props.onRequireClosing}>
-        <div className={"dialog-body"} onClick={stopPropagation}>
-          hello
-        </div>
-      </dialog>
-    );
+const Dialog = forwardRef<
+  HTMLDialogElement,
+  {
+    modalType: SceneType;
+    currentStatus: string | undefined;
+    onRequireClosing: () => void;
+    onNewStatus: (status: string) => void;
   }
-);
+>(({ onNewStatus, onRequireClosing, modalType, currentStatus }, ref) => {
+  const stopPropagation = useCallback(
+    (e: React.MouseEvent<HTMLDivElement, MouseEvent>) => {
+      e.stopPropagation();
+    },
+    []
+  );
+
+  const clickEdit = () => {
+    const r = prompt(`New status for ${modalType}`);
+    if (!r) return;
+    if (r === "") return;
+
+    onNewStatus(r);
+    onRequireClosing();
+  };
+
+  const clickReset = () => {
+    onNewStatus("1");
+    onRequireClosing();
+  };
+
+  const clickInc = () => {
+    try {
+      const parsed = parseInt(currentStatus || "0", 10);
+      onNewStatus(String(parsed + 1));
+    } catch {
+      alert("current status is not number");
+    }
+    onRequireClosing();
+  };
+
+  const title = `${modalType} : ${currentStatus}`;
+
+  return (
+    <dialog
+      className="portrait:w-full landscape:w-2/4"
+      ref={ref}
+      onClick={onRequireClosing}
+    >
+      <div className={"dialog-body"} onClick={stopPropagation}>
+        <div className="flex">
+          <h3 className="text-lg">{title}</h3>
+          <div className="ml-auto">
+            <button type="button" onClick={onRequireClosing}>
+              x
+            </button>
+          </div>
+        </div>
+
+        <div className="mt-5 grid grid-cols-1 gap-5">
+          <Button onClick={clickInc} text={"+1"} />
+
+          <Button onClick={clickEdit} text={"Edit"} />
+
+          <Button onClick={clickReset} text={"Reset"} />
+        </div>
+      </div>
+    </dialog>
+  );
+});
 Dialog.displayName = "Dialog";
+
+const Button = ({ onClick, text }: { text: string; onClick: () => void }) => {
+  return (
+    <button
+      className="w-full border-gray-200 border-[1px] rounded-xl py-3"
+      onClick={onClick}
+      type="button"
+    >
+      {text}
+    </button>
+  );
+};
 
 const Section = ({
   name,
   detailName,
   status,
-  onNewStatus,
   onClick,
 }: {
   name: string;
