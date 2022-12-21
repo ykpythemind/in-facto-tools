@@ -135,19 +135,16 @@ export default function Home() {
         <div className="pt-3 grow grid gap-10 grid-cols-1 grid-rows-3 landscape:grid-cols-3 landscape:grid-rows-1 px-6 ">
           <Section
             name={"S"}
-            detailName={"Scene"}
             status={currentScene.scene}
             onClick={() => showModal("scene")}
           />
           <Section
             name={"C"}
-            detailName={"Cut"}
             status={currentScene.cut}
             onClick={() => showModal(`cut`)}
           />
           <Section
             name={"T"}
-            detailName={"Take"}
             status={currentScene.take}
             onClick={() => showModal(`take`)}
           />
@@ -271,14 +268,11 @@ const Button = ({ onClick, text }: { text: string; onClick: () => void }) => {
 
 const Section = ({
   name,
-  detailName,
   status,
   onClick,
 }: {
   name: string;
-  detailName: string;
   status: string;
-  onNewStatus: (status: string) => void;
   onClick: () => void;
 }) => {
   // const onClick = useCallback(() => {
