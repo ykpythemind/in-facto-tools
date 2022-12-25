@@ -254,11 +254,7 @@ const Dialog = forwardRef<
         style={{ overscrollBehavior: "contain" }}
         onClick={onRequireClosing}
       >
-        <div
-          className={"dialog-body"}
-          onClick={stopPropagation}
-          style={{ height: "calc(100% + 1px)" }}
-        >
+        <div className={"dialog-body"} onClick={stopPropagation}>
           <div className="flex">
             <h3 className="text-lg">{title}</h3>
             <div className="ml-auto">
