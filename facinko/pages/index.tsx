@@ -17,6 +17,7 @@ const defaultScene = (): SceneStatus => ({
 
 export default function Home() {
   const [theme, setTheme] = useState<"light" | "dark" | null>(null);
+  const [isDialogOpen, setIsDialogOpen] = useState(false);
 
   const [currentScene, setCurrentScene] = useState<SceneStatus | null>(null);
   const ref: React.MutableRefObject<HTMLDialogElement | null> = useRef(null);
@@ -86,6 +87,7 @@ export default function Home() {
 
   const showModal = useCallback((modalType: SceneType) => {
     if (ref.current) {
+      setIsDialogOpen(true);
       ref.current.showModal();
       setModalType(modalType);
     }
@@ -93,6 +95,7 @@ export default function Home() {
 
   const closeModal = useCallback(() => {
     if (ref.current) {
+      setIsDialogOpen(false);
       ref.current.close();
     }
   }, []);
@@ -165,6 +168,7 @@ export default function Home() {
         currentStatus={modalContentStatus}
         ref={ref}
         onRequireClosing={closeModal}
+        isOpen={isDialogOpen}
         onNewStatus={(status) => {
           // dirty
           switch (modalType) {
@@ -193,82 +197,108 @@ const Dialog = forwardRef<
     currentStatus: string | undefined;
     onRequireClosing: () => void;
     onNewStatus: (status: string) => void;
+    isOpen: boolean;
   }
->(({ onNewStatus, onRequireClosing, modalType, currentStatus }, ref) => {
-  const stopPropagation = useCallback(
-    (e: React.MouseEvent<HTMLDivElement, MouseEvent>) => {
-      e.stopPropagation();
-    },
-    []
-  );
+>(
+  (
+    { onNewStatus, onRequireClosing, modalType, currentStatus, isOpen },
+    ref
+  ) => {
+    const firstButtonRef = useRef<HTMLButtonElement>(null);
 
-  const clickEdit = () => {
-    const r = prompt(`New status for ${modalType}`);
-    if (!r) return;
-    if (r === "") return;
+    useEffect(() => {
+      if (isOpen) {
+        if (firstButtonRef.current) {
+          firstButtonRef.current.focus();
+        }
+      }
+    }, [isOpen]);
 
-    onNewStatus(r);
-    onRequireClosing();
-  };
+    const stopPropagation = useCallback(
+      (e: React.MouseEvent<HTMLDivElement, MouseEvent>) => {
+        e.stopPropagation();
+      },
+      []
+    );
 
-  const clickReset = () => {
-    onNewStatus("1");
-    onRequireClosing();
-  };
+    const clickEdit = () => {
+      const r = prompt(`New status for ${modalType}`);
+      if (!r) return;
+      if (r === "") return;
 
-  const clickInc = () => {
-    try {
-      const parsed = parseInt(currentStatus || "0", 10);
-      onNewStatus(String(parsed + 1));
-    } catch {
-      alert("current status is not number");
-    }
-    onRequireClosing();
-  };
+      onNewStatus(r);
+      onRequireClosing();
+    };
 
-  const title = `${modalType} : ${currentStatus}`;
+    const clickReset = () => {
+      onNewStatus("1");
+      onRequireClosing();
+    };
 
-  return (
-    <dialog
-      className="portrait:w-full landscape:w-2/4"
-      ref={ref}
-      style={{ overscrollBehavior: "contain" }}
-      onClick={onRequireClosing}
-    >
-      <div className={"dialog-body"} onClick={stopPropagation}>
-        <div className="flex">
-          <h3 className="text-lg">{title}</h3>
-          <div className="ml-auto">
-            <button type="button" onClick={onRequireClosing}>
-              x
-            </button>
+    const clickInc = () => {
+      try {
+        const parsed = parseInt(currentStatus || "0", 10);
+        onNewStatus(String(parsed + 1));
+      } catch {
+        alert("current status is not number");
+      }
+      onRequireClosing();
+    };
+
+    const title = `${modalType} : ${currentStatus}`;
+
+    return (
+      <dialog
+        className="portrait:w-full landscape:w-2/4"
+        ref={ref}
+        style={{ overscrollBehavior: "contain" }}
+        onClick={onRequireClosing}
+      >
+        <div
+          className={"dialog-body"}
+          onClick={stopPropagation}
+          style={{ height: "calc(100% + 1px)" }}
+        >
+          <div className="flex">
+            <h3 className="text-lg">{title}</h3>
+            <div className="ml-auto">
+              <button type="button" onClick={onRequireClosing}>
+                x
+              </button>
+            </div>
+          </div>
+
+          <div className="mt-5 grid grid-cols-1 gap-5">
+            <Button ref={firstButtonRef} onClick={clickInc} text={"+1"} />
+
+            <Button onClick={clickEdit} text={"Edit"} />
+
+            <Button onClick={clickReset} text={"Reset"} />
           </div>
         </div>
-
-        <div className="mt-5 grid grid-cols-1 gap-5">
-          <Button onClick={clickInc} text={"+1"} />
-
-          <Button onClick={clickEdit} text={"Edit"} />
-
-          <Button onClick={clickReset} text={"Reset"} />
-        </div>
-      </div>
-    </dialog>
-  );
-});
+      </dialog>
+    );
+  }
+);
 Dialog.displayName = "Dialog";
 
-const Button = ({ onClick, text }: { text: string; onClick: () => void }) => {
-  return (
-    <button
-      className="w-full border-gray-200 border-[1px] rounded-xl py-3"
-      onClick={onClick}
-      type="button"
-    >
-      {text}
-    </button>
-  );
-};
+type ButtonProps = { text: string; onClick: () => void };
+
+const Button = forwardRef<HTMLButtonElement, ButtonProps>(
+  ({ onClick, text }, ref) => {
+    return (
+      <button
+        className="w-full border-gray-200 border-[1px] rounded-xl py-3"
+        ref={ref}
+        onClick={onClick}
+        type="button"
+      >
+        {text}
+      </button>
+    );
+  }
+);
+Button.displayName = "Button";
 
 const Section = ({
   name,
