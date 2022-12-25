@@ -113,7 +113,10 @@ export default function Home() {
         <link rel="icon" href="/favicon.ico" />
       </Head>
 
-      <div className="pt-3 px-2 flex flex-col min-h-screen">
+      <div
+        className="pt-3 px-2 flex flex-col min-h-screen"
+        style={{ minHeight: "100dvh" }}
+      >
         <div className="grow-0 mb-3 flex items-center">
           <div className="">
             <h1 className="text-lg">facinko</h1>
@@ -229,6 +232,7 @@ const Dialog = forwardRef<
     <dialog
       className="portrait:w-full landscape:w-2/4"
       ref={ref}
+      style={{ overscrollBehavior: "contain" }}
       onClick={onRequireClosing}
     >
       <div className={"dialog-body"} onClick={stopPropagation}>
