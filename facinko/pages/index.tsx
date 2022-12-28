@@ -100,6 +100,17 @@ export default function Home() {
     }
   }, []);
 
+  const clickStart = useCallback(() => {
+    if (!currentScene) return;
+
+    const { scene, cut, take } = currentScene;
+    const uttr = new SpeechSynthesisUtterance(
+      `scene ${scene}, cut ${cut}, take ${take}.`
+    );
+    uttr.rate = 0.8;
+    speechSynthesis.speak(uttr);
+  }, [currentScene]);
+
   if (theme === null || currentScene === null) {
     return (
       <>
@@ -109,17 +120,17 @@ export default function Home() {
   }
 
   return (
-    <div className="dark:bg-black dark:text-white">
+    <div
+      className="dark:bg-black dark:text-white h-screen"
+      style={{ height: "100dvh" }}
+    >
       <Head>
         <title>facinko</title>
         <meta name="description" content="facinko" />
         <link rel="icon" href="/favicon.ico" />
       </Head>
 
-      <div
-        className="pt-3 px-2 flex flex-col min-h-screen"
-        style={{ minHeight: "100dvh" }}
-      >
+      <div className="pt-3 px-2 flex flex-col h-full">
         <div className="grow-0 mb-3 flex items-center">
           <div className="">
             <h1 className="text-lg">facinko</h1>
@@ -158,7 +169,9 @@ export default function Home() {
         </div>
 
         <div className="grow-0  pb-5 flex items-center">
-          <div className="">-</div>
+          <div className="">
+            <Button text={"start"} onClick={clickStart} />
+          </div>
           <div className="ml-auto"></div>
         </div>
       </div>
@@ -249,6 +262,7 @@ const Dialog = forwardRef<
 
     return (
       <dialog
+        open={isOpen}
         className="portrait:w-full landscape:w-2/4"
         ref={ref}
         style={{ overscrollBehavior: "contain" }}
