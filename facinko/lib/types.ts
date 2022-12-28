@@ -21,6 +21,6 @@ export type SceneType = z.infer<typeof sceneTypeEnum>;
 
 export const SceneStateSchema = z.object({
   workingScene: SceneConfigSchema,
-  history: z.array(SceneConfigSchema),
+  records: z.array(SceneConfigSchema),
 });
 export type SceneState = z.infer<typeof SceneStateSchema>;

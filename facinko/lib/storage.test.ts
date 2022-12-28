@@ -11,7 +11,7 @@ test("parse", async () => {
         "take": "2",
         "id": 1
       },
-      "history": []
+      "records": []
     }
   `,
     true
@@ -24,7 +24,7 @@ test("parse", async () => {
       take: "2",
       id: 1,
     },
-    history: [],
+    records: [],
   });
 });
 

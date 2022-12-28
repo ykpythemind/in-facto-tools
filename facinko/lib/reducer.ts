@@ -2,7 +2,7 @@ import { SceneConfig, SceneState } from "./types";
 
 export const initialSceneState: SceneState = {
   workingScene: { cut: "1", scene: "1", take: "1", id: -1 },
-  history: [],
+  records: [],
 };
 
 type SceneAction =
@@ -27,37 +27,37 @@ export function sceneReducer(
     case "init":
       return {
         workingScene: action.payload.workingScene,
-        history: action.payload.history,
+        records: action.payload.records,
       };
     case "favorite": {
-      const history = [...state.history];
-      if (history[action.payload.sceneId]) {
-        history[action.payload.sceneId].favorite = true;
-        return { ...state, history };
+      const records = [...state.records];
+      if (records[action.payload.sceneId]) {
+        records[action.payload.sceneId].favorite = true;
+        return { ...state, records };
       } else {
         return state;
       }
     }
     case "unfavorite": {
-      const history = [...state.history];
-      if (history[action.payload.sceneId]) {
-        history[action.payload.sceneId].favorite = false;
-        return { ...state, history };
+      const records = [...state.records];
+      if (records[action.payload.sceneId]) {
+        records[action.payload.sceneId].favorite = false;
+        return { ...state, records };
       } else {
         return state;
       }
     }
     case "addNote": {
-      const history = [...state.history];
-      if (history[action.payload.sceneId]) {
-        history[action.payload.sceneId].note = action.payload.note;
-        return { ...state, history };
+      const records = [...state.records];
+      if (records[action.payload.sceneId]) {
+        records[action.payload.sceneId].note = action.payload.note;
+        return { ...state, records };
       } else {
         return state;
       }
     }
     case "newWorkingScene": {
-      const lastId = state.history[state.history.length - 1]?.id ?? 0;
+      const lastId = state.records[state.records.length - 1]?.id ?? 0;
       const { scene, cut, take } = action.payload.newScene;
       const newScene: SceneConfig = {
         scene,
@@ -66,7 +66,10 @@ export function sceneReducer(
         id: lastId + 1,
       };
 
-      return { ...state, workingScene: newScene };
+      // push new records
+      const records = [...state.records, state.workingScene];
+
+      return { records, workingScene: newScene };
     }
     case "updateWorkingScene": {
       const currentId = state.workingScene.id;
@@ -74,7 +77,7 @@ export function sceneReducer(
 
       return {
         workingScene: { scene, cut, take, id: currentId },
-        history: state.history,
+        records: state.records,
       };
     }
     default:
