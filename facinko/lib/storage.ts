@@ -5,6 +5,8 @@ export function parseSceneState(
   throwOnError = false
 ): SceneState | null {
   if (!data) {
+    console.warn("No data");
+
     if (throwOnError) {
       throw new Error("No data");
     }
@@ -15,6 +17,8 @@ export function parseSceneState(
   try {
     obj = JSON.parse(data);
   } catch (e) {
+    console.warn("Failed to parse JSON", e);
+
     if (throwOnError) {
       throw e;
     }
@@ -24,6 +28,8 @@ export function parseSceneState(
   try {
     return SceneStateSchema.parse(obj);
   } catch (e) {
+    console.warn("Schema mismatch", e);
+
     if (throwOnError) {
       throw e;
     }

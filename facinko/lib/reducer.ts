@@ -12,6 +12,10 @@ type SceneAction =
       payload: { newScene: Omit<SceneConfig, "id"> };
     }
   | {
+      type: "addRecord";
+      payload: { newScene: SceneConfig };
+    }
+  | {
       type: "updateWorkingScene";
       payload: { sceneConfig: Omit<SceneConfig, "id"> };
     }
@@ -31,8 +35,9 @@ export function sceneReducer(
       };
     case "favorite": {
       const records = [...state.records];
-      if (records[action.payload.sceneId]) {
-        records[action.payload.sceneId].favorite = true;
+      const i = records.findIndex((r) => r.id === action.payload.sceneId);
+      if (i) {
+        records[i].favorite = true;
         return { ...state, records };
       } else {
         return state;
@@ -40,8 +45,9 @@ export function sceneReducer(
     }
     case "unfavorite": {
       const records = [...state.records];
-      if (records[action.payload.sceneId]) {
-        records[action.payload.sceneId].favorite = false;
+      const i = records.findIndex((r) => r.id === action.payload.sceneId);
+      if (i) {
+        records[i].favorite = false;
         return { ...state, records };
       } else {
         return state;
@@ -49,12 +55,22 @@ export function sceneReducer(
     }
     case "addNote": {
       const records = [...state.records];
-      if (records[action.payload.sceneId]) {
-        records[action.payload.sceneId].note = action.payload.note;
+      const i = records.findIndex((r) => r.id === action.payload.sceneId);
+      if (i) {
+        records[i].note = action.payload.note;
         return { ...state, records };
       } else {
         return state;
       }
+    }
+    case "addRecord": {
+      const records = [...state.records];
+      if (records.some((r) => r.id === action.payload.newScene.id)) {
+        return state;
+      }
+
+      records.push(action.payload.newScene);
+      return { ...state, records };
     }
     case "newWorkingScene": {
       const lastId = state.records[state.records.length - 1]?.id ?? 0;
@@ -76,7 +92,7 @@ export function sceneReducer(
       const { scene, cut, take } = action.payload.sceneConfig;
 
       return {
-        workingScene: { scene, cut, take, id: currentId },
+        workingScene: { scene, cut, take, id: currentId + 1 },
         records: state.records,
       };
     }

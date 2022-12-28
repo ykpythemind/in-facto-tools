@@ -8,6 +8,7 @@ import {
   useState,
 } from "react";
 import { Button } from "../components/Button";
+import { RecordsDialog } from "../components/RecordsDialog";
 import { Dialog } from "../components/SectionDialog";
 import { initialSceneState, sceneReducer } from "../lib/reducer";
 import { parseSceneState } from "../lib/storage";
@@ -20,7 +21,9 @@ export default function Home() {
   const [state, dispatch] = useReducer(sceneReducer, initialSceneState);
 
   const [isLoaded, setIsLoaded] = useState(false);
-  const ref: React.MutableRefObject<HTMLDialogElement | null> = useRef(null);
+  const [isRecordsDialogOpen, setIsRecordsDialogOpen] = useState(false);
+  const dialogRef: React.MutableRefObject<HTMLDialogElement | null> =
+    useRef(null);
 
   useEffect(() => {
     // load current scene...
@@ -37,12 +40,16 @@ export default function Home() {
     setIsLoaded(true);
   }, []);
 
+  // dirty...
+  const serializedState = JSON.stringify(state);
+  console.log("render", serializedState);
+
   useEffect(() => {
     if (!isLoaded) return;
 
     // save
-    localStorage.setItem("state", JSON.stringify(state));
-  }, [isLoaded, state]);
+    localStorage.setItem("state", serializedState);
+  }, [isLoaded, serializedState]);
 
   useEffect(() => {
     // On page load or when changing themes, best to add inline in `head` to avoid FOUC
@@ -80,22 +87,34 @@ export default function Home() {
   }
 
   const showModal = useCallback((modalType: SceneType) => {
-    if (ref.current) {
+    if (dialogRef.current) {
       setIsDialogOpen(true);
-      ref.current.showModal();
+      dialogRef.current.showModal();
       setModalType(modalType);
     }
   }, []);
 
   const closeModal = useCallback(() => {
-    if (ref.current) {
+    if (dialogRef.current) {
       setIsDialogOpen(false);
-      ref.current.close();
+      dialogRef.current.close();
     }
   }, []);
 
   const clickStart = useCallback(() => {
     if (!workingScene) return;
+
+    dispatch({
+      type: "addRecord",
+      payload: {
+        newScene: {
+          scene: workingScene.scene,
+          cut: workingScene.cut,
+          take: workingScene.take,
+          id: workingScene.id,
+        },
+      },
+    });
 
     const { scene, cut, take } = workingScene;
     const uttr = new SpeechSynthesisUtterance(
@@ -104,6 +123,34 @@ export default function Home() {
     uttr.rate = 0.8;
     speechSynthesis.speak(uttr);
   }, [workingScene]);
+
+  const recordDialogRef = useRef<HTMLDialogElement | null>(null);
+
+  const showRecordsDialog = useCallback(() => {
+    if (recordDialogRef.current) {
+      setIsRecordsDialogOpen(true);
+      recordDialogRef.current.showModal();
+    }
+  }, []);
+
+  const closeRecordsDialog = useCallback(() => {
+    if (recordDialogRef.current) {
+      setIsRecordsDialogOpen(false);
+      recordDialogRef.current.close();
+    }
+  }, []);
+
+  const onFavorite = useCallback((sceneId: number) => {
+    dispatch({ type: "favorite", payload: { sceneId } });
+  }, []);
+
+  const onUnfavorite = useCallback((sceneId: number) => {
+    dispatch({ type: "unfavorite", payload: { sceneId } });
+  }, []);
+
+  const onUpdateNote = useCallback((sceneId: number, note: string) => {
+    dispatch({ type: "addNote", payload: { sceneId, note } });
+  }, []);
 
   if (theme === null || isLoaded === null) {
     return (
@@ -166,14 +213,28 @@ export default function Home() {
           <div className="">
             <Button text={"start"} onClick={clickStart} />
           </div>
+
+          <div className="">
+            <Button text={"records"} onClick={showRecordsDialog} />
+          </div>
           <div className="ml-auto"></div>
         </div>
       </div>
 
+      <RecordsDialog
+        ref={recordDialogRef}
+        isOpen={isRecordsDialogOpen}
+        onRequireClosing={closeRecordsDialog}
+        records={state.records}
+        onFavorite={onFavorite}
+        onUnfavorite={onUnfavorite}
+        onUpdateNote={onUpdateNote}
+      />
+
       <Dialog
         modalType={modalType}
         currentStatus={modalContentStatus}
-        ref={ref}
+        ref={dialogRef}
         onRequireClosing={closeModal}
         isOpen={isDialogOpen}
         onNewStatus={(newStatus) => {
