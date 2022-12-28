@@ -1,18 +1,33 @@
 import { SceneState, SceneStateSchema } from "./types";
 
 export async function parseSceneState(
-  data: string
+  data: string | null,
+  throwOnError = false
 ): Promise<SceneState | null> {
+  if (!data) {
+    if (throwOnError) {
+      throw new Error("No data");
+    }
+    return null;
+  }
+
   let obj: Object | null = null;
   try {
     obj = JSON.parse(data);
   } catch (e) {
+    if (throwOnError) {
+      throw e;
+    }
     return null;
   }
 
   try {
     return SceneStateSchema.parse(obj);
   } catch (e) {
+    if (throwOnError) {
+      throw e;
+    }
+
     return null;
   }
 }
