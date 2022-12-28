@@ -1,9 +1,9 @@
 import { SceneState, SceneStateSchema } from "./types";
 
-export async function parseSceneState(
+export function parseSceneState(
   data: string | null,
   throwOnError = false
-): Promise<SceneState | null> {
+): SceneState | null {
   if (!data) {
     if (throwOnError) {
       throw new Error("No data");

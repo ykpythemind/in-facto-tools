@@ -1,49 +1,53 @@
 import Head from "next/head";
-import { forwardRef, useCallback, useEffect, useRef, useState } from "react";
-import { SceneStatus, SceneType } from "../lib/types";
+import {
+  forwardRef,
+  useCallback,
+  useEffect,
+  useReducer,
+  useRef,
+  useState,
+} from "react";
+import { initialSceneState, sceneReducer } from "../lib/reducer";
+import { parseSceneState } from "../lib/storage";
+import { SceneConfig, SceneType } from "../lib/types";
 
-const defaultScene = (): SceneStatus => ({
+const defaultScene = (): SceneConfig => ({
   scene: "1",
   cut: "1",
   take: "1",
+  id: 1,
 });
 
 export default function Home() {
   const [theme, setTheme] = useState<"light" | "dark" | null>(null);
   const [isDialogOpen, setIsDialogOpen] = useState(false);
 
-  const [currentScene, setCurrentScene] = useState<SceneStatus | null>(null);
+  const [state, dispatch] = useReducer(sceneReducer, initialSceneState);
+
+  const [isLoaded, setIsLoaded] = useState(false);
   const ref: React.MutableRefObject<HTMLDialogElement | null> = useRef(null);
 
   useEffect(() => {
-    // load current scene
+    // load current scene...
 
-    const l = localStorage.getItem("currentScene");
-    if (l) {
-      try {
-        const parsed = JSON.parse(l);
-        if (parsed.scene && parsed.cut && parsed.take) {
-          setCurrentScene(parsed);
-        } else {
-          setCurrentScene(defaultScene());
-        }
-        return;
-      } catch (e) {
-        console.error("aaaa");
-        console.error(e);
-        setCurrentScene(defaultScene());
-      }
+    const item = localStorage.getItem("state");
+    const result = parseSceneState(item);
+
+    if (result) {
+      dispatch({ type: "init", payload: result });
+    } else {
+      // do nothing
     }
 
-    setCurrentScene(defaultScene());
+    setIsLoaded(true);
   }, []);
 
   useEffect(() => {
-    if (!currentScene) return;
+    if (!isLoaded) return;
 
     // save
-    localStorage.setItem("currentScene", JSON.stringify(currentScene));
-  }, [currentScene]);
+    localStorage.setItem("state", JSON.stringify(state));
+  }, [isLoaded, state]);
 
   useEffect(() => {
     // On page load or when changing themes, best to add inline in `head` to avoid FOUC
@@ -68,14 +72,16 @@ export default function Home() {
     }
   }, [theme]);
 
+  const workingScene = state.workingScene;
+
   const [modalType, setModalType] = useState<SceneType>("scene");
-  let modalContentStatus = currentScene?.scene;
+  let modalContentStatus = workingScene?.scene;
 
   if (modalType === "cut") {
-    modalContentStatus = currentScene?.cut;
+    modalContentStatus = workingScene?.cut;
   }
   if (modalType === "take") {
-    modalContentStatus = currentScene?.take;
+    modalContentStatus = workingScene?.take;
   }
 
   const showModal = useCallback((modalType: SceneType) => {
@@ -94,17 +100,17 @@ export default function Home() {
   }, []);
 
   const clickStart = useCallback(() => {
-    if (!currentScene) return;
+    if (!workingScene) return;
 
-    const { scene, cut, take } = currentScene;
+    const { scene, cut, take } = workingScene;
     const uttr = new SpeechSynthesisUtterance(
       `scene ${scene}, cut ${cut}, take ${take}.`
     );
     uttr.rate = 0.8;
     speechSynthesis.speak(uttr);
-  }, [currentScene]);
+  }, [workingScene]);
 
-  if (theme === null || currentScene === null) {
+  if (theme === null || isLoaded === null) {
     return (
       <>
         <div>loading</div>
@@ -145,17 +151,17 @@ export default function Home() {
         <div className="pt-3 grow grid gap-10 grid-cols-1 grid-rows-3 landscape:grid-cols-3 landscape:grid-rows-1 px-6 ">
           <Section
             name={"S"}
-            status={currentScene.scene}
+            status={workingScene.scene}
             onClick={() => showModal("scene")}
           />
           <Section
             name={"C"}
-            status={currentScene.cut}
+            status={workingScene.cut}
             onClick={() => showModal(`cut`)}
           />
           <Section
             name={"T"}
-            status={currentScene.take}
+            status={workingScene.take}
             onClick={() => showModal(`take`)}
           />
           <div className="w-full"></div>
@@ -175,17 +181,28 @@ export default function Home() {
         ref={ref}
         onRequireClosing={closeModal}
         isOpen={isDialogOpen}
-        onNewStatus={(status) => {
+        onNewStatus={(newStatus) => {
           // dirty
+          const current = state.workingScene;
+
           switch (modalType) {
             case "scene":
-              setCurrentScene((before) => ({ ...before!, scene: status }));
+              dispatch({
+                type: "updateWorkingScene",
+                payload: { sceneConfig: { ...current, scene: newStatus } },
+              });
               break;
             case "take":
-              setCurrentScene((before) => ({ ...before!, take: status }));
+              dispatch({
+                type: "updateWorkingScene",
+                payload: { sceneConfig: { ...current, take: newStatus } },
+              });
               break;
             case "cut":
-              setCurrentScene((before) => ({ ...before!, cut: status }));
+              dispatch({
+                type: "updateWorkingScene",
+                payload: { sceneConfig: { ...current, cut: newStatus } },
+              });
               break;
             default:
               break;
