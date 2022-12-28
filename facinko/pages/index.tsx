@@ -1,13 +1,6 @@
 import Head from "next/head";
 import { forwardRef, useCallback, useEffect, useRef, useState } from "react";
-
-type SceneStatus = {
-  scene: string;
-  cut: string;
-  take: string;
-};
-
-type SceneType = "scene" | "cut" | "take";
+import { SceneStatus, SceneType } from "../lib/types";
 
 const defaultScene = (): SceneStatus => ({
   scene: "1",
@@ -319,14 +312,6 @@ const Section = ({
   status: string;
   onClick: () => void;
 }) => {
-  // const onClick = useCallback(() => {
-  //   const r = prompt(`New status for ${detailName}`);
-  //   if (!r) return;
-  //   if (r === "") return;
-  //
-  //   onNewStatus(r);
-  // }, [onNewStatus, detailName]);
-
   return (
     <div className={"w-full flex landscape:block"} onClick={onClick}>
       <div className="flex items-center landscape:flex-col w-full border-4 border-black dark:border-white cursor-pointer ">
