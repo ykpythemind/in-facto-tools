@@ -5,7 +5,7 @@ test("parse", async () => {
   const result = await parseSceneState(
     `
     {
-      "currentScene": {
+      "workingScene": {
         "scene": "1",
         "cut": "1",
         "take": "2",
@@ -18,7 +18,7 @@ test("parse", async () => {
   );
 
   expect(result).toStrictEqual({
-    currentScene: {
+    workingScene: {
       scene: "1",
       cut: "1",
       take: "2",
@@ -32,7 +32,7 @@ test("parse fail", async () => {
   const result = await parseSceneState(
     `
     {
-      "currentScene": {
+      "workingScene": {
         "scene": "1",
         "cut": "1",
         "take": "2"
