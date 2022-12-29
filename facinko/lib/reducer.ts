@@ -7,6 +7,7 @@ export const initialSceneState: SceneState = {
 
 type SceneAction =
   | { type: "init"; payload: SceneState }
+  | { type: "reset" }
   | {
       type: "newWorkingScene";
       payload: { newScene: Omit<SceneConfig, "id"> };
@@ -36,7 +37,7 @@ export function sceneReducer(
     case "favorite": {
       const records = [...state.records];
       const i = records.findIndex((r) => r.id === action.payload.sceneId);
-      if (i) {
+      if (i !== -1) {
         records[i].favorite = true;
         return { ...state, records };
       } else {
@@ -46,7 +47,7 @@ export function sceneReducer(
     case "unfavorite": {
       const records = [...state.records];
       const i = records.findIndex((r) => r.id === action.payload.sceneId);
-      if (i) {
+      if (i !== -1) {
         records[i].favorite = false;
         return { ...state, records };
       } else {
@@ -56,7 +57,7 @@ export function sceneReducer(
     case "addNote": {
       const records = [...state.records];
       const i = records.findIndex((r) => r.id === action.payload.sceneId);
-      if (i) {
+      if (i !== -1) {
         records[i].note = action.payload.note;
         return { ...state, records };
       } else {
@@ -95,6 +96,9 @@ export function sceneReducer(
         workingScene: { scene, cut, take, id: currentId + 1 },
         records: state.records,
       };
+    }
+    case "reset": {
+      return initialSceneState;
     }
     default:
       const _exhaustiveCheck: never = action;

@@ -152,6 +152,10 @@ export default function Home() {
     dispatch({ type: "addNote", payload: { sceneId, note } });
   }, []);
 
+  const onRequireReset = useCallback(() => {
+    dispatch({ type: "reset" });
+  }, []);
+
   if (theme === null || isLoaded === null) {
     return (
       <>
@@ -176,7 +180,12 @@ export default function Home() {
           <div className="">
             <h1 className="text-lg">facinko</h1>
           </div>
-          <div className="ml-auto">
+          <div className="ml-auto mr-4">
+            <button type={"button"} onClick={showRecordsDialog}>
+              Records 🎞️
+            </button>
+          </div>
+          <div>
             <button
               type="button"
               onClick={() =>
@@ -190,7 +199,7 @@ export default function Home() {
           </div>
         </div>
 
-        <div className="pt-3 grow grid gap-10 grid-cols-1 grid-rows-3 landscape:grid-cols-3 landscape:grid-rows-1 px-6 ">
+        <div className="py-3 grow grid gap-10 grid-cols-1 grid-rows-3 landscape:grid-cols-3 landscape:grid-rows-1 px-6 ">
           <Section
             name={"S"}
             status={workingScene.scene}
@@ -206,18 +215,12 @@ export default function Home() {
             status={workingScene.take}
             onClick={() => showModal(`take`)}
           />
-          <div className="w-full"></div>
         </div>
 
-        <div className="grow-0  pb-5 flex items-center">
-          <div className="">
-            <Button text={"start"} onClick={clickStart} />
+        <div className="pb-5 w-full flex items-center">
+          <div className="w-full">
+            <Button text={"Start 🎥"} onClick={clickStart} />
           </div>
-
-          <div className="">
-            <Button text={"records"} onClick={showRecordsDialog} />
-          </div>
-          <div className="ml-auto"></div>
         </div>
       </div>
 
@@ -229,6 +232,7 @@ export default function Home() {
         onFavorite={onFavorite}
         onUnfavorite={onUnfavorite}
         onUpdateNote={onUpdateNote}
+        onRequireReset={onRequireReset}
       />
 
       <Dialog

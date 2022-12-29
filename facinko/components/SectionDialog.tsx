@@ -72,7 +72,7 @@ export const Dialog = forwardRef<
             <h3 className="text-lg">{title}</h3>
             <div className="ml-auto">
               <button type="button" onClick={onRequireClosing}>
-                x
+                [close]
               </button>
             </div>
           </div>
