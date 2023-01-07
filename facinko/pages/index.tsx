@@ -1,56 +1,55 @@
 import Head from "next/head";
-import { forwardRef, useCallback, useEffect, useRef, useState } from "react";
-
-type SceneStatus = {
-  scene: string;
-  cut: string;
-  take: string;
-};
-
-type SceneType = "scene" | "cut" | "take";
-
-const defaultScene = (): SceneStatus => ({
-  scene: "1",
-  cut: "1",
-  take: "1",
-});
+import {
+  forwardRef,
+  useCallback,
+  useEffect,
+  useReducer,
+  useRef,
+  useState,
+} from "react";
+import { Button } from "../components/Button";
+import { RecordsDialog } from "../components/RecordsDialog";
+import { Dialog } from "../components/SectionDialog";
+import { initialSceneState, sceneReducer } from "../lib/reducer";
+import { parseSceneState } from "../lib/storage";
+import { SceneConfig, SceneType } from "../lib/types";
 
 export default function Home() {
   const [theme, setTheme] = useState<"light" | "dark" | null>(null);
   const [isDialogOpen, setIsDialogOpen] = useState(false);
 
-  const [currentScene, setCurrentScene] = useState<SceneStatus | null>(null);
-  const ref: React.MutableRefObject<HTMLDialogElement | null> = useRef(null);
+  const [state, dispatch] = useReducer(sceneReducer, initialSceneState);
+
+  const [isLoaded, setIsLoaded] = useState(false);
+  const [isRecordsDialogOpen, setIsRecordsDialogOpen] = useState(false);
+  const dialogRef: React.MutableRefObject<HTMLDialogElement | null> =
+    useRef(null);
 
   useEffect(() => {
-    // load current scene
+    // load current scene...
 
-    const l = localStorage.getItem("currentScene");
-    if (l) {
-      try {
-        const parsed = JSON.parse(l);
-        if (parsed.scene && parsed.cut && parsed.take) {
-          setCurrentScene(parsed);
-        } else {
-          setCurrentScene(defaultScene());
-        }
-        return;
-      } catch (e) {
-        console.error("aaaa");
-        console.error(e);
-        setCurrentScene(defaultScene());
-      }
+    const item = localStorage.getItem("state");
+    const result = parseSceneState(item);
+
+    if (result) {
+      dispatch({ type: "init", payload: result });
+    } else {
+      // do nothing
     }
 
-    setCurrentScene(defaultScene());
+    setIsLoaded(true);
   }, []);
 
+  // dirty...
+  const serializedState = JSON.stringify(state);
+  console.log("render", serializedState);
+
   useEffect(() => {
-    if (!currentScene) return;
+    if (!isLoaded) return;
 
     // save
-    localStorage.setItem("currentScene", JSON.stringify(currentScene));
-  }, [currentScene]);
+    localStorage.setItem("state", serializedState);
+  }, [isLoaded, serializedState]);
 
   useEffect(() => {
     // On page load or when changing themes, best to add inline in `head` to avoid FOUC
@@ -75,32 +74,89 @@ export default function Home() {
     }
   }, [theme]);
 
+  const workingScene = state.workingScene;
+
   const [modalType, setModalType] = useState<SceneType>("scene");
-  let modalContentStatus = currentScene?.scene;
+  let modalContentStatus = workingScene?.scene;
 
   if (modalType === "cut") {
-    modalContentStatus = currentScene?.cut;
+    modalContentStatus = workingScene?.cut;
   }
   if (modalType === "take") {
-    modalContentStatus = currentScene?.take;
+    modalContentStatus = workingScene?.take;
   }
 
   const showModal = useCallback((modalType: SceneType) => {
-    if (ref.current) {
+    if (dialogRef.current) {
       setIsDialogOpen(true);
-      ref.current.showModal();
+      dialogRef.current.showModal();
       setModalType(modalType);
     }
   }, []);
 
   const closeModal = useCallback(() => {
-    if (ref.current) {
+    if (dialogRef.current) {
       setIsDialogOpen(false);
-      ref.current.close();
+      dialogRef.current.close();
     }
   }, []);
 
-  if (theme === null || currentScene === null) {
+  const clickStart = useCallback(() => {
+    if (!workingScene) return;
+
+    dispatch({
+      type: "addRecord",
+      payload: {
+        newScene: {
+          scene: workingScene.scene,
+          cut: workingScene.cut,
+          take: workingScene.take,
+          id: workingScene.id,
+        },
+      },
+    });
+
+    const { scene, cut, take } = workingScene;
+    const uttr = new SpeechSynthesisUtterance(
+      `scene ${scene}, cut ${cut}, take ${take}.`
+    );
+    uttr.rate = 0.8;
+    speechSynthesis.speak(uttr);
+  }, [workingScene]);
+
+  const recordDialogRef = useRef<HTMLDialogElement | null>(null);
+
+  const showRecordsDialog = useCallback(() => {
+    if (recordDialogRef.current) {
+      setIsRecordsDialogOpen(true);
+      recordDialogRef.current.showModal();
+    }
+  }, []);
+
+  const closeRecordsDialog = useCallback(() => {
+    if (recordDialogRef.current) {
+      setIsRecordsDialogOpen(false);
+      recordDialogRef.current.close();
+    }
+  }, []);
+
+  const onFavorite = useCallback((sceneId: number) => {
+    dispatch({ type: "favorite", payload: { sceneId } });
+  }, []);
+
+  const onUnfavorite = useCallback((sceneId: number) => {
+    dispatch({ type: "unfavorite", payload: { sceneId } });
+  }, []);
+
+  const onUpdateNote = useCallback((sceneId: number, note: string) => {
+    dispatch({ type: "addNote", payload: { sceneId, note } });
+  }, []);
+
+  const onRequireReset = useCallback(() => {
+    dispatch({ type: "reset" });
+  }, []);
+
+  if (theme === null || isLoaded === null) {
     return (
       <>
         <div>loading</div>
@@ -109,22 +165,27 @@ export default function Home() {
   }
 
   return (
-    <div className="dark:bg-black dark:text-white">
+    <div
+      className="dark:bg-black dark:text-white h-screen"
+      style={{ height: "100dvh" }}
+    >
       <Head>
         <title>facinko</title>
         <meta name="description" content="facinko" />
         <link rel="icon" href="/favicon.ico" />
       </Head>
 
-      <div
-        className="pt-3 px-2 flex flex-col min-h-screen"
-        style={{ minHeight: "100dvh" }}
-      >
+      <div className="pt-3 px-2 flex flex-col h-full">
         <div className="grow-0 mb-3 flex items-center">
           <div className="">
             <h1 className="text-lg">facinko</h1>
           </div>
-          <div className="ml-auto">
+          <div className="ml-auto mr-4">
+            <button type={"button"} onClick={showRecordsDialog}>
+              Records 🎞️
+            </button>
+          </div>
+          <div>
             <button
               type="button"
               onClick={() =>
@@ -138,48 +199,70 @@ export default function Home() {
           </div>
         </div>
 
-        <div className="pt-3 grow grid gap-10 grid-cols-1 grid-rows-3 landscape:grid-cols-3 landscape:grid-rows-1 px-6 ">
+        <div className="py-3 grow grid gap-10 grid-cols-1 grid-rows-3 landscape:grid-cols-3 landscape:grid-rows-1 px-6 ">
           <Section
             name={"S"}
-            status={currentScene.scene}
+            status={workingScene.scene}
             onClick={() => showModal("scene")}
           />
           <Section
             name={"C"}
-            status={currentScene.cut}
+            status={workingScene.cut}
             onClick={() => showModal(`cut`)}
           />
           <Section
             name={"T"}
-            status={currentScene.take}
+            status={workingScene.take}
             onClick={() => showModal(`take`)}
           />
-          <div className="w-full"></div>
         </div>
 
-        <div className="grow-0  pb-5 flex items-center">
-          <div className="">-</div>
-          <div className="ml-auto"></div>
+        <div className="pb-5 w-full flex items-center">
+          <div className="w-full">
+            <Button text={"Start 🎥"} onClick={clickStart} />
+          </div>
         </div>
       </div>
+
+      <RecordsDialog
+        ref={recordDialogRef}
+        isOpen={isRecordsDialogOpen}
+        onRequireClosing={closeRecordsDialog}
+        records={state.records}
+        onFavorite={onFavorite}
+        onUnfavorite={onUnfavorite}
+        onUpdateNote={onUpdateNote}
+        onRequireReset={onRequireReset}
+      />
 
       <Dialog
         modalType={modalType}
         currentStatus={modalContentStatus}
-        ref={ref}
+        ref={dialogRef}
         onRequireClosing={closeModal}
         isOpen={isDialogOpen}
-        onNewStatus={(status) => {
+        onNewStatus={(newStatus) => {
           // dirty
+          const current = state.workingScene;
+
           switch (modalType) {
             case "scene":
-              setCurrentScene((before) => ({ ...before!, scene: status }));
+              dispatch({
+                type: "updateWorkingScene",
+                payload: { sceneConfig: { ...current, scene: newStatus } },
+              });
               break;
             case "take":
-              setCurrentScene((before) => ({ ...before!, take: status }));
+              dispatch({
+                type: "updateWorkingScene",
+                payload: { sceneConfig: { ...current, take: newStatus } },
+              });
               break;
             case "cut":
-              setCurrentScene((before) => ({ ...before!, cut: status }));
+              dispatch({
+                type: "updateWorkingScene",
+                payload: { sceneConfig: { ...current, cut: newStatus } },
+              });
               break;
             default:
               break;
@@ -190,112 +273,6 @@ export default function Home() {
   );
 }
 
-const Dialog = forwardRef<
-  HTMLDialogElement,
-  {
-    modalType: SceneType;
-    currentStatus: string | undefined;
-    onRequireClosing: () => void;
-    onNewStatus: (status: string) => void;
-    isOpen: boolean;
-  }
->(
-  (
-    { onNewStatus, onRequireClosing, modalType, currentStatus, isOpen },
-    ref
-  ) => {
-    const firstButtonRef = useRef<HTMLButtonElement>(null);
-
-    useEffect(() => {
-      if (isOpen) {
-        if (firstButtonRef.current) {
-          firstButtonRef.current.focus();
-        }
-      }
-    }, [isOpen]);
-
-    const stopPropagation = useCallback(
-      (e: React.MouseEvent<HTMLDivElement, MouseEvent>) => {
-        e.stopPropagation();
-      },
-      []
-    );
-
-    const clickEdit = () => {
-      const r = prompt(`New status for ${modalType}`);
-      if (!r) return;
-      if (r === "") return;
-
-      onNewStatus(r);
-      onRequireClosing();
-    };
-
-    const clickReset = () => {
-      onNewStatus("1");
-      onRequireClosing();
-    };
-
-    const clickInc = () => {
-      try {
-        const parsed = parseInt(currentStatus || "0", 10);
-        onNewStatus(String(parsed + 1));
-      } catch {
-        alert("current status is not number");
-      }
-      onRequireClosing();
-    };
-
-    const title = `${modalType} : ${currentStatus}`;
-
-    return (
-      <dialog
-        className="portrait:w-full landscape:w-2/4"
-        ref={ref}
-        style={{ overscrollBehavior: "contain" }}
-        onClick={onRequireClosing}
-      >
-        <div className={"dialog-body"} onClick={stopPropagation}>
-          <div className="flex">
-            <h3 className="text-lg">{title}</h3>
-            <div className="ml-auto">
-              <button type="button" onClick={onRequireClosing}>
-                x
-              </button>
-            </div>
-          </div>
-
-          <div className="mt-5 grid grid-cols-1 gap-5">
-            <Button ref={firstButtonRef} onClick={clickInc} text={"+1"} />
-
-            <Button onClick={clickEdit} text={"Edit"} />
-
-            <Button onClick={clickReset} text={"Reset"} />
-          </div>
-        </div>
-      </dialog>
-    );
-  }
-);
-Dialog.displayName = "Dialog";
-
-type ButtonProps = { text: string; onClick: () => void };
-
-const Button = forwardRef<HTMLButtonElement, ButtonProps>(
-  ({ onClick, text }, ref) => {
-    return (
-      <button
-        className="w-full border-gray-200 border-[1px] rounded-xl py-3"
-        ref={ref}
-        onClick={onClick}
-        type="button"
-      >
-        {text}
-      </button>
-    );
-  }
-);
-Button.displayName = "Button";
-
 const Section = ({
   name,
   status,
@@ -305,14 +282,6 @@ const Section = ({
   status: string;
   onClick: () => void;
 }) => {
-  // const onClick = useCallback(() => {
-  //   const r = prompt(`New status for ${detailName}`);
-  //   if (!r) return;
-  //   if (r === "") return;
-  //
-  //   onNewStatus(r);
-  // }, [onNewStatus, detailName]);
-
   return (
     <div className={"w-full flex landscape:block"} onClick={onClick}>
       <div className="flex items-center landscape:flex-col w-full border-4 border-black dark:border-white cursor-pointer ">

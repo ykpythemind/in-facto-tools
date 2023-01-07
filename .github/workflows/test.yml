@@ -1,0 +1,24 @@
+on:
+  push:
+name: test
+jobs:
+  test_facinko:
+    defaults:
+      run:
+        shell: bash
+        working-directory: facinko
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@v3
+      - uses: actions/setup-node@v3
+        with:
+          node-version: 16
+          cache: 'yarn'
+          cache-dependency-path: facinko/yarn.lock
+
+      - run: yarn install
+
+      - run: yarn tsc --noEmit
+
+      - run: yarn jest
