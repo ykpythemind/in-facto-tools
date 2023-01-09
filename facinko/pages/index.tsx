@@ -199,7 +199,7 @@ export default function Home() {
           </div>
         </div>
 
-        <div className="py-3 grow grid gap-10 grid-cols-1 grid-rows-3 landscape:grid-cols-3 landscape:grid-rows-1 px-6 ">
+        <div className="py-3 grow grid gap-5 grid-flow-row auto-rows-fr grid-cols-1 grid-rows-3 landscape:grid-cols-3 landscape:grid-rows-1 px-6">
           <Section
             name={"S"}
             status={workingScene.scene}
@@ -286,13 +286,13 @@ const Section = ({
     <div className={"w-full flex landscape:block"} onClick={onClick}>
       <div className="flex items-center landscape:flex-col w-full border-4 border-black dark:border-white cursor-pointer ">
         <div className="min-h-full flex items-center border-r-[1px] landscape:border-r-0 border-black dark:border-white">
-          <div className="text-[50px] font-bold px-5 min-w-[80px] text-center">
+          <div className="text-[40px] font-bold px-5 min-w-[80px] text-center">
             {name}
           </div>
         </div>
 
         <div className="grow justify-center">
-          <div className="text-center text-[100px] font-bold">{status}</div>
+          <div className="text-center text-[70px] font-bold">{status}</div>
         </div>
       </div>
     </div>
