@@ -165,10 +165,7 @@ export default function Home() {
   }
 
   return (
-    <div
-      className="dark:bg-black dark:text-white h-screen"
-      style={{ height: "100dvh" }}
-    >
+    <div className="dark:bg-black dark:text-white" style={{ height: "100dvh" }}>
       <Head>
         <title>facinko</title>
         <meta name="description" content="facinko" />
