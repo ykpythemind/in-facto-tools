@@ -176,9 +176,17 @@ export default function Home() {
         className="pt-3 px-2 flex flex-col h-screen"
         style={{ height: "100dvh" }}
       >
-        <div className="grow-0 mb-3 flex items-center">
+        <div className="grow-0 flex items-center">
           <div className="">
-            <h1 className="text-lg">facinko</h1>
+            <h1 className="text-lg">
+              <a
+                href="https://in-facto.jp"
+                target={"_blank"}
+                rel="noopener noreferrer"
+              >
+                facinko
+              </a>
+            </h1>
           </div>
           <div className="ml-auto mr-4">
             <button type={"button"} onClick={showRecordsDialog}>
@@ -193,7 +201,7 @@ export default function Home() {
               }
             >
               <span className="text-cyan-700 dark:text-yellow-700">
-                {theme === "dark" ? "[dark]" : "[light]"}
+                {theme === "dark" ? "🌓" : "☀"}
               </span>
             </button>
           </div>
@@ -217,7 +225,7 @@ export default function Home() {
           />
         </div>
 
-        <div className="pb-5 w-full flex items-center">
+        <div className="pb-5 py-3 px-6 w-full flex items-center">
           <div className="w-full">
             <Button text={"Start 🎥"} onClick={clickStart} />
           </div>

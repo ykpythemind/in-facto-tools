@@ -69,11 +69,15 @@ export const RecordsDialog = forwardRef<
       <dialog
         open={isOpen}
         className="portrait:w-full landscape:w-2/4 h-4/5 py-7"
-        ref={ref}
         style={{ overscrollBehavior: "contain" }}
+        ref={ref}
         onClick={onRequireClosing}
       >
-        <div className={"dialog-body h-full"} onClick={stopPropagation}>
+        <div
+          className={"dialog-body h-full"}
+          style={{ overscrollBehavior: "contain" }}
+          onClick={stopPropagation}
+        >
           <div
             className="grid  gap-3 h-full"
             style={{ gridTemplateRows: "auto 1fr auto" }}

@@ -63,11 +63,15 @@ export const Dialog = forwardRef<
       <dialog
         open={isOpen}
         className="portrait:w-full landscape:w-2/4"
-        ref={ref}
         style={{ overscrollBehavior: "contain" }}
+        ref={ref}
         onClick={onRequireClosing}
       >
-        <div className={"dialog-body"} onClick={stopPropagation}>
+        <div
+          className={"dialog-body"}
+          style={{ overscrollBehavior: "contain" }}
+          onClick={stopPropagation}
+        >
           <div className="flex">
             <h3 className="text-lg">{title}</h3>
             <div className="ml-auto">
