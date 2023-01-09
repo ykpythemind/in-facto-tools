@@ -16,12 +16,12 @@ export const Dialog = forwardRef<
     { onNewStatus, onRequireClosing, modalType, currentStatus, isOpen },
     ref
   ) => {
-    const firstButtonRef = useRef<HTMLButtonElement>(null);
+    const primaryButtonRef = useRef<HTMLButtonElement>(null);
 
     useEffect(() => {
       if (isOpen) {
-        if (firstButtonRef.current) {
-          firstButtonRef.current.focus();
+        if (primaryButtonRef.current) {
+          primaryButtonRef.current.focus();
         }
       }
     }, [isOpen]);
@@ -48,12 +48,24 @@ export const Dialog = forwardRef<
     };
 
     const clickInc = () => {
-      try {
-        const parsed = parseInt(currentStatus || "0", 10);
-        onNewStatus(String(parsed + 1));
-      } catch {
+      const parsed = parseInt(currentStatus || "0", 10);
+      if (parsed == NaN) {
         alert("current status is not number");
+        return;
       }
+      onNewStatus(String(parsed + 1));
+      onRequireClosing();
+    };
+
+    const clickDec = () => {
+      const parsed = parseInt(currentStatus || "0", 10);
+      if (parsed == NaN) {
+        alert("current status is not number");
+        return;
+      }
+      const newVal = parsed - 1;
+      if (newVal < 1) return;
+      onNewStatus(String(newVal));
       onRequireClosing();
     };
 
@@ -82,7 +94,10 @@ export const Dialog = forwardRef<
           </div>
 
           <div className="mt-5 grid grid-cols-1 gap-5">
-            <Button ref={firstButtonRef} onClick={clickInc} text={"+1"} />
+            <div className="flex gap-2">
+              <Button onClick={clickDec} text={"-1"} />
+              <Button ref={primaryButtonRef} onClick={clickInc} text={"+1"} />
+            </div>
 
             <Button onClick={clickEdit} text={"Edit"} />
 
