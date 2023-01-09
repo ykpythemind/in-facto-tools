@@ -165,14 +165,17 @@ export default function Home() {
   }
 
   return (
-    <div className="dark:bg-black dark:text-white" style={{ height: "100dvh" }}>
+    <div className="dark:bg-black dark:text-white">
       <Head>
         <title>facinko</title>
         <meta name="description" content="facinko" />
         <link rel="icon" href="/favicon.ico" />
       </Head>
 
-      <div className="pt-3 px-2 flex flex-col h-full">
+      <div
+        className="pt-3 px-2 flex flex-col h-screen"
+        style={{ height: "100dvh" }}
+      >
         <div className="grow-0 mb-3 flex items-center">
           <div className="">
             <h1 className="text-lg">facinko</h1>
