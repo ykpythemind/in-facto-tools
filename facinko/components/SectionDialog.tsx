@@ -49,20 +49,12 @@ export const Dialog = forwardRef<
 
     const clickInc = () => {
       const parsed = parseInt(currentStatus || "0", 10);
-      if (parsed == NaN) {
-        alert("current status is not number");
-        return;
-      }
       onNewStatus(String(parsed + 1));
       onRequireClosing();
     };
 
     const clickDec = () => {
       const parsed = parseInt(currentStatus || "0", 10);
-      if (parsed == NaN) {
-        alert("current status is not number");
-        return;
-      }
       const newVal = parsed - 1;
       if (newVal < 1) return;
       onNewStatus(String(newVal));
