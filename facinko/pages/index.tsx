@@ -14,6 +14,8 @@ import { initialSceneState, sceneReducer } from "../lib/reducer";
 import { parseSceneState } from "../lib/storage";
 import { SceneConfig, SceneType } from "../lib/types";
 
+const defaultStartText = "🎥 Start";
+
 export default function Home() {
   const [theme, setTheme] = useState<"light" | "dark" | null>(null);
   const [isDialogOpen, setIsDialogOpen] = useState(false);
@@ -42,7 +44,9 @@ export default function Home() {
 
   // dirty...
   const serializedState = JSON.stringify(state);
-  console.log("render", serializedState);
+  // console.log("render", serializedState);
+
+  const [startButtonText, setStartButtonText] = useState(defaultStartText);
 
   useEffect(() => {
     if (!isLoaded) return;
@@ -101,7 +105,7 @@ export default function Home() {
     }
   }, []);
 
-  const clickStart = useCallback(() => {
+  const clickStart = useCallback(async () => {
     if (!workingScene) return;
 
     dispatch({
@@ -122,6 +126,12 @@ export default function Home() {
     );
     uttr.rate = 0.8;
     speechSynthesis.speak(uttr);
+
+    (async () => {
+      setStartButtonText("🎬 Action!");
+      await sleep(1000);
+      setStartButtonText(defaultStartText);
+    })();
   }, [workingScene]);
 
   const recordDialogRef = useRef<HTMLDialogElement | null>(null);
@@ -163,6 +173,8 @@ export default function Home() {
       </>
     );
   }
+
+  console.log("render");
 
   return (
     <div className="dark:bg-black dark:text-white">
@@ -227,7 +239,7 @@ export default function Home() {
 
         <div className="pb-5 py-3 px-6 w-full flex items-center">
           <div className="w-full">
-            <Button text={"Start 🎥"} onClick={clickStart} />
+            <Button text={startButtonText} onClick={clickStart} />
           </div>
         </div>
       </div>
@@ -306,3 +318,7 @@ const Section = ({
     </div>
   );
 };
+
+async function sleep(ms: number): Promise<void> {
+  return new Promise((resolve) => setTimeout(resolve, ms));
+}
