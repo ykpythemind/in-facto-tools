@@ -167,6 +167,7 @@ function truncate(str: string): string {
 
 function exportRecords(records: SceneState["records"]) {
   return records
+    .filter((r) => r.shouldRecord)
     .map((r) => {
       const title = `S${r.scene} C${r.cut} T${r.take}`;
       const note = r.note ? ` ${r.note}` : "";
@@ -185,7 +186,7 @@ function setClipboard(text: string) {
       /* success */
     },
     () => {
-      alert("fail");
+      console.warn("fail");
       /* failure */
     }
   );
