@@ -94,32 +94,48 @@ export const RecordsDialog = forwardRef<
                 .filter((r) => r.shouldRecord)
                 .map((r) => {
                   const title = `S${r.scene} C${r.cut} T${r.take}`;
+                  const time = r.time
+                    ? new Date(r.time).toLocaleTimeString([], {
+                        hour: "2-digit",
+                        minute: "2-digit",
+                      })
+                    : "";
 
                   return (
                     <div
-                      className="self-start grid gap-1 w-full items-center"
                       key={r.id}
-                      style={{ gridTemplateColumns: "1fr 2fr auto" }}
+                      className=" border-b-[1px] border-gray-700 dark:border-gray-300"
                     >
-                      <div className="font-bold">{title}</div>
+                      <div
+                        className="self-start grid gap-1 w-full items-center"
+                        style={{ gridTemplateColumns: "2fr  auto" }}
+                      >
+                        <div className="flex gap-2 items-center">
+                          <div className="font-bold">{title}</div>
 
-                      <div className="px-4 text-right">
-                        <button
-                          type="button"
-                          onClick={() => onClickEditNote(r.note ?? null, r.id)}
-                        >
-                          <span className="text-gray-600">
-                            {r.note ? truncate(r.note) : ""}
-                          </span>{" "}
-                          <span className="text-xl">✎</span>
-                        </button>
+                          <div className="text-sm">{r.time && `${time}`}</div>
+                        </div>
+
+                        <div className="text-xl flex gap-2">
+                          <button
+                            type="button"
+                            onClick={() =>
+                              onClickEditNote(r.note ?? null, r.id)
+                            }
+                          >
+                            <span className="text-xl">✎</span>
+                          </button>
+
+                          <Fav
+                            fav={r.favorite}
+                            onClick={() => onClickFav(r.id)}
+                          />
+                        </div>
                       </div>
-
-                      <div className="text-xl">
-                        <Fav
-                          fav={r.favorite}
-                          onClick={() => onClickFav(r.id)}
-                        />
+                      <div className="text-right">
+                        <span className="text-gray-700">
+                          {r.note ? truncate(r.note) : ""}
+                        </span>
                       </div>
                     </div>
                   );
@@ -177,7 +193,16 @@ function exportRecords(records: SceneState["records"]) {
     .map((r) => {
       const title = `S${r.scene} C${r.cut} T${r.take}`;
       const note = r.note ? ` ${r.note}` : "";
-      return `${title}${note}${convertFav(r.favorite)}`;
+
+      const time = r.time
+        ? new Date(r.time).toLocaleTimeString([], {
+            hour: "2-digit",
+            minute: "2-digit",
+          })
+        : "";
+      return `${title}${time !== "" ? ` (${time}) ` : ""}${note}${convertFav(
+        r.favorite
+      )}`;
     })
     .join("\n");
 }

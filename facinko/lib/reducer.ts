@@ -23,7 +23,7 @@ type SceneAction =
     }
   | {
       type: "favorite";
-      payload: { sceneId: number };
+      payload: { sceneId: number; favoriteTime: string };
     }
   // | { type: "unfavorite"; payload: { sceneId: number } }
   | { type: "addNote"; payload: { sceneId: number; note: string } };
@@ -48,7 +48,11 @@ export function sceneReducer(
           records[i].favorite = records[i].favorite + 1;
         }
         console.log(records[i].favorite); // development mode cause multiple call
-        records[i].shouldRecord = true;
+        if (!records[i].shouldRecord) {
+          // 1回目のお気に入り登録時に、時間を記録する
+          records[i].time = action.payload.favoriteTime;
+          records[i].shouldRecord = true;
+        }
         return { ...state, records };
       } else {
         console.warn("never");

@@ -117,6 +117,7 @@ export default function Home() {
       type: "favorite",
       payload: {
         sceneId: state.workingSceneId,
+        favoriteTime: new Date().toISOString(),
       },
     });
   }, [state.workingSceneId]);
@@ -140,7 +141,7 @@ export default function Home() {
   const onFavorite = useCallback((sceneId: number) => {
     dispatch({
       type: "favorite",
-      payload: { sceneId },
+      payload: { sceneId, favoriteTime: new Date().toISOString() },
     });
   }, []);
 

@@ -12,6 +12,7 @@ const HasID = z.object({
   favorite: z.number().min(0).max(3),
   note: z.string().optional(),
   shouldRecord: z.boolean(),
+  time: z.string().optional(),
 });
 
 const SceneConfigSchema = SceneConfigSchemaBase.merge(HasID);
