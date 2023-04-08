@@ -42,8 +42,11 @@ export const Dialog = forwardRef<
     };
 
     const clickReset = () => {
-      onNewStatus("1");
-      // onRequireClosing();
+      const r = confirm("reset ok?");
+      if (r) {
+        onNewStatus("1");
+        onRequireClosing();
+      }
     };
 
     const clickInc = () => {
@@ -76,7 +79,7 @@ export const Dialog = forwardRef<
           <div className="flex">
             <h3 className="text-lg mr-4">{title}</h3>
 
-            <button type="button" onClick={clickReset} className="text-red-300">
+            <button type="button" onClick={clickReset} className="text-red-500">
               Reset
             </button>
             <div className="ml-auto">
@@ -97,7 +100,7 @@ export const Dialog = forwardRef<
               <Button onClick={clickEdit} text={"Edit"} />
             </div>
 
-            <Button onClick={onRequireClosing} text={"OK"} isPrimary />
+            {/* <Button onClick={onRequireClosing} text={"OK"} isPrimary /> */}
           </div>
         </div>
       </dialog>

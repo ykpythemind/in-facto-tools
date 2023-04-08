@@ -171,9 +171,9 @@ export default function Home() {
         <link rel="icon" href="/favicon.ico" />
       </Head>
 
-      <div className="flex items-center pb-3">
+      <div className="flex items-center pb-3 mx-4">
         <div className="">
-          <h1 className="text-lg">
+          <h1 className="text-lg font-serif">
             <a
               href="https://in-facto.jp"
               target={"_blank"}
@@ -183,7 +183,7 @@ export default function Home() {
             </a>
           </h1>
         </div>
-        <div className="ml-auto mr-4">
+        <div className="ml-auto">
           <button
             type="button"
             onClick={() => setTheme((b) => (b === "light" ? "dark" : "light"))}
@@ -285,10 +285,6 @@ const Section = ({
   onClick: () => void;
 }) => {
   const [elemRef, { width, height }] = useElementSize();
-
-  useEffect(() => {
-    console.log({ width, height });
-  }, [width, height]);
 
   const size = useMemo(() => {
     if (width === null || height === null) {
