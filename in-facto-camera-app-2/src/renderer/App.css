@@ -1,0 +1,141 @@
+/*
+ * @NOTE: Prepend a `~` to css file paths that are in your node_modules
+ *        See https://github.com/webpack-contrib/sass-loader#imports
+ */
+*, *::before, *::after {
+  box-sizing: border-box;
+}
+/*
+  2. デフォルトのマージンを削除
+*/
+* {
+  margin: 0;
+}
+      body {
+        background-color: black;
+        color: #eeeeee;
+        padding: 0;
+        margin: 0;
+
+        width: 100%;
+        height: 100%;
+      }
+
+.lds-ring {
+  display: inline-block;
+  position: relative;
+  width: 80px;
+  height: 80px;
+}
+.lds-ring div {
+  box-sizing: border-box;
+  display: block;
+  position: absolute;
+  width: 64px;
+  height: 64px;
+  margin: 8px;
+  border: 8px solid #fff;
+  border-radius: 50%;
+  animation: lds-ring 1.2s cubic-bezier(0.5, 0, 0.5, 1) infinite;
+  border-color: #fff transparent transparent transparent;
+}
+.lds-ring div:nth-child(1) {
+  animation-delay: -0.45s;
+}
+.lds-ring div:nth-child(2) {
+  animation-delay: -0.3s;
+}
+.lds-ring div:nth-child(3) {
+  animation-delay: -0.15s;
+}
+@keyframes lds-ring {
+  0% {
+    transform: rotate(0deg);
+  }
+  100% {
+    transform: rotate(360deg);
+  }
+}
+
+      #loading {
+        position: relative;
+        width: 100%;
+        height: 100vh;
+
+        display: flex;
+        align-items: center;
+        justify-content: center;
+      }
+
+      #video {
+        position: relative;
+        width: 100%;
+        height: 100%;
+      }
+
+      .control {
+        position: absolute;
+        top: 5;
+        right: 5;
+        display: flex;
+        align-items: center;
+        /* justify-content: center;
+        align-items: center; */
+        z-index: 1;
+
+        padding: 10px;
+      }
+
+      #slider {
+        position: absolute;
+        bottom: 5px;
+        right: 0px;
+        /* justify-content: center;
+        align-items: center; */
+        z-index: 1;
+        width: 100%;
+        padding: 10px;
+      }
+      #sliderIn {
+        width: 100%;
+        padding: 10px 20px;
+      }
+
+      #sliderIn .f {
+        display: flex;
+        align-items: center;
+      }
+
+      #sliderIn .stat {
+        margin-left: 20px;
+        width: 70px;
+        text-align: center;
+        font-weight: bold;
+      }
+
+      #sliderIn .livemode {
+        /* width: 50px; */
+
+        font-size: 20px;
+        letter-spacing: 0.1rem;
+        color: red;
+        font-weight: bold;
+        background-color: white;
+        border-radius: 10px;
+      }
+
+      .control-live {
+        background-color: #ff2222;
+        padding: 2px;
+        border-radius: 6px;
+        font-weight: bold;
+        font-size: 17px;
+        display: inline-block;
+      }
+
+      #control-time {
+        font-weight: bold;
+        font-size: 17px;
+
+        margin-left: 6px;
+      }
