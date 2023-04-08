@@ -2,6 +2,8 @@
 
 ## facinko
 
+facinko is カチンコ
+
 ```bash
 yarn dev
 ```

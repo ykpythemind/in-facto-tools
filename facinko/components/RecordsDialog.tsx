@@ -98,6 +98,7 @@ export const RecordsDialog = forwardRef<
                     ? new Date(r.time).toLocaleTimeString([], {
                         hour: "2-digit",
                         minute: "2-digit",
+                        hour12: false,
                       })
                     : "";
 
@@ -198,6 +199,7 @@ function exportRecords(records: SceneState["records"]) {
         ? new Date(r.time).toLocaleTimeString([], {
             hour: "2-digit",
             minute: "2-digit",
+            hour12: false,
           })
         : "";
       return `${title}${time !== "" ? ` (${time}) ` : ""}${note}${convertFav(
