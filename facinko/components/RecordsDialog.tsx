@@ -79,7 +79,11 @@ export const RecordsDialog = forwardRef<
             <div className="flex mb-2">
               <h3 className="text-lg">Records</h3>
               <div className="ml-auto">
-                <button type="button" onClick={onRequireClosing}>
+                <button
+                  type="button"
+                  onClick={onRequireClosing}
+                  className="text-gray-500"
+                >
                   [close]
                 </button>
               </div>
@@ -104,7 +108,9 @@ export const RecordsDialog = forwardRef<
                           type="button"
                           onClick={() => onClickEditNote(r.note ?? null, r.id)}
                         >
-                          {r.note ? truncate(r.note) : ""}{" "}
+                          <span className="text-gray-600">
+                            {r.note ? truncate(r.note) : ""}
+                          </span>{" "}
                           <span className="text-xl">✎</span>
                         </button>
                       </div>

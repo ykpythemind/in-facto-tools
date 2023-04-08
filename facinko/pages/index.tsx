@@ -217,12 +217,12 @@ export default function Home() {
         <button
           type={"button"}
           onClick={showRecordsDialog}
-          className="underline"
+          className="underline text-lg"
         >
           Menu
         </button>
 
-        <div className="">
+        <div className="text-xl">
           <Fav fav={workingScene.favorite} onClick={() => clickFav()} />
         </div>
       </div>
