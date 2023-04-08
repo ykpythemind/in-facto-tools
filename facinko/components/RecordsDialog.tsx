@@ -187,7 +187,12 @@ const convertFav = (favCount: number): string => {
     return "";
   }
 
-  return new Array(favCount).map(() => "♥").join("");
+  let str = "";
+  for (let i = 0; i < favCount; i++) {
+    str += "♥";
+  }
+
+  return str;
 };
 
 function setClipboard(text: string) {
