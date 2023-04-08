@@ -1,27 +1,31 @@
 import { SceneConfig, SceneState } from "./types";
 
+export const fallbackScene: SceneConfig = {
+  id: 0,
+  scene: "1",
+  cut: "1",
+  take: "1",
+  favorite: 0,
+  shouldRecord: false,
+};
+
 export const initialSceneState: SceneState = {
-  workingScene: { cut: "1", scene: "1", take: "1", id: -1 },
-  records: [],
+  workingSceneId: 0,
+  records: [fallbackScene],
 };
 
 type SceneAction =
   | { type: "init"; payload: SceneState }
   | { type: "reset" }
   | {
-      type: "newWorkingScene";
-      payload: { newScene: Omit<SceneConfig, "id"> };
-    }
-  | {
-      type: "addRecord";
-      payload: { newScene: SceneConfig };
-    }
-  | {
       type: "updateWorkingScene";
       payload: { sceneConfig: Omit<SceneConfig, "id"> };
     }
-  | { type: "favorite"; payload: { sceneId: number } }
-  | { type: "unfavorite"; payload: { sceneId: number } }
+  | {
+      type: "favorite";
+      payload: { sceneId: number; favoriteTime: string };
+    }
+  // | { type: "unfavorite"; payload: { sceneId: number } }
   | { type: "addNote"; payload: { sceneId: number; note: string } };
 
 export function sceneReducer(
@@ -31,26 +35,27 @@ export function sceneReducer(
   switch (action.type) {
     case "init":
       return {
-        workingScene: action.payload.workingScene,
+        workingSceneId: action.payload.workingSceneId,
         records: action.payload.records,
       };
     case "favorite": {
       const records = [...state.records];
       const i = records.findIndex((r) => r.id === action.payload.sceneId);
       if (i !== -1) {
-        records[i].favorite = true;
+        if (records[i].favorite > 2) {
+          records[i].favorite = 0;
+        } else {
+          records[i].favorite = records[i].favorite + 1;
+        }
+        console.log(records[i].favorite); // development mode cause multiple call
+        if (!records[i].shouldRecord) {
+          // 1回目のお気に入り登録時に、時間を記録する
+          records[i].time = action.payload.favoriteTime;
+          records[i].shouldRecord = true;
+        }
         return { ...state, records };
       } else {
-        return state;
-      }
-    }
-    case "unfavorite": {
-      const records = [...state.records];
-      const i = records.findIndex((r) => r.id === action.payload.sceneId);
-      if (i !== -1) {
-        records[i].favorite = false;
-        return { ...state, records };
-      } else {
+        console.warn("never");
         return state;
       }
     }
@@ -59,43 +64,37 @@ export function sceneReducer(
       const i = records.findIndex((r) => r.id === action.payload.sceneId);
       if (i !== -1) {
         records[i].note = action.payload.note;
+        records[i].shouldRecord = true;
         return { ...state, records };
       } else {
         return state;
       }
     }
-    case "addRecord": {
-      const records = [...state.records];
-      if (records.some((r) => r.id === action.payload.newScene.id)) {
-        return state;
+    case "updateWorkingScene": {
+      const currentId = state.workingSceneId;
+      const { scene, cut, take, favorite } = action.payload.sceneConfig;
+      const i = state.records.findIndex((r) => {
+        return r.scene === scene && r.cut === cut && r.take === take;
+      });
+      if (i !== -1) {
+        // 同じシーンがあったら、そのシーンをworkingSceneにする
+        const workingSceneId = state.records[i].id;
+        return { ...state, workingSceneId };
       }
 
-      records.push(action.payload.newScene);
-      return { ...state, records };
-    }
-    case "newWorkingScene": {
-      const lastId = state.records[state.records.length - 1]?.id ?? 0;
-      const { scene, cut, take } = action.payload.newScene;
+      const lastId = Math.max(...state.records.map((a) => a.id)) ?? 0;
       const newScene: SceneConfig = {
         scene,
         cut,
         take,
         id: lastId + 1,
+        favorite: 0,
+        shouldRecord: false,
       };
 
       // push new records
-      const records = [...state.records, state.workingScene];
-
-      return { records, workingScene: newScene };
-    }
-    case "updateWorkingScene": {
-      const currentId = state.workingScene.id;
-      const { scene, cut, take } = action.payload.sceneConfig;
-
-      return {
-        workingScene: { scene, cut, take, id: currentId + 1 },
-        records: state.records,
-      };
+      const records = [...state.records, newScene];
+      return { records, workingSceneId: newScene.id };
     }
     case "reset": {
       return initialSceneState;

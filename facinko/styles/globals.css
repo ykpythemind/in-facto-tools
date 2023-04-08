@@ -6,3 +6,17 @@ dialog::backdrop {
   background-color: #000;
   opacity: 0.3;
 }
+
+/* @layer base {
+  * {
+    @apply box-border;
+  }
+} */
+
+html,
+body,
+body > div:first-child,
+div#__next,
+div#__next > div {
+height: 100%;
+}

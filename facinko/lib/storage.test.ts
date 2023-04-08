@@ -5,26 +5,25 @@ test("parse", async () => {
   const result = await parseSceneState(
     `
     {
-      "workingScene": {
-        "scene": "1",
-        "cut": "1",
-        "take": "2",
-        "id": 1
-      },
-      "records": []
+      "workingSceneId": 1,
+      "records": [{ "scene": "1", "cut": "1", "take": "a", "favorite": 1, "shouldRecord": false, "id": 1 } ]
     }
   `,
     true
   );
 
   expect(result).toStrictEqual({
-    workingScene: {
-      scene: "1",
-      cut: "1",
-      take: "2",
-      id: 1,
-    },
-    records: [],
+    workingSceneId: 1,
+    records: [
+      {
+        scene: "1",
+        cut: "1",
+        take: "a",
+        favorite: 1,
+        shouldRecord: false,
+        id: 1,
+      },
+    ],
   });
 });
 

@@ -9,7 +9,6 @@ export const RecordsDialog = forwardRef<
     onRequireClosing: () => void;
     records: SceneState["records"];
     onFavorite: (sceneId: number) => void;
-    onUnfavorite: (sceneId: number) => void;
     onUpdateNote: (sceneId: number, note: string) => void;
     onRequireReset: () => void;
     isOpen: boolean;
@@ -20,7 +19,6 @@ export const RecordsDialog = forwardRef<
       onFavorite,
       onRequireClosing,
       onRequireReset,
-      onUnfavorite,
       onUpdateNote,
       records,
       isOpen,
@@ -45,14 +43,10 @@ export const RecordsDialog = forwardRef<
     );
 
     const onClickFav = useCallback(
-      (isFavorite: boolean, sceneId: number) => {
-        if (isFavorite) {
-          onUnfavorite(sceneId);
-        } else {
-          onFavorite(sceneId);
-        }
+      (sceneId: number) => {
+        onFavorite(sceneId);
       },
-      [onFavorite, onUnfavorite]
+      [onFavorite]
     );
 
     const onClickEditNote = useCallback(
@@ -85,44 +79,68 @@ export const RecordsDialog = forwardRef<
             <div className="flex mb-2">
               <h3 className="text-lg">Records</h3>
               <div className="ml-auto">
-                <button type="button" onClick={onRequireClosing}>
+                <button
+                  type="button"
+                  onClick={onRequireClosing}
+                  className="text-gray-500"
+                >
                   [close]
                 </button>
               </div>
             </div>
 
             <div className="content-start overflow-y-scroll grid grid-cols-1 pb-3 gap-5 border-b-[1px] border-gray-200">
-              {records.map((r) => {
-                const title = `S${r.scene} C${r.cut} T${r.take}`;
+              {records
+                .filter((r) => r.shouldRecord)
+                .map((r) => {
+                  const title = `S${r.scene} C${r.cut} T${r.take}`;
+                  const time = r.time
+                    ? new Date(r.time).toLocaleTimeString([], {
+                        hour: "2-digit",
+                        minute: "2-digit",
+                        hour12: false,
+                      })
+                    : "";
 
-                return (
-                  <div
-                    className="self-start grid gap-1 w-full items-center"
-                    key={r.id}
-                    style={{ gridTemplateColumns: "1fr 2fr auto" }}
-                  >
-                    <div className="font-bold">{title}</div>
-
-                    <div className="px-4 text-right">
-                      <button
-                        type="button"
-                        onClick={() => onClickEditNote(r.note ?? null, r.id)}
+                  return (
+                    <div
+                      key={r.id}
+                      className=" border-b-[1px] border-gray-700 dark:border-gray-300"
+                    >
+                      <div
+                        className="self-start grid gap-1 w-full items-center"
+                        style={{ gridTemplateColumns: "2fr  auto" }}
                       >
-                        {r.note ? truncate(r.note) : ""}{" "}
-                        <span className="text-xl">✎</span>
-                      </button>
-                    </div>
+                        <div className="flex gap-2 items-center">
+                          <div className="font-bold">{title}</div>
 
-                    <div className="text-xl">
-                      <Fav
-                        isFav={r.favorite ?? false}
-                        disabled={false}
-                        onClick={() => onClickFav(r.favorite ?? false, r.id)}
-                      />
+                          <div className="text-sm">{r.time && `${time}`}</div>
+                        </div>
+
+                        <div className="text-xl flex gap-2">
+                          <button
+                            type="button"
+                            onClick={() =>
+                              onClickEditNote(r.note ?? null, r.id)
+                            }
+                          >
+                            <span className="text-xl">✎</span>
+                          </button>
+
+                          <Fav
+                            fav={r.favorite}
+                            onClick={() => onClickFav(r.id)}
+                          />
+                        </div>
+                      </div>
+                      <div className="text-right">
+                        <span className="text-gray-700">
+                          {r.note ? truncate(r.note) : ""}
+                        </span>
+                      </div>
                     </div>
-                  </div>
-                );
-              })}
+                  );
+                })}
             </div>
 
             <div>
@@ -172,13 +190,37 @@ function truncate(str: string): string {
 
 function exportRecords(records: SceneState["records"]) {
   return records
+    .filter((r) => r.shouldRecord)
     .map((r) => {
       const title = `S${r.scene} C${r.cut} T${r.take}`;
       const note = r.note ? ` ${r.note}` : "";
-      return `${title}${note}${r.favorite ? " ♡" : ""}`;
+
+      const time = r.time
+        ? new Date(r.time).toLocaleTimeString([], {
+            hour: "2-digit",
+            minute: "2-digit",
+            hour12: false,
+          })
+        : "";
+      return `${title}${time !== "" ? ` (${time}) ` : ""}${note}${convertFav(
+        r.favorite
+      )}`;
     })
     .join("\n");
 }
+
+const convertFav = (favCount: number): string => {
+  if (favCount === 0) {
+    return "";
+  }
+
+  let str = "";
+  for (let i = 0; i < favCount; i++) {
+    str += "♥";
+  }
+
+  return str;
+};
 
 function setClipboard(text: string) {
   const type = "text/plain";
@@ -190,7 +232,7 @@ function setClipboard(text: string) {
       /* success */
     },
     () => {
-      alert("fail");
+      console.warn("fail");
       /* failure */
     }
   );
