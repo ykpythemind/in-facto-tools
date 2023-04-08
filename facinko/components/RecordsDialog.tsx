@@ -177,10 +177,18 @@ function exportRecords(records: SceneState["records"]) {
     .map((r) => {
       const title = `S${r.scene} C${r.cut} T${r.take}`;
       const note = r.note ? ` ${r.note}` : "";
-      return `${title}${note}${r.favorite ? " ♡" : ""}`;
+      return `${title}${note}${convertFav(r.favorite)}`;
     })
     .join("\n");
 }
+
+const convertFav = (favCount: number): string => {
+  if (favCount === 0) {
+    return "";
+  }
+
+  return new Array(favCount).map(() => "♥").join("");
+};
 
 function setClipboard(text: string) {
   const type = "text/plain";
