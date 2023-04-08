@@ -47,7 +47,7 @@ export function sceneReducer(
         } else {
           records[i].favorite = records[i].favorite + 1;
         }
-        console.log(records[i].favorite);
+        console.log(records[i].favorite); // development mode cause multiple call
         records[i].shouldRecord = true;
         return { ...state, records };
       } else {
