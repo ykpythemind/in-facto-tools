@@ -39,7 +39,6 @@ export const Dialog = forwardRef<
       if (r === "") return;
 
       onNewStatus(r);
-      onRequireClosing();
     };
 
     const clickReset = () => {
@@ -50,7 +49,6 @@ export const Dialog = forwardRef<
     const clickInc = () => {
       const parsed = parseInt(currentStatus || "0", 10);
       onNewStatus(String(parsed + 1));
-      onRequireClosing();
     };
 
     const clickDec = () => {
@@ -58,7 +56,6 @@ export const Dialog = forwardRef<
       const newVal = parsed - 1;
       if (newVal < 1) return;
       onNewStatus(String(newVal));
-      onRequireClosing();
     };
 
     const title = `${modalType} : ${currentStatus}`;

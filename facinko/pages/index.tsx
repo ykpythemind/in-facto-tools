@@ -3,6 +3,7 @@ import {
   forwardRef,
   useCallback,
   useEffect,
+  useMemo,
   useReducer,
   useRef,
   useState,
@@ -10,11 +11,13 @@ import {
 import { Button } from "../components/Button";
 import { RecordsDialog } from "../components/RecordsDialog";
 import { Dialog } from "../components/SectionDialog";
-import { initialSceneState, sceneReducer } from "../lib/reducer";
+import { fallbackScene, initialSceneState, sceneReducer } from "../lib/reducer";
 import { parseSceneState } from "../lib/storage";
 import { SceneConfig, SceneType } from "../lib/types";
+import { AutoTextSize } from "auto-text-size";
 
-const defaultStartText = "🎥 Start";
+import { useElementSize } from "usehooks-ts";
+import { Fav } from "../components/Fav";
 
 export default function Home() {
   const [theme, setTheme] = useState<"light" | "dark" | null>(null);
@@ -33,20 +36,24 @@ export default function Home() {
     const item = localStorage.getItem("state");
     const result = parseSceneState(item);
 
+    if (isLoaded) return;
+
     if (result) {
       dispatch({ type: "init", payload: result });
     } else {
       // do nothing
+      dispatch({
+        type: "init",
+        payload: { records: [fallbackScene], workingSceneId: 0 },
+      });
     }
 
     setIsLoaded(true);
-  }, []);
+  }, [isLoaded]);
 
   // dirty...
   const serializedState = JSON.stringify(state);
   // console.log("render", serializedState);
-
-  const [startButtonText, setStartButtonText] = useState(defaultStartText);
 
   useEffect(() => {
     if (!isLoaded) return;
@@ -78,7 +85,7 @@ export default function Home() {
     }
   }, [theme]);
 
-  const workingScene = state.workingScene;
+  const workingScene = state.records[state.workingSceneId] ?? fallbackScene;
 
   const [modalType, setModalType] = useState<SceneType>("scene");
   let modalContentStatus = workingScene?.scene;
@@ -105,34 +112,14 @@ export default function Home() {
     }
   }, []);
 
-  const clickStart = useCallback(async () => {
-    if (!workingScene) return;
-
+  const clickFav = useCallback(() => {
     dispatch({
-      type: "addRecord",
+      type: "favorite",
       payload: {
-        newScene: {
-          scene: workingScene.scene,
-          cut: workingScene.cut,
-          take: workingScene.take,
-          id: workingScene.id,
-        },
+        sceneId: state.workingSceneId,
       },
     });
-
-    const { scene, cut, take } = workingScene;
-    const uttr = new SpeechSynthesisUtterance(
-      `scene ${scene}, cut ${cut}, take ${take}.`
-    );
-    uttr.rate = 0.8;
-    speechSynthesis.speak(uttr);
-
-    (async () => {
-      setStartButtonText("🎬 Action!");
-      await sleep(1000);
-      setStartButtonText(defaultStartText);
-    })();
-  }, [workingScene]);
+  }, [state.workingSceneId]);
 
   const recordDialogRef = useRef<HTMLDialogElement | null>(null);
 
@@ -151,11 +138,10 @@ export default function Home() {
   }, []);
 
   const onFavorite = useCallback((sceneId: number) => {
-    dispatch({ type: "favorite", payload: { sceneId } });
-  }, []);
-
-  const onUnfavorite = useCallback((sceneId: number) => {
-    dispatch({ type: "unfavorite", payload: { sceneId } });
+    dispatch({
+      type: "favorite",
+      payload: { sceneId },
+    });
   }, []);
 
   const onUpdateNote = useCallback((sceneId: number, note: string) => {
@@ -174,73 +160,70 @@ export default function Home() {
     );
   }
 
-  console.log("render");
-
   return (
-    <div className="dark:bg-black dark:text-white">
+    <div
+      className="dark:bg-black dark:text-white h-screen pt-3 pb-5 px-2 flex flex-col"
+      style={{ height: "100dvh" }}
+    >
       <Head>
         <title>facinko</title>
         <meta name="description" content="facinko" />
         <link rel="icon" href="/favicon.ico" />
       </Head>
 
-      <div
-        className="pt-3 px-2 flex flex-col h-screen"
-        style={{ height: "100dvh" }}
-      >
-        <div className="grow-0 flex items-center">
-          <div className="">
-            <h1 className="text-lg">
-              <a
-                href="https://in-facto.jp"
-                target={"_blank"}
-                rel="noopener noreferrer"
-              >
-                facinko
-              </a>
-            </h1>
-          </div>
-          <div className="ml-auto mr-4">
-            <button type={"button"} onClick={showRecordsDialog}>
-              Records 🎞️
-            </button>
-          </div>
-          <div>
-            <button
-              type="button"
-              onClick={() =>
-                setTheme((b) => (b === "light" ? "dark" : "light"))
-              }
+      <div className="flex items-center pb-3">
+        <div className="">
+          <h1 className="text-lg">
+            <a
+              href="https://in-facto.jp"
+              target={"_blank"}
+              rel="noopener noreferrer"
             >
-              <span className="text-cyan-700 dark:text-yellow-700">
-                {theme === "dark" ? "🌓" : "☀"}
-              </span>
-            </button>
-          </div>
+              facinko
+            </a>
+          </h1>
         </div>
-
-        <div className="py-3 grow grid gap-5 grid-flow-row auto-rows-fr grid-cols-1 grid-rows-3 landscape:grid-cols-3 landscape:grid-rows-1 px-6">
-          <Section
-            name={"S"}
-            status={workingScene.scene}
-            onClick={() => showModal("scene")}
-          />
-          <Section
-            name={"C"}
-            status={workingScene.cut}
-            onClick={() => showModal(`cut`)}
-          />
-          <Section
-            name={"T"}
-            status={workingScene.take}
-            onClick={() => showModal(`take`)}
-          />
+        <div className="ml-auto mr-4">
+          <button
+            type="button"
+            onClick={() => setTheme((b) => (b === "light" ? "dark" : "light"))}
+          >
+            <span className="text-cyan-700 dark:text-yellow-700">
+              {theme === "dark" ? "🌓" : "☀"}
+            </span>
+          </button>
         </div>
+      </div>
 
-        <div className="pb-5 py-3 px-6 w-full flex items-center">
-          <div className="w-full">
-            <Button text={startButtonText} onClick={clickStart} />
-          </div>
+      <div className="grow grid gap-4 grid-cols-1 grid-rows-3 landscape:grid-cols-3 landscape:grid-rows-1 px-6 w-full">
+        <Section
+          name={"S"}
+          status={workingScene.scene}
+          onClick={() => showModal("scene")}
+        />
+        <Section
+          name={"C"}
+          status={workingScene.cut}
+          onClick={() => showModal(`cut`)}
+        />
+        <Section
+          name={"T"}
+          status={workingScene.take}
+          onClick={() => showModal(`take`)}
+        />
+      </div>
+
+      <div className="flex w-full justify-end items-center pt-3 gap-5 px-4">
+        <button
+          type={"button"}
+          onClick={showRecordsDialog}
+          className="underline"
+        >
+          Menu
+        </button>
+
+        <div className="">
+          <Fav fav={workingScene.favorite} onClick={() => clickFav()} />
         </div>
       </div>
 
@@ -250,7 +233,6 @@ export default function Home() {
         onRequireClosing={closeRecordsDialog}
         records={state.records}
         onFavorite={onFavorite}
-        onUnfavorite={onUnfavorite}
         onUpdateNote={onUpdateNote}
         onRequireReset={onRequireReset}
       />
@@ -263,7 +245,7 @@ export default function Home() {
         isOpen={isDialogOpen}
         onNewStatus={(newStatus) => {
           // dirty
-          const current = state.workingScene;
+          const current = workingScene;
 
           switch (modalType) {
             case "scene":
@@ -302,20 +284,37 @@ const Section = ({
   status: string;
   onClick: () => void;
 }) => {
+  const [elemRef, { width, height }] = useElementSize();
+
+  useEffect(() => {
+    console.log({ width, height });
+  }, [width, height]);
+
+  const size = useMemo(() => {
+    if (width === null || height === null) {
+      return 0;
+    }
+
+    return Math.round(Math.min(width, height) / 2); // 2 is magic number  // なんとなくいっぱいになる. <AutoTextSize>だとあふれてしまうため
+  }, [width, height]);
+
   return (
-    <div className={"w-full flex"}>
+    <div className={"h-full w-full flex"}>
       <div
         onClick={onClick}
-        className="flex landscape:flex-col items-center w-full border-4 border-black dark:border-white cursor-pointer "
+        className="h-full flex landscape:flex-col items-center w-full border-4 border-black dark:border-white cursor-pointer "
+        ref={elemRef}
       >
-        <div className="flex  items-center  border-black dark:border-white">
-          <div className="text-[40px] font-bold px-5 min-w-[80px] text-center">
-            {name}
-          </div>
+        <div className="grow-0 flex items-center  border-black dark:border-white">
+          <div className="text-[40px] font-bold px-5 text-center">{name}</div>
         </div>
 
-        <div className="grow justify-center flex h-full">
-          <div className="text-center text-[70px] font-bold justify-center self-center">
+        <div className="grow justify-center flex h-full w-full">
+          <div
+            className="font-bold justify-center self-center"
+            style={{ fontSize: `${size}px` }}
+          >
+            {/* text-[70px]  */}
             {status}
           </div>
         </div>

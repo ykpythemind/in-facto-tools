@@ -9,8 +9,9 @@ const SceneConfigSchemaBase = z.object({
 });
 const HasID = z.object({
   id: z.number(),
-  favorite: z.boolean().optional(),
+  favorite: z.number().min(0).max(3),
   note: z.string().optional(),
+  shouldRecord: z.boolean(),
 });
 
 const SceneConfigSchema = SceneConfigSchemaBase.merge(HasID);
@@ -20,7 +21,7 @@ const sceneTypeEnum = z.enum(sceneTypeEnumValues);
 export type SceneType = z.infer<typeof sceneTypeEnum>;
 
 export const SceneStateSchema = z.object({
-  workingScene: SceneConfigSchema,
+  workingSceneId: z.number(),
   records: z.array(SceneConfigSchema),
 });
 export type SceneState = z.infer<typeof SceneStateSchema>;

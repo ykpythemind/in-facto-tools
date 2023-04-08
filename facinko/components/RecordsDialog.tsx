@@ -9,7 +9,6 @@ export const RecordsDialog = forwardRef<
     onRequireClosing: () => void;
     records: SceneState["records"];
     onFavorite: (sceneId: number) => void;
-    onUnfavorite: (sceneId: number) => void;
     onUpdateNote: (sceneId: number, note: string) => void;
     onRequireReset: () => void;
     isOpen: boolean;
@@ -20,7 +19,6 @@ export const RecordsDialog = forwardRef<
       onFavorite,
       onRequireClosing,
       onRequireReset,
-      onUnfavorite,
       onUpdateNote,
       records,
       isOpen,
@@ -45,14 +43,10 @@ export const RecordsDialog = forwardRef<
     );
 
     const onClickFav = useCallback(
-      (isFavorite: boolean, sceneId: number) => {
-        if (isFavorite) {
-          onUnfavorite(sceneId);
-        } else {
-          onFavorite(sceneId);
-        }
+      (sceneId: number) => {
+        onFavorite(sceneId);
       },
-      [onFavorite, onUnfavorite]
+      [onFavorite]
     );
 
     const onClickEditNote = useCallback(
@@ -92,37 +86,38 @@ export const RecordsDialog = forwardRef<
             </div>
 
             <div className="content-start overflow-y-scroll grid grid-cols-1 pb-3 gap-5 border-b-[1px] border-gray-200">
-              {records.map((r) => {
-                const title = `S${r.scene} C${r.cut} T${r.take}`;
+              {records
+                .filter((r) => r.shouldRecord)
+                .map((r) => {
+                  const title = `S${r.scene} C${r.cut} T${r.take}`;
 
-                return (
-                  <div
-                    className="self-start grid gap-1 w-full items-center"
-                    key={r.id}
-                    style={{ gridTemplateColumns: "1fr 2fr auto" }}
-                  >
-                    <div className="font-bold">{title}</div>
+                  return (
+                    <div
+                      className="self-start grid gap-1 w-full items-center"
+                      key={r.id}
+                      style={{ gridTemplateColumns: "1fr 2fr auto" }}
+                    >
+                      <div className="font-bold">{title}</div>
 
-                    <div className="px-4 text-right">
-                      <button
-                        type="button"
-                        onClick={() => onClickEditNote(r.note ?? null, r.id)}
-                      >
-                        {r.note ? truncate(r.note) : ""}{" "}
-                        <span className="text-xl">✎</span>
-                      </button>
+                      <div className="px-4 text-right">
+                        <button
+                          type="button"
+                          onClick={() => onClickEditNote(r.note ?? null, r.id)}
+                        >
+                          {r.note ? truncate(r.note) : ""}{" "}
+                          <span className="text-xl">✎</span>
+                        </button>
+                      </div>
+
+                      <div className="text-xl">
+                        <Fav
+                          fav={r.favorite}
+                          onClick={() => onClickFav(r.id)}
+                        />
+                      </div>
                     </div>
-
-                    <div className="text-xl">
-                      <Fav
-                        isFav={r.favorite ?? false}
-                        disabled={false}
-                        onClick={() => onClickFav(r.favorite ?? false, r.id)}
-                      />
-                    </div>
-                  </div>
-                );
-              })}
+                  );
+                })}
             </div>
 
             <div>

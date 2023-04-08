@@ -1,19 +1,33 @@
 import { forwardRef } from "react";
 
-type FavProps = { isFav: boolean; onClick: () => void; disabled: boolean };
+type FavProps = { fav: number; onClick: () => void };
 
 export const Fav = forwardRef<HTMLButtonElement, FavProps>((props, ref) => {
-  const { isFav, onClick, disabled } = props;
+  const { fav, onClick } = props;
+
+  const isFav = fav > 0;
+
+  let favtext = "♡";
+  if (isFav) {
+    favtext = "";
+    for (let i = 0; i < fav; i++) {
+      favtext += "♥";
+    }
+  }
 
   return (
     <button
-      disabled={disabled}
       ref={ref}
       type={"button"}
-      onClick={onClick}
+      onClick={(e) => {
+        e.stopPropagation();
+        e.preventDefault();
+        console.log("burn");
+        onClick();
+      }}
       className={`${isFav ? "text-red-700" : "text-gray-700"} `}
     >
-      {isFav ? "♥" : "♡"}
+      {favtext}
     </button>
   );
 });
