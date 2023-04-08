@@ -303,16 +303,21 @@ const Section = ({
   onClick: () => void;
 }) => {
   return (
-    <div className={"w-full flex landscape:block"} onClick={onClick}>
-      <div className="flex items-center landscape:flex-col w-full border-4 border-black dark:border-white cursor-pointer ">
-        <div className="min-h-full flex items-center border-r-[1px] landscape:border-r-0 border-black dark:border-white">
+    <div className={"w-full flex"}>
+      <div
+        onClick={onClick}
+        className="flex landscape:flex-col items-center w-full border-4 border-black dark:border-white cursor-pointer "
+      >
+        <div className="flex  items-center  border-black dark:border-white">
           <div className="text-[40px] font-bold px-5 min-w-[80px] text-center">
             {name}
           </div>
         </div>
 
-        <div className="grow justify-center">
-          <div className="text-center text-[70px] font-bold">{status}</div>
+        <div className="grow justify-center flex h-full">
+          <div className="text-center text-[70px] font-bold justify-center self-center">
+            {status}
+          </div>
         </div>
       </div>
     </div>
