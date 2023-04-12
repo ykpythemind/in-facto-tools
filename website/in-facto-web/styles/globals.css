@@ -1,0 +1,96 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@import 'animate.css';
+
+/* https://gist.github.com/dmurawsky/d45f068097d181c733a53687edce1919?permalink_comment_id=4215317#gistcomment-4215317 */
+html,
+body,
+body > div:first-child,
+div#__next,
+div#__next > div {
+height: 100%;
+}
+
+
+#postContent {
+  font-size: 0.97rem;
+}
+
+#postContent p {
+  margin-bottom: 1.3rem;
+}
+
+#postContent .postBodyComment {
+}
+
+#postContent .postBodyCommentBody {
+}
+
+#postContent .postBodyCommentPerson {
+  font-weight: bold;
+  margin-right: 10px;
+}
+
+#postContent h2 {
+  font-size: 1.2rem;
+  margin-top: 6rem;
+  margin-bottom: 3rem;
+}
+
+#postContent h2:first-child {
+  margin-top: 3rem;
+}
+
+
+#postContent h2::before {
+  content: "§ "
+}
+
+#postContent a {
+  text-decoration: underline;
+}
+#postContent a:hover {
+  --tw-text-opacity: 1;
+  color: rgb(96 165 250 / var(--tw-text-opacity));
+}
+
+
+.postIframeOuter {
+  margin-top: 3rem;
+  margin-bottom: 3rem;
+  position: relative;
+  height: 0;
+  padding: 0 0 56.25%;
+  overflow: hidden;
+}
+
+.postAnnotation {
+  color: gray;
+  font-size: 0.7rem;
+}
+
+.postIframeOuter iframe {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+}
+
+.postSubContentOuter {
+  margin-top: 3rem;
+  margin-bottom: 3rem;
+  text-align: center;
+}
+
+.postSubContentOuter img {
+  margin: 0 auto;
+}
+
+.postSubContentCaption {
+  margin-top: 5px;
+  color: gray;
+  font-size: 0.85rem;
+}
