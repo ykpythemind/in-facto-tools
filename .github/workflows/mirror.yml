@@ -31,10 +31,22 @@ jobs:
           token: ${{ steps.get-token.outputs.token }}
           path: in-facto-tools
 
-      - name: mirror
+      - name: copy in-facto-web
         run: |
           rm -rf in-facto-web/.git
           rm -rf in-facto-tools/website
           mkdir in-facto-tools/website
           cp -r in-facto-web in-facto-tools/website
           ls -la in-facto-tools
+
+      - name: commit & push
+        run: |
+          git add .
+          if ! git diff --exit-code --quiet
+          then
+            git config user.name github-actions
+            git config user.email github-actions@github.com
+            git add .
+            git commit -m "Sync in-facto-web"
+            git push
+          fi
