@@ -2,6 +2,8 @@
 on:
   workflow_dispatch:
 name: 'mirroring in-facto repo'
+permissions:
+  contents: write
 jobs:
   mirror:
     defaults:
