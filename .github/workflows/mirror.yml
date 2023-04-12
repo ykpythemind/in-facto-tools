@@ -41,6 +41,7 @@ jobs:
 
       - name: commit & push
         run: |
+          cd in-facto-tools
           git add .
           if ! git diff --exit-code --quiet
           then
