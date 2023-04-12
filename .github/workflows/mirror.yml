@@ -22,7 +22,7 @@ jobs:
         with:
           repository: ykpythemind/in-facto
           token: ${{ steps.get-token.outputs.token }}
-          path: in-facto
+          path: in-facto-web
 
       - name: Checkout in-facto-tools
         uses: actions/checkout@v3
@@ -33,6 +33,8 @@ jobs:
 
       - name: mirror
         run: |
-          rm -rf in-facto/.git
-          cp -r in-facto/* in-facto-tools
+          rm -rf in-facto-web/.git
+          rm -rf in-facto-tools/website
+          mkdir in-facto-tools/website
+          cp -r in-facto-web in-facto-tools/website
           ls -la in-facto-tools
