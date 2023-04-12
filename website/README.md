@@ -34,3 +34,11 @@ https://dash.cloudflare.com/b9d9f39f61032e736a07fa0653d76c23/pages/view/in-facto
 - 全同期: `yarn ts-node docsync.ts`
 - 特定のmdファイルだけ対象にする場合 `TARGET=xx.md yarn ts-node docsync.ts`
 - 先頭のmdファイルだけ対象にする場合 `TOP=true yarn ts-node docsync.ts`
+
+## ミラーリング
+
+https://github.com/ykpythemind/in-facto-tools にソースコードが同期されます
+
+## License
+
+MIT
