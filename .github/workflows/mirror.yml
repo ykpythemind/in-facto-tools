@@ -1,0 +1,39 @@
+# workflow dispatchで起動するgithub actionを書きたい
+on:
+  workflow_dispatch:
+name: 'mirroring in-facto repo'
+jobs:
+  mirror:
+    defaults:
+      run:
+        shell: bash
+        working-directory: facinko
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - name: use token
+        id: get-token
+        uses: getsentry/action-github-app-token@v2
+        with:
+          app_id: ${{ secrets.APP_ID }}
+          private_key: ${{ secrets.APP_PRIVATE_KEY }}
+
+      - name: Checkout private repo
+        uses: actions/checkout@v3
+        with:
+          repository: ykpythemind/in-facto
+          token: ${{ steps.get-token.outputs.token }}
+          path: in-facto
+
+      - name: Checkout in-facto-tools
+        uses: actions/checkout@v3
+        with:
+          repository: ykpythemind/in-facto-tools
+          token: ${{ steps.get-token.outputs.token }}
+          path: in-facto-tools
+
+      - name: mirror
+        run: |
+          rm -rf in-facto/.git
+          cp -r in-facto/* in-facto-tools
+          ls -la in-facto-tools
