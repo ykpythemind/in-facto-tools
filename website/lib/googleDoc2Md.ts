@@ -45,7 +45,7 @@ export const googleDoc2Md = async (
       continue;
     }
 
-    const match = line.match(/^(トモヒロツジ|ykpythemind|藤本薪)(.?)/);
+    const match = line.match(/^(トモヒロツジ|ykpythemind|藤本薪|osd)(.?)/);
     if (match && match[1]) {
       const person = match[1];
       pointer++;

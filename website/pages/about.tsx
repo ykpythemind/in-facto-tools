@@ -16,13 +16,13 @@ const Page: NextPageWithLayout = () => {
 
       <div className="mt-5">
         <p className="align-middle">
-          「真の楽しさを追求する」知的活動団体、
+          「真の楽しさを追求する」制作コミュニティ、
           <img
             src={"/in-facto-black.png"}
             alt={"in-facto"}
             className={"w-[50px] inline align-middle -mt-1 ml-0.5 mr-0.5"}
           />
-          から映像制作チームが発足。ホラー映画が好きなメンバーからなり、「自分たちのホラー」を追求するべく活動中。
+          から映像制作チームが発足。「自分たちのホラー」を追求するべく活動中。
         </p>
         <div className="mt-5 flex space-x-3">
           <A
@@ -48,7 +48,7 @@ const Page: NextPageWithLayout = () => {
 
         <div className="mt-16 pt-10 md:pt-5">
           <h3 className="text-lg font-serif mb-10">
-            § Team &quot;in-facto&quot;
+            § Community &quot;in-facto&quot;
           </h3>
 
           <Member
@@ -83,6 +83,17 @@ const Page: NextPageWithLayout = () => {
             }
             twitter={"fujiphone"}
             horror={"好きなホラー映画「貞子VS伽耶子」「スペル」"}
+          />
+          <Break />
+
+          <Member
+            name={"osd"}
+            imgSrc="https://github.com/osd-02.png"
+            description={
+              "ソフトウェアエンジニア。podcast番組 undrcastを配信。わからないものをこねくりまわすことが得意。"
+            }
+            twitter={"osd-02"}
+            horror={"好きなホラー映画 「来る。」 「呪詛」"}
           />
           <Break />
         </div>
