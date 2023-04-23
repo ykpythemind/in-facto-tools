@@ -87,6 +87,10 @@ async function saveDoc(auth: A, filename: string, documentID: string) {
   console.log(`processing... ${filename}(${documentID})`);
   const r = await fetchDoc(auth, documentID);
   fs.writeFile(path.join(process.cwd(), "_posts", filename), r);
+  const dirname = filename.replace(/\.md$/, "");
+  await fs.mkdir(path.join(process.cwd(), "public", "post_assets", dirname), {
+    recursive: true,
+  });
   console.log(`done\n`);
 }
 
