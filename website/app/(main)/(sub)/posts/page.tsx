@@ -1,23 +1,14 @@
 import { format, parseISO } from "date-fns";
-import { InferGetStaticPropsType } from "next";
-import Link from "next/link";
-import { ReactElement } from "react";
 import { A } from "../../components/A";
-import { AppSeo } from "../../components/Header/AppSeo";
-import { SubPageLayout } from "../../components/layouts/SubPageLayout";
 import { PageTitle } from "../../components/PageTitle";
-import { getAllPosts } from "../../lib/api";
-import { NextPageWithLayout } from "../_app";
+import { getAllPosts } from "../../../../lib/api";
+import { Metadata } from "next";
 
-type Props = InferGetStaticPropsType<typeof getStaticProps>;
-
-const Page: NextPageWithLayout<Props> = (props) => {
-  const { allPosts } = props;
+function Page() {
+  const allPosts = getAllPosts(["title", "date", "slug"]);
 
   return (
     <div>
-      <AppSeo path={"/posts"} title={"Posts"} />
-
       <PageTitle title={"Posts"} />
 
       <div className="mt-6">
@@ -34,6 +25,10 @@ const Page: NextPageWithLayout<Props> = (props) => {
       </div>
     </div>
   );
+}
+
+export const metadata: Metadata = {
+  title: "Posts",
 };
 
 const PostIndex = ({
@@ -55,23 +50,11 @@ const PostIndex = ({
         </div>
       )}
 
-      <Link href={`/posts/${slug}`} passHref>
-        <A className="inline-flex">{title}</A>
-      </Link>
+      <A isInlineFlex href={`/posts/${slug}`}>
+        {title}
+      </A>
     </div>
   );
-};
-
-Page.getLayout = function getLayout(page: ReactElement) {
-  return <SubPageLayout>{page}</SubPageLayout>;
-};
-
-export const getStaticProps = async () => {
-  const allPosts = getAllPosts(["title", "date", "slug"]);
-
-  return {
-    props: { allPosts },
-  };
 };
 
 export default Page;

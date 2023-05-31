@@ -1,18 +1,14 @@
-import Head from "next/head";
+"use client";
+
 import Link from "next/link";
 import { clsx } from "clsx";
 import { useEffect, useRef, useState } from "react";
 // import { useInView } from "react-intersection-observer";
-import { A } from "../A";
-import { Favicons } from "../Header/Favicons";
+import { A } from "../components/A";
 import { Transition } from "react-transition-group";
-import { useRouter } from "next/router";
+import { usePathname } from "next/navigation";
 
-export const SubPageLayout = ({
-  children,
-}: {
-  children: React.ReactElement;
-}) => {
+const Layout = ({ children }: { children: React.ReactElement }) => {
   // const { ref, inView, entry } = useInView({
   //   fallbackInView: true,
   //   initialInView: true,
@@ -23,10 +19,6 @@ export const SubPageLayout = ({
 
   return (
     <>
-      <Head>
-        <Favicons />
-      </Head>
-
       <Navigation isVisible={isNavigationVisible} />
 
       <main
@@ -38,13 +30,11 @@ export const SubPageLayout = ({
         <div className="mt-8 pb-2 md:hidden">
           <div className="inline-block">
             <Link href={"/"} passHref>
-              <A>
-                <img
-                  src={"/in-facto-black.png"}
-                  alt={"in-facto"}
-                  className={"w-[100px] md:w-[160px]"}
-                />
-              </A>
+              <img
+                src={"/in-facto-black.png"}
+                alt={"in-facto"}
+                className={"w-[100px] md:w-[160px]"}
+              />
             </Link>
           </div>
         </div>
@@ -53,7 +43,7 @@ export const SubPageLayout = ({
         <footer className="mt-10 mb-12 text-gray-600 text-sm font-serif font-light tracking-wider">
           <div className="flex">
             <div>
-              <A href={"/"}>in-facto</A> (c) 2022
+              <A href={"/"}>in-facto</A> (c) 2022-2023
             </div>
 
             <div className="ml-auto"></div>
@@ -87,15 +77,14 @@ const Navigation = (props: { isVisible: boolean }) => {
   const { isVisible } = props;
   const nodeRef = useRef(null);
 
-  const router = useRouter();
+  const path = usePathname();
 
   let page: PageState = "unknown";
 
-  const path = router.asPath;
-  if (path.startsWith("/about")) {
+  if (path && path.startsWith("/about")) {
     page = "about";
   }
-  if (path.startsWith("/posts")) {
+  if (path && path.startsWith("/posts")) {
     page = "posts";
   }
 
@@ -117,20 +106,16 @@ const Navigation = (props: { isVisible: boolean }) => {
           >
             <div className="flex flex-col gap-1">
               <div>
-                <Link href={"/"} passHref>
-                  <A>
-                    <img
-                      src={"/in-facto-black.png"}
-                      alt={"in-facto"}
-                      className={"w-[100px]"}
-                    />
-                  </A>
-                </Link>
+                <A href={"/"}>
+                  <img
+                    src={"/in-facto-black.png"}
+                    alt={"in-facto"}
+                    className={"w-[100px]"}
+                  />
+                </A>
               </div>
               <div className={clsx("mt-3", page === "about" && "font-bold")}>
-                <Link href={"/about"} passHref>
-                  <A>About</A>
-                </Link>
+                <A href="/about">About</A>
                 {page === "about" && ` ${currentArrow}`}
               </div>
               <div>
@@ -143,9 +128,7 @@ const Navigation = (props: { isVisible: boolean }) => {
                 </A>
               </div>
               <div className={clsx(page === "posts" && "font-bold")}>
-                <Link href={"/posts"} passHref>
-                  <A>Posts</A>
-                </Link>
+                <A href={"/posts"}>Posts</A>
                 {page === "posts" && ` ${currentArrow}`}
               </div>
             </div>
@@ -155,3 +138,5 @@ const Navigation = (props: { isVisible: boolean }) => {
     </Transition>
   );
 };
+
+export default Layout;

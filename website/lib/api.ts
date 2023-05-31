@@ -3,6 +3,7 @@ import { join } from "path";
 import matter from "gray-matter";
 import { isPreviewEnv } from "./env";
 import { isAfter, isBefore } from "date-fns";
+import { notFound } from "next/navigation";
 
 const postsDirectory = join(process.cwd(), "_posts");
 
@@ -13,6 +14,10 @@ export function getPostSlugs() {
 export function getPostBySlug(slug: string, fields: string[] = []) {
   const realSlug = slug.replace(/\.md$/, "");
   const fullPath = join(postsDirectory, `${realSlug}.md`);
+  const isExists = fs.existsSync(fullPath);
+  if (!isExists) {
+    notFound();
+  }
   const fileContents = fs.readFileSync(fullPath, "utf8");
   const { data, content } = matter(fileContents);
 

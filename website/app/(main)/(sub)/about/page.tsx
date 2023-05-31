@@ -1,17 +1,13 @@
 import Link from "next/link";
 import { Twitter, Youtube } from "@icons-pack/react-simple-icons";
-import { NextPageWithLayout } from "./_app";
-import { ReactElement } from "react";
-import { contactUrl, SubPageLayout } from "../components/layouts/SubPageLayout";
-import { PageTitle } from "../components/PageTitle";
-import { AppSeo } from "../components/Header/AppSeo";
-import { A } from "../components/A";
+import { PageTitle } from "../../components/PageTitle";
+import { A } from "../../components/A";
+import { contactUrl } from "../layout";
+import { Metadata } from "next";
 
-const Page: NextPageWithLayout = () => {
+const Page = () => {
   return (
     <div>
-      <AppSeo path={"/about"} title={"About"} />
-
       <PageTitle title={"About"} />
 
       <div className="mt-5">
@@ -102,10 +98,6 @@ const Page: NextPageWithLayout = () => {
   );
 };
 
-Page.getLayout = function getLayout(page: ReactElement) {
-  return <SubPageLayout>{page}</SubPageLayout>;
-};
-
 const Break = () => {
   return <div className="mt-10"></div>;
 };
@@ -130,11 +122,13 @@ const Member = (props: {
           <div className={"font-bold"}>{props.name}</div>
           {props.twitter && (
             <div className={"ml-2"}>
-              <Link passHref href={`https://twitter.com/${props.twitter}`}>
-                <a target={"_blank"} rel="noreferrer">
-                  <Twitter size={16} />
-                </a>
-              </Link>
+              <a
+                href={`https://twitter.com/${props.twitter}`}
+                target={"_blank"}
+                rel="noreferrer"
+              >
+                <Twitter size={16} />
+              </a>
             </div>
           )}
         </div>
@@ -147,6 +141,10 @@ const Member = (props: {
       <div className={"mt-2 italic text-sm"}>{props.horror}</div>
     </div>
   );
+};
+
+export const metadata: Metadata = {
+  title: "About",
 };
 
 export default Page;
