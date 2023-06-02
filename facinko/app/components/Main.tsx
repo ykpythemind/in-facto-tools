@@ -1,6 +1,6 @@
-import Head from "next/head";
+"use client";
+
 import {
-  forwardRef,
   useCallback,
   useEffect,
   useMemo,
@@ -8,18 +8,21 @@ import {
   useRef,
   useState,
 } from "react";
-import { Button } from "../components/Button";
 import { RecordsDialog } from "../components/RecordsDialog";
 import { Dialog } from "../components/SectionDialog";
-import { fallbackScene, initialSceneState, sceneReducer } from "../lib/reducer";
-import { parseSceneState } from "../lib/storage";
-import { SceneConfig, SceneType } from "../lib/types";
-import { AutoTextSize } from "auto-text-size";
+import {
+  fallbackScene,
+  initialSceneState,
+  sceneReducer,
+} from "../../lib/reducer";
+
+import { parseSceneState } from "../../lib/storage";
+import { SceneType } from "../../lib/types";
 
 import { useElementSize } from "usehooks-ts";
 import { Fav } from "../components/Fav";
 
-export default function Home() {
+export default function Main() {
   const [theme, setTheme] = useState<"light" | "dark" | null>(null);
   const [isDialogOpen, setIsDialogOpen] = useState(false);
 
@@ -166,12 +169,6 @@ export default function Home() {
       className="dark:bg-black dark:text-white h-screen pt-3 pb-5 px-2 flex flex-col"
       style={{ height: "100dvh" }}
     >
-      <Head>
-        <title>facinko</title>
-        <meta name="description" content="facinko" />
-        <link rel="icon" href="/favicon.ico" />
-      </Head>
-
       <div className="flex items-center pb-3 mx-4">
         <div className="">
           <h1 className="text-lg font-serif">
@@ -319,7 +316,3 @@ const Section = ({
     </div>
   );
 };
-
-async function sleep(ms: number): Promise<void> {
-  return new Promise((resolve) => setTimeout(resolve, ms));
-}
