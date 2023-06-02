@@ -1,5 +1,5 @@
 import { forwardRef, useCallback, useEffect, useRef, useState } from "react";
-import { SceneState } from "../lib/types";
+import { SceneState } from "../../lib/types";
 import { Button } from "./Button";
 import { Fav } from "./Fav";
 

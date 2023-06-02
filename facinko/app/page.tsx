@@ -8,16 +8,14 @@ import {
   useRef,
   useState,
 } from "react";
-import { Button } from "../components/Button";
-import { RecordsDialog } from "../components/RecordsDialog";
-import { Dialog } from "../components/SectionDialog";
+import { RecordsDialog } from "./components/RecordsDialog";
+import { Dialog } from "./components/SectionDialog";
 import { fallbackScene, initialSceneState, sceneReducer } from "../lib/reducer";
 import { parseSceneState } from "../lib/storage";
-import { SceneConfig, SceneType } from "../lib/types";
-import { AutoTextSize } from "auto-text-size";
+import { SceneType } from "../lib/types";
 
 import { useElementSize } from "usehooks-ts";
-import { Fav } from "../components/Fav";
+import { Fav } from "./components/Fav";
 
 export default function Home() {
   const [theme, setTheme] = useState<"light" | "dark" | null>(null);
