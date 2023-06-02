@@ -1,3 +1,5 @@
+"use client";
+
 import { forwardRef, useCallback, useEffect, useRef, useState } from "react";
 import { SceneState } from "../../lib/types";
 import { Button } from "./Button";
