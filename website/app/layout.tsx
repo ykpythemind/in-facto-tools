@@ -28,7 +28,15 @@ export const metadata: Metadata = {
   description,
   openGraph: {
     title: { absolute: "", template: "%s - in-facto" },
+    type: "article",
     description,
     images: "/in-facto-ogp.jpg",
+    siteName: "in-facto",
+  },
+  twitter: {
+    card: "summary_large_image",
+    images: "/in-facto-ogp.jpg",
+    description,
+    title: { absolute: "", template: "%s - in-facto" },
   },
 };
