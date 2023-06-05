@@ -3,6 +3,7 @@ import { A } from "../../components/A";
 import { PageTitle } from "../../components/PageTitle";
 import { getAllPosts } from "../../../../lib/api";
 import { Metadata } from "next";
+import { generateSharedMetadata } from "../../../../lib/generateSharedMetadata";
 
 function Page() {
   const allPosts = getAllPosts(["title", "date", "slug"]);
@@ -27,9 +28,7 @@ function Page() {
   );
 }
 
-export const metadata: Metadata = {
-  title: "Posts",
-};
+export const metadata = generateSharedMetadata({ title: "Posts" });
 
 const PostIndex = ({
   title,

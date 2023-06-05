@@ -4,6 +4,7 @@ import { PageTitle } from "../../components/PageTitle";
 import { A } from "../../components/A";
 import { contactUrl } from "../layout";
 import { Metadata } from "next";
+import { generateSharedMetadata } from "../../../../lib/generateSharedMetadata";
 
 const Page = () => {
   return (
@@ -143,8 +144,8 @@ const Member = (props: {
   );
 };
 
-export const metadata: Metadata = {
+export const metadata: Metadata = generateSharedMetadata({
   title: "About",
-};
+});
 
 export default Page;

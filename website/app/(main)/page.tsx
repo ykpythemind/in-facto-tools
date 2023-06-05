@@ -1,14 +1,16 @@
 import type { Metadata, NextPage } from "next";
 import { A } from "./components/A";
+import { generateSharedMetadata } from "../../lib/generateSharedMetadata";
 // import { ReactElement } from "react";
 // import { AppSeo } from "./components/Header/AppSeo";
 // import { getAllPosts } from "../lib/api";
 
 // type Props = InferGetStaticPropsType<typeof getStaticProps>;
 
-export const metadata: Metadata = {
-  title: { absolute: "in-facto" },
-};
+export const metadata: Metadata = generateSharedMetadata({
+  title: "in-facto",
+  isRoot: true,
+});
 
 const Page: NextPage = () => {
   return (

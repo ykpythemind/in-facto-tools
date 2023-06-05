@@ -5,6 +5,7 @@ import { PostComponent } from "../../../components/PostComponent";
 import { googleDoc2Md } from "../../../../../lib/googleDoc2Md";
 import { A } from "../../../components/A";
 import { Metadata } from "next";
+import { generateSharedMetadata } from "../../../../../lib/generateSharedMetadata";
 
 type Params = { slug: string };
 
@@ -64,9 +65,9 @@ export const generateStaticParams = async () => {
 export const generateMetadata = ({ params }: { params: Params }) => {
   const post = getPostBySlug(params.slug, ["title", "slug"]);
 
-  const metadata: Metadata = {
+  const metadata: Metadata = generateSharedMetadata({
     title: post.title,
-  };
+  });
 
   return metadata;
 };
