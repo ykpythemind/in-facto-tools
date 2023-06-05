@@ -19,12 +19,16 @@ export default function RootLayout({
   );
 }
 
+const description =
+  "「真の楽しさを追求する」知的活動団体、in-factoの公式サイトです。";
+
 export const metadata: Metadata = {
   metadataBase: new URL("https://in-facto.jp"),
   title: { absolute: "", template: "%s - in-facto" },
-  description:
-    "「真の楽しさを追求する」知的活動団体、in-factoの公式サイトです。",
+  description,
   openGraph: {
+    title: { absolute: "", template: "%s - in-facto" },
+    description,
     images: "/in-facto-ogp.jpg",
   },
 };
