@@ -85,7 +85,8 @@ const ProfileBlock = (props: ProfileBlockProps) => {
   const sourceRef = useRef<MediaElementAudioSourceNode | null>(null);
   const talking = useRef<Array<number>>([]);
 
-  const [volState, setVolState] = useState<0 | 1 | 2>(0);
+  // const [volState, setVolState] = useState<0 | 1 | 2>(0);
+  const [averageVol, setCurrentAverageVol] = useState(0);
   const { sensitivity = 0 } = props;
 
   useEffect(() => {
@@ -136,17 +137,15 @@ const ProfileBlock = (props: ProfileBlockProps) => {
       }, 5);
 
       const volStateWatch = setInterval(() => {
+        if (!audioRef.current?.played) {
+          setCurrentAverageVol(0);
+          return;
+        }
         const arr = talking.current;
         const average = arr.reduce((a, b) => a + b) / arr.length;
         // console.log(average);
-        if (average > 1.1) {
-          setVolState(2);
-        } else if (average > 1.08) {
-          setVolState(1);
-        } else {
-          setVolState(0);
-        }
-      }, 300);
+        setCurrentAverageVol(average);
+      }, 180);
 
       return () => {
         clearInterval(timer);
@@ -154,15 +153,48 @@ const ProfileBlock = (props: ProfileBlockProps) => {
       };
     };
     fn();
-  }, [sensitivity]);
+  }, [sensitivity, audioRef]);
+
+  let volState: 0 | 1 | 2 = 0;
+  if (averageVol > 1.1) {
+    volState = 2;
+  } else if (averageVol > 1.08) {
+    volState = 1;
+  }
+
+  const iconSize = 95;
+  let bgScale = averageVol > 0 ? averageVol * 1.04 : averageVol; // 1.05はまじっくなんばー
+  if (bgScale > 1.4) {
+    bgScale = 1.4; // デカくなりすぎんように
+  }
+  const bgSize = `${iconSize * bgScale}px`;
 
   return (
-    <div className="bg-gray flex justify-center items-center rounded-lg py-[15%] relative">
+    <div className="bg-gray flex justify-center items-center rounded-lg py-[15%] relative z-10">
       <div className="absolute top-0 right-0">
         {/* <canvas ref={canvasRef} width={30} height={30} /> */}
       </div>
+      <div
+        className="z-40"
+        style={{
+          position: "absolute",
+          top: "50%",
+          left: "50%",
+          transform: "translate(-50%, -50%)",
+        }}
+      >
+        <div
+          style={{
+            width: bgSize,
+            height: bgSize,
+            borderRadius: "50%",
+            backgroundColor: "rgba(255, 255, 255, 0.2)",
+            animation: "pulse 1s ease infinite",
+          }}
+        ></div>
+      </div>
       <img
-        className="inline object-cover max-w-[100px] w-ma rounded-full"
+        className="inline object-cover max-w-[100px] w-ma rounded-full z-50"
         src={props.iconUrl}
         alt="Profile image"
       />
