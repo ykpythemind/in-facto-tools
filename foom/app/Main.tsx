@@ -1,23 +1,42 @@
 "use client";
-import { useEffect, useRef, useState } from "react";
+import { MutableRefObject, useEffect, useRef, useState } from "react";
 import { RiVoiceprintFill } from "react-icons/ri";
 
 export const Main = () => {
   const videoRef = useRef<HTMLVideoElement>(null);
 
+  const audioRef1 = useRef<HTMLAudioElement>(null);
+  const audioRef2 = useRef<HTMLAudioElement>(null);
+  const audioRef3 = useRef<HTMLAudioElement>(null);
+
+  const [started, setStarted] = useState(false);
+
   useEffect(() => {
-    videoRef.current?.play();
-  }, []);
+    if (started) {
+      videoRef.current?.play();
+      audioRef1.current?.play();
+      audioRef2.current?.play();
+      audioRef3.current?.play();
+    }
+  }, [started]);
+
+  const onClickStart = () => {
+    setStarted(true);
+  };
 
   return (
     <main className="flex min-h-screen flex-col items-center justify-center p-24 bg-base text-white">
+      {!started && (
+        <div className="absolute top-0" onClick={onClickStart}>
+          start
+        </div>
+      )}
       <div className="w-full h-full grid grid-cols-4 gap-6 place-content-stretch">
         <div className="col-span-3 h-full flex justify-center">
           {/* <img src="/delivery_image.jpg" className="w-full" /> */}
           <video
             src="/P1033141_1.mp4"
             className="w-full"
-            autoPlay
             loop
             muted
             ref={videoRef}
@@ -29,18 +48,21 @@ export const Main = () => {
               name="ykpyt"
               iconUrl="/ykp.png"
               audioUrl="/talk-osd.mp3"
+              audioRef={audioRef1}
             />
             <ProfileBlock
               name="osd"
               iconUrl="https://avatars.githubusercontent.com/u/65229525?v=4"
               audioUrl="/talk-osd2.mp3"
               sensitivity={-0.1}
+              audioRef={audioRef2}
             />
             <ProfileBlock
               name="osd2"
               iconUrl="https://avatars.githubusercontent.com/u/65229525?v=4"
               audioUrl="/talk-osd3.mp3"
               sensitivity={-0.1}
+              audioRef={audioRef3}
             />
           </div>
         </div>
@@ -54,15 +76,12 @@ type ProfileBlockProps = {
   iconUrl: string;
   audioUrl: string;
   sensitivity?: number;
+  audioRef: MutableRefObject<HTMLAudioElement | null>;
 };
 
-const WIDTH = 30;
-const HEIGHT = 30;
-
 const ProfileBlock = (props: ProfileBlockProps) => {
-  const canvasRef = useRef<HTMLCanvasElement>(null);
   const audioCtxRef = useRef<AudioContext | null>(null);
-  const audioRef = useRef<HTMLAudioElement | null>(null);
+  const audioRef = props.audioRef;
   const sourceRef = useRef<MediaElementAudioSourceNode | null>(null);
   const talking = useRef<Array<number>>([]);
 
@@ -78,7 +97,6 @@ const ProfileBlock = (props: ProfileBlockProps) => {
         audioCtxRef.current = new AudioContext();
       }
 
-      await audioRef.current?.play();
       const analyser = audioCtxRef.current.createAnalyser();
 
       analyser.fftSize = 2048; // FFTサイズ
@@ -158,7 +176,7 @@ const ProfileBlock = (props: ProfileBlockProps) => {
         </div>
       </div>
 
-      <audio src={props.audioUrl} ref={audioRef} hidden />
+      <audio src={props.audioUrl} ref={audioRef} hidden autoPlay={false} />
     </div>
   );
 };
