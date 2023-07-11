@@ -1,5 +1,6 @@
 "use client";
-import { useEffect, useRef } from "react";
+import { useEffect, useRef, useState } from "react";
+import { RiVoiceprintFill } from "react-icons/ri";
 
 export const Main = () => {
   const videoRef = useRef<HTMLVideoElement>(null);
@@ -40,6 +41,7 @@ type ProfileBlockProps = {
   name: string;
   iconUrl: string;
   audioUrl: string;
+  sensitivity?: number;
 };
 
 const WIDTH = 30;
@@ -50,16 +52,16 @@ const ProfileBlock = (props: ProfileBlockProps) => {
   const audioCtxRef = useRef<AudioContext | null>(null);
   const audioRef = useRef<HTMLAudioElement | null>(null);
   const sourceRef = useRef<MediaElementAudioSourceNode | null>(null);
+  const talking = useRef<Array<number>>([]);
+
+  const [volState, setVolState] = useState<0 | 1 | 2>(0);
+  const { sensitivity = 0 } = props;
 
   useEffect(() => {
     const fn = async () => {
       if (!audioRef.current) {
         throw new Error("audiorefがnull");
       }
-      if (!canvasRef.current) {
-        throw new Error("canvasがnull");
-      }
-
       if (!audioCtxRef.current) {
         audioCtxRef.current = new AudioContext();
       }
@@ -67,9 +69,10 @@ const ProfileBlock = (props: ProfileBlockProps) => {
       await audioRef.current?.play();
       const analyser = audioCtxRef.current.createAnalyser();
 
-      analyser.fftSize = 256; // FFTサイズ
-      analyser.maxDecibels = 80;
-      analyser.minDecibels = 20; // 最小値
+      analyser.fftSize = 2048; // FFTサイズ
+      analyser.smoothingTimeConstant = 1;
+      // analyser.minDecibels = -90;
+      // analyser.maxDecibels = -10;
       const dataArray = new Uint8Array(analyser.fftSize);
       const bufferLength = dataArray.length;
       analyser.getByteTimeDomainData(dataArray);
@@ -85,83 +88,89 @@ const ProfileBlock = (props: ProfileBlockProps) => {
 
       // draw an oscilloscope of the current audio source
 
-      const canvasCtx = canvasRef.current.getContext("2d");
-
-      function draw() {
-        requestAnimationFrame(draw);
-
-        if (!canvasCtx) return;
-        if (!canvasRef.current) return;
-
+      const timer = setInterval(() => {
         analyser.getByteTimeDomainData(dataArray);
 
-        let hasTalk = false
+        const a: Array<number> = [];
         for (let i = 0; i < bufferLength; i++) {
-          const v =
+          a.push(Math.abs(dataArray[i] / 128.0) + sensitivity);
         }
 
-        canvasCtx.fillStyle = "rgb(200, 200, 200)";
-        canvasCtx.fillRect(0, 0, WIDTH, HEIGHT);
-
-        canvasCtx.lineWidth = 2;
-        canvasCtx.strokeStyle = "rgb(0, 0, 0)";
-
-        canvasCtx.beginPath();
-
-        var sliceWidth = (WIDTH * 1.0) / bufferLength;
-        var x = 0;
-
-        for (let i = 0; i < bufferLength; i++) {
-          var v = dataArray[i] / 128.0;
-          var y = (v * HEIGHT) / 2;
-
-          if (i === 0) {
-            canvasCtx.moveTo(x, y);
-          } else {
-            canvasCtx.lineTo(x, y);
-          }
-
-          x += sliceWidth;
+        const v = Math.max(...a);
+        if (talking.current.length < 100) {
+          talking.current.push(v);
+        } else {
+          talking.current.shift();
+          talking.current.push(v);
         }
+      }, 5);
 
-        canvasCtx.lineTo(canvasRef.current.width, canvasRef.current.height / 2);
-        canvasCtx.stroke();
-      }
+      const volStateWatch = setInterval(() => {
+        const arr = talking.current;
+        const average = arr.reduce((a, b) => a + b) / arr.length;
+        console.log(average);
+        if (average > 1.1) {
+          setVolState(2);
+        } else if (average > 1.08) {
+          setVolState(1);
+        } else {
+          setVolState(0);
+        }
+      }, 300);
 
-      draw();
+      return () => {
+        clearInterval(timer);
+        clearInterval(volStateWatch);
+      };
     };
     fn();
-  }, []);
-
-  useEffect(() => {
-    if (!canvasRef.current) {
-      throw new Error("objectがnull");
-    }
-    const canvas = canvasRef.current;
-    const ctx = canvas.getContext("2d");
-    if (!ctx) {
-      throw new Error("context取得失敗");
-    }
-    // 黒い長方形を描画する
-    // ctx.fillStyle = "#000000";
-    // ctx.fillRect(0, 0, ctx.canvas.width / 2, ctx.canvas.height / 2);
-  }, []);
+  }, [sensitivity]);
 
   return (
     <div className="bg-gray flex justify-center items-center rounded-lg py-[15%] relative">
       <div className="absolute top-0 right-0">
-        <canvas ref={canvasRef} width={30} height={30} />
+        {/* <canvas ref={canvasRef} width={30} height={30} /> */}
       </div>
       <img
         className="inline object-cover max-w-[100px] w-ma rounded-full"
         src={props.iconUrl}
         alt="Profile image"
       />
-      <div className="absolute bottom-0 left-0">
-        <div className="ml-3 mb-3">{props.name}</div>
+      <div className="absolute bottom-0 left-0 w-full items-center">
+        <div className="mb-3 px-3 w-full">
+          <div className="flex">
+            <div className="mr-auto">{props.name}</div>
+
+            <TalkingIndicator num={volState} />
+          </div>
+        </div>
       </div>
 
-      <audio src="/aa.m4a" ref={audioRef} hidden />
+      <audio src="/talk-osd.mp3" ref={audioRef} hidden />
+    </div>
+  );
+};
+
+const TalkingIndicator = ({ num }: { num: number }) => {
+  const T = () => {
+    if (num > 0) {
+      return <RiVoiceprintFill size={num == 1 ? 10 : 16} />;
+    } else {
+      return <div></div>;
+    }
+  };
+
+  let base = "w-[26px] h-[26px] rounded-full flex items-center justify-center";
+  if (num == 0) {
+    // base += " bg-gray2";
+    base += " bg-blue-400";
+  } else {
+    base += " bg-blue-400";
+  }
+
+  return (
+    <div className={base}>
+      <T />
     </div>
   );
 };
