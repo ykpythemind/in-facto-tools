@@ -10,9 +10,9 @@ export const Main = () => {
   }, []);
 
   return (
-    <main className="flex min-h-screen flex-col items-center justify-between p-24 bg-base text-white">
-      <div className="w-full grid grid-cols-4 gap-6">
-        <div className="col-span-3">
+    <main className="flex min-h-screen flex-col items-center justify-center p-24 bg-base text-white">
+      <div className="w-full h-full grid grid-cols-4 gap-6 place-content-stretch">
+        <div className="col-span-3 h-full flex justify-center">
           {/* <img src="/delivery_image.jpg" className="w-full" /> */}
           <video
             src="/P1033141_1.mp4"
@@ -25,10 +25,22 @@ export const Main = () => {
         </div>
         <div className="col-span-1">
           <div className="grid grid-rows-1 gap-4">
-            {/* <ProfileBlock name="ykpyt" iconUrl="/ykp.png" audioUrl="" /> */}
+            <ProfileBlock
+              name="ykpyt"
+              iconUrl="/ykp.png"
+              audioUrl="/talk-osd.mp3"
+            />
             <ProfileBlock
               name="osd"
               iconUrl="https://avatars.githubusercontent.com/u/65229525?v=4"
+              audioUrl="/talk-osd2.mp3"
+              sensitivity={-0.1}
+            />
+            <ProfileBlock
+              name="osd2"
+              iconUrl="https://avatars.githubusercontent.com/u/65229525?v=4"
+              audioUrl="/talk-osd3.mp3"
+              sensitivity={-0.1}
             />
           </div>
         </div>
@@ -108,7 +120,7 @@ const ProfileBlock = (props: ProfileBlockProps) => {
       const volStateWatch = setInterval(() => {
         const arr = talking.current;
         const average = arr.reduce((a, b) => a + b) / arr.length;
-        console.log(average);
+        // console.log(average);
         if (average > 1.1) {
           setVolState(2);
         } else if (average > 1.08) {
@@ -146,7 +158,7 @@ const ProfileBlock = (props: ProfileBlockProps) => {
         </div>
       </div>
 
-      <audio src="/talk-osd.mp3" ref={audioRef} hidden />
+      <audio src={props.audioUrl} ref={audioRef} hidden />
     </div>
   );
 };
