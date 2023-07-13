@@ -1,15 +1,35 @@
 "use client";
 import { MutableRefObject, useEffect, useRef, useState } from "react";
-import { RiVoiceprintFill } from "react-icons/ri";
+import { RiVoiceprintFill, RiVolumeMuteFill } from "react-icons/ri";
 
 export const Main = () => {
   const videoRef = useRef<HTMLVideoElement>(null);
 
-  const audioRef1 = useRef<HTMLAudioElement>(null);
-  const audioRef2 = useRef<HTMLAudioElement>(null);
-  const audioRef3 = useRef<HTMLAudioElement>(null);
+  const { audioRef: audioRef1 } = useProfileBlockRef();
+  const { audioRef: audioRef2 } = useProfileBlockRef();
+  const { audioRef: audioRef3, videoRef: videoRef3 } = useProfileBlockRef();
+  const { audioRef: audioRef4 } = useProfileBlockRef();
 
   const [started, setStarted] = useState(false);
+  const [video3On, setVideo3On] = useState(false);
+  const [video3Muted, setVideo3Muted] = useState(true);
+
+  useEffect(() => {
+    const listener = function (event) {
+      // console.log("event.key: " + event.key);
+      if (event.key === "!") {
+        setStarted(true);
+      }
+      if (event.key === "@") {
+        setStarted(true);
+      }
+    };
+    document.addEventListener("keydown", listener);
+
+    return () => {
+      document.removeEventListener("keydown", listener);
+    };
+  }, []);
 
   useEffect(() => {
     if (started) {
@@ -17,8 +37,32 @@ export const Main = () => {
       audioRef1.current?.play();
       audioRef2.current?.play();
       audioRef3.current?.play();
+      audioRef4.current?.play();
     }
+  }, [started, videoRef, audioRef1, audioRef2, audioRef3, audioRef4]);
+
+  const [currentTime, setCurrentTime] = useState(0);
+
+  useEffect(() => {
+    const timer = setInterval(() => {
+      if (started) {
+        setCurrentTime((t) => t + 5);
+      }
+    }, 5);
+
+    return () => {
+      clearInterval(timer);
+    };
   }, [started]);
+
+  useEffect(() => {
+    if (currentTime > 1000) {
+      setVideo3On(true);
+    }
+    if (currentTime > 900) {
+      setVideo3Muted(false);
+    }
+  }, [currentTime]);
 
   const onClickStart = () => {
     setStarted(true);
@@ -56,13 +100,25 @@ export const Main = () => {
               audioUrl="/talk-osd2.mp3"
               sensitivity={-0.1}
               audioRef={audioRef2}
+              isMuted
             />
             <ProfileBlock
               name="osd2"
               iconUrl="https://avatars.githubusercontent.com/u/65229525?v=4"
               audioUrl="/talk-osd3.mp3"
               sensitivity={-0.1}
+              isVideoOn={video3On}
+              isMuted={video3Muted}
+              videoRef={videoRef3}
               audioRef={audioRef3}
+              videoUrl="/20230709_tyousahoukoku_rokehan.mp4"
+            />
+            <ProfileBlock
+              name="遠嶋"
+              iconUrl="https://github.com/tontoko.png"
+              audioUrl="/talk-osd2.mp3"
+              sensitivity={-0.1}
+              audioRef={audioRef4}
             />
           </div>
         </div>
@@ -75,19 +131,37 @@ type ProfileBlockProps = {
   name: string;
   iconUrl: string;
   audioUrl: string;
+  videoUrl?: string;
   sensitivity?: number;
+  isMuted?: boolean;
+  isVideoOn?: boolean;
   audioRef: MutableRefObject<HTMLAudioElement | null>;
+  videoRef?: MutableRefObject<HTMLVideoElement | null>;
 };
 
 const ProfileBlock = (props: ProfileBlockProps) => {
   const audioCtxRef = useRef<AudioContext | null>(null);
-  const audioRef = props.audioRef;
   const sourceRef = useRef<MediaElementAudioSourceNode | null>(null);
   const talking = useRef<Array<number>>([]);
 
   // const [volState, setVolState] = useState<0 | 1 | 2>(0);
   const [averageVol, setCurrentAverageVol] = useState(0);
-  const { sensitivity = 0 } = props;
+  const {
+    sensitivity = 0,
+    isMuted = false,
+    isVideoOn = false,
+    audioRef,
+    videoRef,
+    videoUrl,
+  } = props;
+
+  useEffect(() => {
+    if (isVideoOn) {
+      videoRef?.current?.play();
+    } else {
+      videoRef?.current?.pause();
+    }
+  }, [isVideoOn, videoRef]);
 
   useEffect(() => {
     const fn = async () => {
@@ -167,43 +241,60 @@ const ProfileBlock = (props: ProfileBlockProps) => {
   if (bgScale > 1.4) {
     bgScale = 1.4; // デカくなりすぎんように
   }
+  if (isMuted) bgScale = 1;
   const bgSize = `${iconSize * bgScale}px`;
 
   return (
-    <div className="bg-gray flex justify-center items-center rounded-lg py-[15%] relative z-10">
+    <div className="bg-gray w-[280px] h-[200px] flex justify-center items-center rounded-lg relative z-10">
       <div className="absolute top-0 right-0">
         {/* <canvas ref={canvasRef} width={30} height={30} /> */}
       </div>
-      <div
-        className="z-40"
-        style={{
-          position: "absolute",
-          top: "50%",
-          left: "50%",
-          transform: "translate(-50%, -50%)",
-        }}
-      >
+      {!isVideoOn && (
         <div
+          className="z-40"
           style={{
-            width: bgSize,
-            height: bgSize,
-            borderRadius: "50%",
-            backgroundColor: "rgba(255, 255, 255, 0.2)",
-            animation: "pulse 1s ease infinite",
+            position: "absolute",
+            top: "50%",
+            left: "50%",
+            transform: "translate(-50%, -50%)",
           }}
-        ></div>
-      </div>
-      <img
-        className="inline object-cover max-w-[100px] w-ma rounded-full z-50"
-        src={props.iconUrl}
-        alt="Profile image"
-      />
+        >
+          <div
+            style={{
+              width: bgSize,
+              height: bgSize,
+              borderRadius: "50%",
+              backgroundColor: "rgba(255, 255, 255, 0.2)",
+              animation: "pulse 1s ease infinite",
+            }}
+          ></div>
+        </div>
+      )}
+
+      {isVideoOn ? (
+        <div className="w-full object-cover h-full">
+          {videoRef && videoUrl && (
+            <video
+              className={"h-full object-cover rounded-lg"}
+              src={videoUrl}
+              ref={videoRef}
+              autoPlay={false}
+            />
+          )}
+        </div>
+      ) : (
+        <img
+          className="inline object-cover max-w-[100px] w-ma rounded-full z-50 my-[15%]"
+          src={props.iconUrl}
+          alt="Profile image"
+        />
+      )}
       <div className="absolute bottom-0 left-0 w-full items-center">
         <div className="mb-3 px-3 w-full">
-          <div className="flex">
+          <div className="flex items-center">
             <div className="mr-auto">{props.name}</div>
 
-            <TalkingIndicator num={volState} />
+            <TalkingIndicator num={volState} isMuted={isMuted} />
           </div>
         </div>
       </div>
@@ -213,21 +304,34 @@ const ProfileBlock = (props: ProfileBlockProps) => {
   );
 };
 
-const TalkingIndicator = ({ num }: { num: number }) => {
+const TalkingIndicator = ({
+  num,
+  isMuted,
+}: {
+  num: number;
+  isMuted: boolean;
+}) => {
   const T = () => {
+    if (isMuted) {
+      return <RiVolumeMuteFill size={20} color="#ffffff" />;
+    }
     if (num > 0) {
-      return <RiVoiceprintFill size={num == 1 ? 10 : 16} />;
+      return <RiVoiceprintFill size={num == 1 ? 15 : 20} />;
     } else {
       return <div></div>;
     }
   };
 
-  let base = "w-[26px] h-[26px] rounded-full flex items-center justify-center";
-  if (num == 0) {
-    // base += " bg-gray2";
-    base += " bg-blue-400";
+  let base = "w-[32px] h-[32px] rounded-full flex items-center justify-center";
+  if (isMuted) {
+    base += " bg-gray2";
   } else {
-    base += " bg-blue-400";
+    if (num == 0) {
+      // base += " bg-gray2";
+      base += " bg-blue-400";
+    } else {
+      base += " bg-blue-400";
+    }
   }
 
   return (
@@ -235,4 +339,11 @@ const TalkingIndicator = ({ num }: { num: number }) => {
       <T />
     </div>
   );
+};
+
+const useProfileBlockRef = () => {
+  const audioRef = useRef<HTMLAudioElement>(null);
+  const videoRef = useRef<HTMLVideoElement | null>(null);
+
+  return { audioRef, videoRef };
 };
