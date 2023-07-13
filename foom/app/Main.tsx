@@ -1,6 +1,7 @@
 "use client";
 import { MutableRefObject, useEffect, useRef, useState } from "react";
 import { RiVoiceprintFill, RiVolumeMuteFill } from "react-icons/ri";
+import { BsDisplay } from "react-icons/bs";
 
 export const Main = () => {
   const videoRef = useRef<HTMLVideoElement>(null);
@@ -76,18 +77,27 @@ export const Main = () => {
         </div>
       )}
       <div className="w-full h-full grid grid-cols-4 gap-6 place-content-stretch">
-        <div className="col-span-3 h-full flex justify-center">
+        <div className="col-span-3 h-full flex flex-col justify-center ">
           {/* <img src="/delivery_image.jpg" className="w-full" /> */}
           <video
             src="/P1033141_1.mp4"
-            className="w-full"
+            className="w-full rounded-lg"
             loop
             muted
             ref={videoRef}
           />
+
+          <div className="mt-10">
+            <div className="rounded-lg bg-gray2 p-4 flex items-center">
+              <BsDisplay size={26} />
+              <div className="ml-5">
+                ykpy さんの画面が全員に共有されています
+              </div>
+            </div>
+          </div>
         </div>
         <div className="col-span-1">
-          <div className="grid grid-rows-1 gap-4">
+          <div className="grid grid-rows-1 gap-4 justify-center">
             <ProfileBlock
               name="ykpyt"
               iconUrl="/ykp.png"
