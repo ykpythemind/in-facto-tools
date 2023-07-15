@@ -111,16 +111,22 @@ export const ProfileBlock = (props: ProfileBlockProps) => {
     volState = 1;
   }
 
-  const iconSize = 95;
-  let bgScale = averageVol > 0 ? averageVol * 1.04 : averageVol; // 1.05はまじっくなんばー
-  if (bgScale > 1.4) {
-    bgScale = 1.4; // デカくなりすぎんように
+  const iconSize = 110;
+  let bgScale = averageVol > 0.1 ? averageVol * 1.09 : averageVol; // 1.05はまじっくなんばー
+  bgScale = averageVol > 1.1 ? averageVol * 1.2 : bgScale; // 1.05はまじっくなんばー
+  if (bgScale > 1.8) {
+    bgScale = 1.8; // デカくなりすぎんように
+  }
+  if (averageVol < 0.08 || averageVol === 0) {
+    bgScale = 1;
   }
   if (isMuted) bgScale = 1;
-  const bgSize = `${iconSize * bgScale}px`;
+
+  let bgSizePx = Math.floor(iconSize * bgScale);
+  const bgSize = `${bgSizePx}px`;
 
   return (
-    <div className="bg-gray w-[280px] h-[200px] flex justify-center items-center rounded-lg relative z-10">
+    <div className="bg-gray w-[320px] h-[200px] flex justify-center items-center rounded-lg relative z-10">
       <div className="absolute top-0 right-0">
         {/* <canvas ref={canvasRef} width={30} height={30} /> */}
       </div>
@@ -152,6 +158,7 @@ export const ProfileBlock = (props: ProfileBlockProps) => {
             <video
               className={"h-full object-cover rounded-lg"}
               src={videoUrl}
+              muted
               ref={videoRef}
               autoPlay={false}
             />
@@ -159,7 +166,7 @@ export const ProfileBlock = (props: ProfileBlockProps) => {
         </div>
       ) : (
         <img
-          className="inline object-cover max-w-[100px] w-ma rounded-full z-50 my-[15%]"
+          className="inline object-cover w-[120px] w-ma rounded-full z-50 my-[15%]"
           src={props.iconUrl}
           alt="Profile image"
         />
@@ -167,7 +174,7 @@ export const ProfileBlock = (props: ProfileBlockProps) => {
       <div className="absolute bottom-0 left-0 w-full items-center">
         <div className="mb-3 px-3 w-full">
           <div className="flex items-center">
-            <div className="mr-auto">{props.name}</div>
+            <div className="mr-auto text-xl">{props.name}</div>
 
             <TalkingIndicator num={volState} isMuted={isMuted} />
           </div>
@@ -188,16 +195,16 @@ const TalkingIndicator = ({
 }) => {
   const T = () => {
     if (isMuted) {
-      return <RiVolumeMuteFill size={20} color="#ffffff" />;
+      return <RiVolumeMuteFill size={24} color="#ffffff" />;
     }
     if (num > 0) {
-      return <RiVoiceprintFill size={num == 1 ? 15 : 20} />;
+      return <RiVoiceprintFill size={num == 1 ? 18 : 24} />;
     } else {
       return <div></div>;
     }
   };
 
-  let base = "w-[32px] h-[32px] rounded-full flex items-center justify-center";
+  let base = "w-[38px] h-[38px] rounded-full flex items-center justify-center";
   if (isMuted) {
     base += " bg-gray2";
   } else {

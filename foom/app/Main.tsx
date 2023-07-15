@@ -46,9 +46,9 @@ export const Main = () => {
     if (started) {
       videoRef.current?.play();
       audioRef1.current?.play();
-      audioRef2.current?.play();
-      audioRef3.current?.play();
-      audioRef4.current?.play();
+      // audioRef2.current?.play();
+      // audioRef3.current?.play();
+      // audioRef4.current?.play();
     }
   }, [started, videoRef, audioRef1, audioRef2, audioRef3, audioRef4]);
 
@@ -73,7 +73,10 @@ export const Main = () => {
     if (currentTime > 900) {
       setVideo3Muted(false);
     }
-  }, [currentTime]);
+    if (currentTime > 87 * 1000) {
+      videoRef.current.pause();
+    }
+  }, [currentTime, videoRef]);
 
   const onClickStart = () => {
     setStarted(true);
@@ -88,9 +91,8 @@ export const Main = () => {
       )}
       <div className="w-full h-full grid grid-cols-4 gap-6 place-content-stretch">
         <div className="col-span-3 h-full flex flex-col justify-center ">
-          {/* <img src="/delivery_image.jpg" className="w-full" /> */}
           <video
-            src="/P1033141_1.mp4"
+            src="/kari_last_embed_video.mp4"
             className="w-full rounded-lg"
             loop
             muted
@@ -107,36 +109,40 @@ export const Main = () => {
           </div>
         </div>
         <div className="col-span-1">
-          <div className="grid grid-rows-1 gap-4 justify-center">
+          <div className="grid grid-rows-1 gap-5 justify-center">
             <ProfileBlock
-              name="ykpyt"
-              iconUrl="/ykp.png"
-              audioUrl="/talk-osd.mp3"
+              name="西山"
+              iconUrl="/nishiyama.png"
+              iconUrl="/a.jpg"
+              audioUrl="/kari_last_embed_video_1.m4a"
               audioRef={audioRef1}
+              sensitivity={0.05}
             />
             <ProfileBlock
-              name="osd"
-              iconUrl="https://avatars.githubusercontent.com/u/65229525?v=4"
+              name="柳瀬"
+              iconUrl="/nishiyama.png"
               audioUrl="/talk-osd2.mp3"
               sensitivity={-0.1}
               audioRef={audioRef2}
               isMuted
             />
             <ProfileBlock
-              name="osd2"
-              iconUrl="https://avatars.githubusercontent.com/u/65229525?v=4"
+              name="髙橋"
               audioUrl="/talk-osd3.mp3"
+              iconUrl="/d.jpg"
               sensitivity={-0.1}
               isVideoOn={video3On}
-              isMuted={video3Muted}
+              // isMuted={video3Muted}
+              isMuted
               videoRef={videoRef3}
               audioRef={audioRef3}
               videoUrl="/20230709_tyousahoukoku_rokehan.mp4"
             />
             <ProfileBlock
-              name="遠嶋"
-              iconUrl="https://github.com/tontoko.png"
+              name="Tomita"
+              iconUrl="/tomita.jpeg"
               audioUrl="/talk-osd2.mp3"
+              isMuted
               sensitivity={-0.1}
               audioRef={audioRef4}
             />
