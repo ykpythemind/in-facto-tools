@@ -73,7 +73,7 @@ export const ProfileBlock = (props: ProfileBlockProps) => {
 
         const a: Array<number> = [];
         for (let i = 0; i < bufferLength; i++) {
-          a.push(Math.abs(dataArray[i] / 128.0) + sensitivity);
+          a.push(Math.abs(dataArray[i] / 128.0));
         }
 
         const v = Math.max(...a);
@@ -105,19 +105,21 @@ export const ProfileBlock = (props: ProfileBlockProps) => {
   }, [sensitivity, audioRef]);
 
   let volState: 0 | 1 | 2 = 0;
-  if (averageVol > 1.1) {
+  let av = averageVol;
+  av = av * (sensitivity + 1);
+  if (av > 1.1) {
     volState = 2;
-  } else if (averageVol > 1.08) {
+  } else if (av > 1.08) {
     volState = 1;
   }
 
   const iconSize = 110;
-  let bgScale = averageVol > 0.1 ? averageVol * 1.09 : averageVol; // 1.05はまじっくなんばー
-  bgScale = averageVol > 1.1 ? averageVol * 1.2 : bgScale; // 1.05はまじっくなんばー
+  let bgScale = av > 0.1 ? av * 1.09 : av; // 1.05はまじっくなんばー
+  bgScale = av > 1.1 ? av * 1.2 : bgScale; // 1.05はまじっくなんばー
   if (bgScale > 1.8) {
     bgScale = 1.8; // デカくなりすぎんように
   }
-  if (averageVol < 0.08 || averageVol === 0) {
+  if (av < 0.08 || av === 0) {
     bgScale = 1;
   }
   if (isMuted) bgScale = 1;

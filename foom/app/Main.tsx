@@ -14,7 +14,11 @@ export const Main = () => {
 
   const [started, setStarted] = useState(false);
   const [video3On, setVideo3On] = useState(false);
+  const [video2Muted, setVideo2Muted] = useState(true);
   const [video3Muted, setVideo3Muted] = useState(true);
+  const [video4Muted, setVideo4Muted] = useState(true);
+
+  const [lastAudioStarted, setLastAudioStarted] = useState(false);
 
   useEffect(() => {
     const listener = function (event) {
@@ -76,7 +80,23 @@ export const Main = () => {
     if (currentTime > 87 * 1000) {
       videoRef.current.pause();
     }
+
+    const lastStart = 1 * 100;
+    if (currentTime > lastStart) {
+      setLastAudioStarted(true);
+    }
   }, [currentTime, videoRef]);
+
+  useEffect(() => {
+    if (lastAudioStarted) {
+      setVideo2Muted(false);
+      setVideo3Muted(false);
+      setVideo4Muted(false);
+      audioRef2.current?.play();
+      audioRef3.current?.play();
+      audioRef4.current?.play();
+    }
+  }, [lastAudioStarted, audioRef2, audioRef3, audioRef4]);
 
   const onClickStart = () => {
     setStarted(true);
@@ -103,7 +123,7 @@ export const Main = () => {
             <div className="rounded-lg bg-gray2 p-4 flex items-center">
               <BsDisplay size={26} />
               <div className="ml-5">
-                ykpy さんの画面が全員に共有されています
+                西山 さんの画面が全員に共有されています
               </div>
             </div>
           </div>
@@ -112,28 +132,26 @@ export const Main = () => {
           <div className="grid grid-rows-1 gap-5 justify-center">
             <ProfileBlock
               name="西山"
-              iconUrl="/nishiyama.png"
               iconUrl="/a.jpg"
               audioUrl="/kari_last_embed_video_1.m4a"
               audioRef={audioRef1}
               sensitivity={0.05}
             />
             <ProfileBlock
-              name="柳瀬"
+              name="柳瀬 和寿"
               iconUrl="/nishiyama.png"
-              audioUrl="/talk-osd2.mp3"
-              sensitivity={-0.1}
+              audioUrl="/yanase_1.m4a"
+              sensitivity={0.07}
               audioRef={audioRef2}
-              isMuted
+              isMuted={video2Muted}
             />
             <ProfileBlock
               name="髙橋"
-              audioUrl="/talk-osd3.mp3"
+              audioUrl="/takahashi_1.m4a"
               iconUrl="/d.jpg"
-              sensitivity={-0.1}
+              sensitivity={0.07}
               isVideoOn={video3On}
-              // isMuted={video3Muted}
-              isMuted
+              isMuted={video3Muted}
               videoRef={videoRef3}
               audioRef={audioRef3}
               videoUrl="/20230709_tyousahoukoku_rokehan.mp4"
@@ -141,9 +159,9 @@ export const Main = () => {
             <ProfileBlock
               name="Tomita"
               iconUrl="/tomita.jpeg"
-              audioUrl="/talk-osd2.mp3"
-              isMuted
-              sensitivity={-0.1}
+              audioUrl="/tomita_1.m4a"
+              sensitivity={0.07}
+              isMuted={video4Muted}
               audioRef={audioRef4}
             />
           </div>
