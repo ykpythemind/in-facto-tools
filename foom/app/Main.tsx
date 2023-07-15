@@ -4,16 +4,18 @@ import { RiVoiceprintFill, RiVolumeMuteFill } from "react-icons/ri";
 import { BsDisplay } from "react-icons/bs";
 import { useProfileBlockRef, ProfileBlock } from "./ProfileBlock";
 
+const lastAudioOnMilliSec = 87 * 1000;
+
 export const Main = () => {
   const videoRef = useRef<HTMLVideoElement>(null);
 
   const { audioRef: audioRef1 } = useProfileBlockRef();
-  const { audioRef: audioRef2 } = useProfileBlockRef();
-  const { audioRef: audioRef3, videoRef: videoRef3 } = useProfileBlockRef();
+  const { audioRef: dummyRef, videoRef: videoRefLast } = useProfileBlockRef();
+  const { audioRef: audioRef3 } = useProfileBlockRef();
   const { audioRef: audioRef4 } = useProfileBlockRef();
 
   const [started, setStarted] = useState(false);
-  const [video3On, setVideo3On] = useState(false);
+  const [lastVideoOn, setlastVideoOn] = useState(false);
   const [video2Muted, setVideo2Muted] = useState(true);
   const [video3Muted, setVideo3Muted] = useState(true);
   const [video4Muted, setVideo4Muted] = useState(true);
@@ -33,7 +35,7 @@ export const Main = () => {
           setCurrentTime(seconds * 1000);
           videoRef.current.currentTime = seconds;
           audioRef1.current.currentTime = seconds;
-          audioRef2.current.currentTime = seconds;
+          // audioRef2.current.currentTime = seconds;
           audioRef3.current.currentTime = seconds;
           audioRef4.current.currentTime = seconds;
         }
@@ -54,14 +56,15 @@ export const Main = () => {
       // audioRef3.current?.play();
       // audioRef4.current?.play();
     }
-  }, [started, videoRef, audioRef1, audioRef2, audioRef3, audioRef4]);
+  }, [started, videoRef, audioRef1, audioRef3, audioRef4]);
 
   const [currentTime, setCurrentTime] = useState(0);
 
   useEffect(() => {
     const timer = setInterval(() => {
-      if (started) {
-        setCurrentTime((t) => t + 5);
+      // setCurrentTime((t) => t + 5);
+      if (videoRef.current.currentTime > lastAudioOnMilliSec / 1000) {
+        setLastAudioStarted(true);
       }
     }, 5);
 
@@ -70,33 +73,31 @@ export const Main = () => {
     };
   }, [started]);
 
-  useEffect(() => {
-    if (currentTime > 1000) {
-      setVideo3On(true);
-    }
-    if (currentTime > 900) {
-      setVideo3Muted(false);
-    }
-    if (currentTime > 87 * 1000) {
-      videoRef.current.pause();
-    }
-
-    const lastStart = 1 * 100;
-    if (currentTime > lastStart) {
-      setLastAudioStarted(true);
-    }
-  }, [currentTime, videoRef]);
+  // useEffect(() => {
+  //   if (currentTime > lastAudioOnMilliSec) {
+  //     setLastAudioStarted(true);
+  //   }
+  // }, [currentTime, videoRef]);
 
   useEffect(() => {
     if (lastAudioStarted) {
-      setVideo2Muted(false);
-      setVideo3Muted(false);
-      setVideo4Muted(false);
-      audioRef2.current?.play();
+      videoRef.current.pause();
+      setlastVideoOn(true);
+
+      setTimeout(() => {
+        videoRefLast?.current.play();
+      }, 800);
+
+      setTimeout(() => {
+        setVideo4Muted(false);
+      }, 400);
+      setTimeout(() => {
+        setVideo3Muted(false);
+      }, 1400);
       audioRef3.current?.play();
       audioRef4.current?.play();
     }
-  }, [lastAudioStarted, audioRef2, audioRef3, audioRef4]);
+  }, [lastAudioStarted, videoRef, audioRef3, audioRef4]);
 
   const onClickStart = () => {
     setStarted(true);
@@ -133,28 +134,27 @@ export const Main = () => {
             <ProfileBlock
               name="西山"
               iconUrl="/a.jpg"
-              audioUrl="/kari_last_embed_video_1.m4a"
+              audioUrl="/nishiyama_full.mp3"
               audioRef={audioRef1}
               sensitivity={0.05}
             />
             <ProfileBlock
               name="柳瀬 和寿"
               iconUrl="/nishiyama.png"
-              audioUrl="/yanase_1.m4a"
               sensitivity={0.07}
-              audioRef={audioRef2}
+              audioRef={dummyRef}
+              videoRef={videoRefLast}
               isMuted={video2Muted}
+              isVideoOn={lastVideoOn}
+              videoUrl="/yanase_last_2.mov"
             />
             <ProfileBlock
               name="髙橋"
               audioUrl="/takahashi_1.m4a"
               iconUrl="/d.jpg"
               sensitivity={0.07}
-              isVideoOn={video3On}
               isMuted={video3Muted}
-              videoRef={videoRef3}
               audioRef={audioRef3}
-              videoUrl="/20230709_tyousahoukoku_rokehan.mp4"
             />
             <ProfileBlock
               name="Tomita"
