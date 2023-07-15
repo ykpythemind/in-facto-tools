@@ -15,6 +15,8 @@ export default function ThreadColumn(props: {
 }) {
   const { slug, no, date, time1, time2, name, body } = props;
 
+  let b = body.replaceAll("町田", '<span class="mosaic">町田</span>');
+
   return (
     <dl>
       <dt className="bg-slate-100 border-double border-t-2 border-b-2">
@@ -23,11 +25,11 @@ export default function ThreadColumn(props: {
       </dt>
       <dd className="mb-4 whitespace-pre-wrap">
         {body === "怪しげな画像が貼られる" ? (
-          <a href={"/" + IMAGE_URL[slug]} target="_blank">
+          <a href={"/p/" + IMAGE_URL[slug]} target="_blank">
             {IMAGE_URL[slug]}
           </a>
         ) : (
-          body
+          <div dangerouslySetInnerHTML={{ __html: b }}></div>
         )}
       </dd>
     </dl>

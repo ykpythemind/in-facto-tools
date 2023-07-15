@@ -4,7 +4,7 @@ import SideThread from "./component/sideThread";
 
 export default function Home() {
   return (
-    <main className="flex min-h-screen text-sm">
+    <main className="flex min-h-screen text-[15px]">
       <SideThread />
       <br />
       <div className="bg-green-300 w-full">

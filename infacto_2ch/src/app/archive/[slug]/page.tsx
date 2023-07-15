@@ -9,6 +9,12 @@ import Papa from "papaparse";
 
 type Params = { slug: string };
 
+export const generateMetadata = ({ params }) => {
+  return {
+    title: `${THREAD_TITLE[params.slug]}`,
+  };
+};
+
 const THREAD_TITLE: { [key: string]: string } = {
   j34LIHJio89fek: "やべえｗｗｗｗｗｗすごい発見したｗｗｗｗ",
   jLljfd889hO9kl: "庭師になる",
@@ -47,7 +53,6 @@ const Page = async ({ params }: { params: Params }) => {
         </div>
         <div className="flex justify-center">
           <div>
-            現在のトップ魚拓:
             <a>【芸能】あの有名人が異次元から来たとしたら！？</a>&nbsp;
             <a>[芸能] 天才とバカの紙一重、芸能界の例は？</a>&nbsp;
             <a>[料理] 一番変な食材で料理する方法</a>&nbsp;
