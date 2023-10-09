@@ -41,3 +41,4 @@ https://github.com/ykpythemind/in-facto-tools にソースコードが同期さ�
 ## License
 
 MIT
+すべての記事の著作権はin-factoに属します
