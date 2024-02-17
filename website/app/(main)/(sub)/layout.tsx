@@ -43,7 +43,7 @@ const Layout = ({ children }: { children: React.ReactElement }) => {
         <footer className="mt-10 mb-12 text-gray-600 text-sm font-serif font-light tracking-wider">
           <div className="flex">
             <div>
-              <A href={"/"}>in-facto</A> (c) 2022-2023
+              <A href={"/"}>in-facto</A> (c) 2022-
             </div>
 
             <div className="ml-auto"></div>

@@ -26,10 +26,6 @@ const Page: NextPage = () => {
         />
         <div className="mt-5 max-w-[200px] md:max-w-md w-full">
           {/* <Youtube color="#222" size={36} /> */}
-          <div className="my-3">
-            <A href="/meetup1">【告知】 10/14 meetup 1を開催します</A>{" "}
-            <span className="text-red-800">new!</span>
-          </div>
           <ul className="flex flex-col space-y-1">
             <li>
               <A href={"/about"}>About</A>
