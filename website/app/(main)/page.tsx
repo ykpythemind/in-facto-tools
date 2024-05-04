@@ -31,13 +31,7 @@ const Page: NextPage = () => {
               <A href={"/about"}>About</A>
             </li>
             <li>
-              <A
-                href="https://www.youtube.com/@in-facto"
-                target="_blank"
-                rel="noopener noreferrer"
-              >
-                Youtube
-              </A>
+              <A href={"/videos"}>Videos</A>
             </li>
             <li>
               <A href={"/posts"}>Posts</A>

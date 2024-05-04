@@ -3,6 +3,7 @@ import { join } from "path";
 import matter from "gray-matter";
 import { isPreviewEnv } from "./env";
 import { isAfter, isBefore } from "date-fns";
+import * as csv from "csv-parse/sync";
 import { notFound } from "next/navigation";
 
 const postsDirectory = join(process.cwd(), "_posts");
@@ -60,4 +61,23 @@ export function getAllPosts(fields: string[] = []) {
   // }
 
   return posts;
+}
+
+export function getAllVideos(fields: string[] = []) {
+  const options = { columns: true };
+  const content = fs.readFileSync(join(process.cwd(), `video.csv`)).toString();
+  const records = csv.parse(content, options);
+  const videos = records.reverse();
+
+  console.log(records);
+
+  // // NEXT_PUBLIC_IS_PREVIEW=trueのときは、公開日が未来の記事も表示する
+  // if (!isPreviewEnv) {
+  //   const now = new Date();
+  //   posts = posts.filter((post) => {
+  //     return isBefore(new Date(post.date), now);
+  //   });
+  // }
+
+  return videos;
 }

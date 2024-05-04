@@ -71,7 +71,7 @@ const transitionStyles = {
   unmounted: {},
 } as const;
 
-type PageState = "about" | "posts" | "unknown";
+type PageState = "about" | "posts" | "videos" | "unknown";
 
 const Navigation = (props: { isVisible: boolean }) => {
   const { isVisible } = props;
@@ -86,6 +86,9 @@ const Navigation = (props: { isVisible: boolean }) => {
   }
   if (path && path.startsWith("/posts")) {
     page = "posts";
+  }
+  if (path && path.startsWith("/videos")) {
+    page = "videos";
   }
 
   const currentArrow = "›";
@@ -118,14 +121,9 @@ const Navigation = (props: { isVisible: boolean }) => {
                 <A href="/about">About</A>
                 {page === "about" && ` ${currentArrow}`}
               </div>
-              <div>
-                <A
-                  href="https://www.youtube.com/@in-facto"
-                  target="_blank"
-                  rel="noopener noreferrer"
-                >
-                  Youtube
-                </A>
+              <div className={clsx(page === "videos" && "font-bold")}>
+                <A href="/videos">Videos</A>
+                {page === "videos" && ` ${currentArrow}`}
               </div>
               <div className={clsx(page === "posts" && "font-bold")}>
                 <A href={"/posts"}>Posts</A>
