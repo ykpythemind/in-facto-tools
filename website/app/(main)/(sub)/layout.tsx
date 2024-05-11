@@ -91,8 +91,6 @@ const Navigation = (props: { isVisible: boolean }) => {
     page = "videos";
   }
 
-  const currentArrow = "›";
-
   return (
     <Transition nodeRef={nodeRef} in={isVisible} timeout={5000} appear={false}>
       {(state) => {
@@ -119,15 +117,12 @@ const Navigation = (props: { isVisible: boolean }) => {
               </div>
               <div className={clsx("mt-3", page === "about" && "font-bold")}>
                 <A href="/about">About</A>
-                {page === "about" && ` ${currentArrow}`}
               </div>
               <div className={clsx(page === "videos" && "font-bold")}>
                 <A href="/videos">Videos</A>
-                {page === "videos" && ` ${currentArrow}`}
               </div>
               <div className={clsx(page === "posts" && "font-bold")}>
                 <A href={"/posts"}>Posts</A>
-                {page === "posts" && ` ${currentArrow}`}
               </div>
             </div>
           </div>
