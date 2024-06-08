@@ -56,10 +56,12 @@ height: 100%;
   color: rgb(96 165 250 / var(--tw-text-opacity));
 }
 
-
-.postIframeOuter {
+.iii {
   margin-top: 3rem;
   margin-bottom: 3rem;
+}
+
+.postIframeOuter {
   position: relative;
   height: 0;
   padding: 0 0 56.25%;
@@ -69,6 +71,12 @@ height: 100%;
 .postAnnotation {
   color: gray;
   font-size: 0.7rem;
+}
+
+.postInfo {
+  margin: 0rem 0 4rem;
+  color: gray;
+  font-size: 0.85rem;
 }
 
 .postIframeOuter iframe {

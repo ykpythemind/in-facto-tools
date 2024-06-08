@@ -1,4 +1,3 @@
-import { buffer } from "stream/consumers";
 import { partialMarkdownToHtml } from "./markdownToHtml";
 
 /* google docsで書いたオレオレmarkdown formatを正式なmarkdownにしつつ装飾する */
@@ -6,7 +5,6 @@ export const googleDoc2Md = async (
   doc: string,
   assetPrefix: string
 ): Promise<string> => {
-  let pointer = 0;
   let annotationCounter = 1;
   let annotationMarkCounter = 1;
 
@@ -14,12 +12,16 @@ export const googleDoc2Md = async (
 
   const lines = doc.split(/\r\n|\n/);
 
-  while (lines.length > pointer) {
-    let line = lines[pointer].trim();
+  while (lines.length > buf.pointer) {
+    if (lines[buf.pointer] && lines[buf.pointer].trim() === "") {
+      buf.appendLine("");
+      buf.next();
+      continue;
+    }
 
     // 独自の注釈
-    if (line.startsWith("<<*>>")) {
-      const rest = line.slice(5);
+    if (lines[buf.pointer].startsWith("<<*>>")) {
+      const rest = lines[buf.pointer].slice(5).trim();
       buf.appendLine('<div class="postAnnotation">');
       buf.appendLine(
         await partialMarkdownToHtml(
@@ -28,40 +30,58 @@ export const googleDoc2Md = async (
       );
       buf.appendLine("</div>");
       annotationMarkCounter++;
-      pointer++;
+      buf.next();
       continue;
     }
 
-    if (line.startsWith(":title:") || line.startsWith("//")) {
-      pointer++;
+    if (lines[buf.pointer].startsWith("//")) {
+      buf.next();
       continue;
     }
 
-    if (line.startsWith("<iframe")) {
-      buf.appendLine('<div class="postIframeOuter">');
-      buf.appendLine(line);
+    if (lines[buf.pointer].startsWith("<iframe")) {
+      buf.appendLine('<div class="iii"><div class="postIframeOuter">');
+      buf.appendLine(lines[buf.pointer]);
       buf.appendLine("</div>");
-      pointer++;
+      buf.next();
+
+      const info = lines[buf.pointer].match(/^:info: (.*)/);
+      if (info && info[1]) {
+        const infoText = info[1];
+        buf.next();
+        buf.appendLine(
+          `<div style="margin-top: 0.4rem; text-align: center;"><div class="postInfo">${infoText}</div></div>`
+        );
+      }
+
+      buf.appendLine("</div>"); // close iii
       continue;
     }
 
-    const match = line.match(/^(トモヒロツジ|ykpythemind|藤本薪|osd)(.?)/);
+    const match = lines[buf.pointer].match(
+      /^(トモヒロツジ|ykpythemind|藤本薪|osd)(.?)/
+    );
     if (match && match[1]) {
       const person = match[1];
-      pointer++;
-
       buf.appendLine(`<p class='postBodyComment'>`);
       const capt = `<span class='postBodyCommentPerson'><strong>${person}</strong></span> <span class='postBodyCommentBody'>`;
       buf.appendLine(capt);
 
       let b = "";
+      buf.next();
 
-      let nextLine = lines[pointer];
-      while (nextLine && nextLine.trim() !== "") {
-        b += nextLine;
+      a: {
+        for (;;) {
+          if (lines[buf.pointer] && lines[buf.pointer].trim() !== "") {
+            const toAdd = lines[buf.pointer].trim();
+            b += toAdd;
 
-        pointer++;
-        nextLine = lines[pointer];
+            buf.next();
+          } else {
+            buf.next();
+            break a;
+          }
+        }
       }
 
       // 文中の注釈に色付け
@@ -82,33 +102,38 @@ export const googleDoc2Md = async (
         (await partialMarkdownToHtml(b)).replace("<p>", "").replace("</p>", "")
       );
 
-      pointer++;
       buf.appendLine(`</span></p>`);
       buf.appendLine("");
       continue;
     }
 
-    const match2 = line.match(/^:image: (.*)/);
+    const info = lines[buf.pointer].match(/^:info: (.*)/);
+    if (info && info[1]) {
+      const infoText = info[1];
+      buf.next();
+
+      buf.appendLine(`<div class="postInfo">${infoText}</div>`);
+      continue;
+    }
+
+    const match2 = lines[buf.pointer].match(/^:image: (.*)/);
     if (match2 && match2[1]) {
       const path = match2[1];
-      pointer++;
+      buf.next();
 
       let caption: string | null = null;
       let alt: string | null = null;
 
-      let nextLine = lines[pointer];
-
-      while (nextLine && nextLine.trim() !== "") {
-        if (nextLine.startsWith(":caption:")) {
-          caption = nextLine.slice(10);
+      while (lines[buf.pointer] && lines[buf.pointer].trim() !== "") {
+        if (lines[buf.pointer].startsWith(":caption:")) {
+          caption = lines[buf.pointer].slice(10);
         }
 
-        if (nextLine.startsWith(":alt:")) {
-          alt = nextLine.slice(6);
+        if (lines[buf.pointer].startsWith(":alt:")) {
+          alt = lines[buf.pointer].slice(6);
         }
 
-        pointer++;
-        nextLine = lines[pointer];
+        buf.next();
       }
 
       const al = alt || caption || "";
@@ -124,13 +149,29 @@ export const googleDoc2Md = async (
 
       buf.appendLine("</div>");
 
-      pointer++;
+      buf.next();
       buf.appendLine("");
       continue;
     }
 
-    pointer++;
-    buf.appendLine(line);
+    const toAdd = lines[buf.pointer];
+    if (toAdd) {
+      if (toAdd.startsWith("トモ")) {
+        console.log("aaaaaaaaaaaaaaaa");
+        console.log("pointer", buf.pointer);
+        console.log(
+          "lines",
+          lines[buf.pointer - 1],
+          "/",
+          lines[buf.pointer],
+          "/",
+          lines[buf.pointer + 1]
+        );
+      }
+      buf.appendLine(toAdd);
+    }
+
+    buf.next();
   }
 
   return buf.toString();
@@ -138,9 +179,14 @@ export const googleDoc2Md = async (
 
 class MarkdownBuffer {
   private buffer: string[] = [];
+  public pointer: number = 0;
 
   public appendLine(line: string): void {
     this.buffer.push(line);
+  }
+
+  public next() {
+    this.pointer = this.pointer + 1;
   }
 
   public toString(): string {
