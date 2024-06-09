@@ -28,4 +28,4 @@ jobs:
         run: yarn tsc --noEmit
 
       - name: test
-        run: yarn run vitest -v
+        run: yarn run vitest
