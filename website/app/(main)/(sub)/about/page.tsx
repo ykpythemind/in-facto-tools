@@ -1,5 +1,4 @@
 import Link from "next/link";
-import { Twitter, Youtube } from "@icons-pack/react-simple-icons";
 import { PageTitle } from "../../components/PageTitle";
 import { A } from "../../components/A";
 import { contactUrl } from "../layout";
@@ -35,7 +34,7 @@ const Page = () => {
             target="_blank"
             rel={"noopener noreferrer"}
           >
-            Twitter
+            X
           </A>
 
           <A href={contactUrl} target="_blank" rel={"noopener noreferrer"}>
@@ -128,7 +127,7 @@ const Member = (props: {
                 target={"_blank"}
                 rel="noreferrer"
               >
-                <Twitter size={16} />
+                <X />
               </a>
             </div>
           )}
@@ -142,6 +141,10 @@ const Member = (props: {
       <div className={"mt-2 italic text-sm"}>{props.horror}</div>
     </div>
   );
+};
+
+const X = () => {
+  return <img src={"/x.svg"} alt="" width={15} height={15} />;
 };
 
 export const metadata: Metadata = generateSharedMetadata({

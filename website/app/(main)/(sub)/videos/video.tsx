@@ -33,7 +33,9 @@ export const VideoComponent = (props: Props) => {
       <div className="text-sm">
         {v.youtube && (
           <div className="mb-2">
-            <YouTube videoId={v.youtube} opts={opts} />
+            <div className="iframeOuter">
+              <YouTube videoId={v.youtube} opts={opts} />
+            </div>
           </div>
         )}
 

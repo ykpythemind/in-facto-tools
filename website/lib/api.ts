@@ -69,7 +69,7 @@ export function getAllVideos(fields: string[] = []) {
   const records = csv.parse(content, options);
   const videos = records.reverse();
 
-  console.log(records);
+  // console.log(records);
 
   // // NEXT_PUBLIC_IS_PREVIEW=trueのときは、公開日が未来の記事も表示する
   // if (!isPreviewEnv) {

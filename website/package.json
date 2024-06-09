@@ -12,7 +12,7 @@
     "auth": "op read 'op://z5y3wu5bo5fzjgqiv5dk7xghaa/uiwehtjrslt5bddd53tpg5hpfi/add more/client_secret_163350424381-10lqmoqi1t50ambc2dp8jit1sabve9fa.apps.googleusercontent.com.json' > credentials.json"
   },
   "dependencies": {
-    "@icons-pack/react-simple-icons": "^5.8.0",
+    "@icons-pack/react-simple-icons": "^9.5.0",
     "clsx": "^1.2.1",
     "csv-parse": "^5.5.5",
     "date-fns": "^2.29.3",
