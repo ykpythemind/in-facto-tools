@@ -27,7 +27,5 @@ jobs:
       - name: typecheck
         run: yarn tsc --noEmit
 
-      #  Jest encountered an unexpected tokenもんだいで動かなくなった
-      # https://zenn.dev/tokiya_horikawa/scraps/75f33067a28292
-      # - name: test
-      #   run: yarn jest --silent false --verbose false
+      - name: test
+        run: yarn run vitest -v
