@@ -80,7 +80,6 @@ ykpythemind 09:56
 
 <iframe width="560" height="315" src="https://www.youtube.com/embed/6k-ZYxlVqaw" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
 
-
 ## 出す音も含めて演技
 
 ykpythemind 10:30
@@ -152,5 +151,3 @@ ykpythemind 26:48
 
 
 *2023/3/7 収録*
-
-

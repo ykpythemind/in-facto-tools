@@ -88,6 +88,7 @@ class MarkdownGenerator {
         }
 
         this.appendLine("</div>"); // close postAroundIframe
+        this.appendLine("");
         continue;
       }
 
