@@ -64,7 +64,7 @@ const Page = () => {
             name={"ykpythemind"}
             imgSrc="/members/ykpythemind2.png"
             description={
-              "猫を堕ろす/ソフトウェアエンジニア。in-factoを設立し、撮影・編集・音声を担当。"
+              "ソフトウェアエンジニア。in-factoを設立し、撮影・編集・音声を担当。別プロジェクトで猫を堕ろすなどの音楽活動も。"
             }
             twitter={"ykpythemind"}
             horror={"好きなホラー映画「グレイヴ・エンカウンターズ」「ノロイ」"}
@@ -123,7 +123,7 @@ const Member = (props: {
           {props.twitter && (
             <div className={"ml-2"}>
               <a
-                href={`https://twitter.com/${props.twitter}`}
+                href={`https://x.com/${props.twitter}`}
                 target={"_blank"}
                 rel="noreferrer"
               >
