@@ -3,6 +3,29 @@
 import Link from "next/link";
 import { useEffect } from "react";
 
+const Reserve = () => {
+  return (
+    <div className=" border-gray-500 border rounded-xl py-3 px-6 flex items-center">
+      <div className="mr-auto">予約する</div>
+
+      <div>
+        <svg
+          xmlns="http://www.w3.org/2000/svg"
+          width="16"
+          height="16"
+          fill="currentColor"
+          viewBox="0 0 16 16"
+        >
+          <path
+            fill-rule="evenodd"
+            d="M4.646 1.646a.5.5 0 0 1 .708 0l6 6a.5.5 0 0 1 0 .708l-6 6a.5.5 0 0 1-.708-.708L10.293 8 4.646 2.354a.5.5 0 0 1 0-.708"
+          />
+        </svg>
+      </div>
+    </div>
+  );
+};
+
 export const Main = () => {
   useEffect(() => {
     document.body.classList.add("bg-black");
@@ -31,6 +54,18 @@ export const Main = () => {
           <br />
           2024年12月14日(土) 18:00〜
           <br />
+          参加費 3000円
+          <br />
+          <br />
+          <div className="">
+            <a
+              href="https://coubic.com/ifm/3262180/book/event_type/detail?express=true"
+              target="_blank"
+              rel="noopener noreferrer"
+            >
+              <Reserve />
+            </a>
+          </div>
           <br />
           <b>§ タイムスケジュール</b>
           <br />
@@ -54,19 +89,6 @@ export const Main = () => {
           楠本奈々瀬 俳優
           <br />
           <br />
-          <b>§ 参加者募集</b>
-          <br />
-          一般参加者の参加予約を受付中。参加費2000円。
-          <a
-            href="https://coubic.com/ifm/3262180/book/event_type/detail?express=true"
-            target="_blank"
-            rel="noopener noreferrer"
-            className="underline hover:text-gray-400 "
-          >
-            予約申込みはこちら
-          </a>
-          <br />
-          <br />
           <b>§ アクセス</b>
           <br />
           路地裏文化会館 C/NE (シーネ){" "}
@@ -82,6 +104,16 @@ export const Main = () => {
             loading="lazy"
             referrerPolicy="no-referrer-when-downgrade"
           />
+          <br />
+          <b>§ アンチハラスメントポリシー</b>
+          <br />
+          我々はすべての方々の人権と尊厳を尊重し、あらゆる形態のハラスメントを許容しません。ハラスメントを受けた場合、見かけた場合、もしくはハラスメントかどうかの判断に迷った場合は運営に
+          <a href="https://docs.google.com/forms/d/e/1FAIpQLSe7FGGsDNHsShnDhsiGV_VsTxxEncPAYZ1SR3JSK29oj4f6-Q/viewform">
+            お問い合わせください
+          </a>
+          。
+          <br />
+          <br />
           <br />
           <br />
           <div className="items-center justify-center">

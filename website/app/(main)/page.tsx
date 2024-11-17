@@ -39,9 +39,11 @@ const Page: NextPage = () => {
           </ul>
 
           <div className="mt-5">
-            <Link href={"/meetup2"} className="text-red-700">
-              in-facto meetup vol.2開催
-            </Link>
+            <div className="inline-block bg-red-600 px-2">
+              <Link href={"/meetup2"} className="text-white">
+                in-facto meetup vol.2開催
+              </Link>
+            </div>
           </div>
         </div>
       </main>
