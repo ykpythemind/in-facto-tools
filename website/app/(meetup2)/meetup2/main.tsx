@@ -108,7 +108,10 @@ export const Main = () => {
           <b>§ アンチハラスメントポリシー</b>
           <br />
           我々はすべての方々の人権と尊厳を尊重し、あらゆる形態のハラスメントを許容しません。ハラスメントを受けた場合、見かけた場合、もしくはハラスメントかどうかの判断に迷った場合は運営に
-          <a href="https://docs.google.com/forms/d/e/1FAIpQLSe7FGGsDNHsShnDhsiGV_VsTxxEncPAYZ1SR3JSK29oj4f6-Q/viewform">
+          <a
+            className="underline"
+            href="https://docs.google.com/forms/d/e/1FAIpQLSe7FGGsDNHsShnDhsiGV_VsTxxEncPAYZ1SR3JSK29oj4f6-Q/viewform"
+          >
             お問い合わせください
           </a>
           。
