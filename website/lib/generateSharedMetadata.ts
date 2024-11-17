@@ -1,8 +1,7 @@
 import { Metadata } from "next";
 import { TemplateString } from "next/dist/lib/metadata/types/metadata-types";
 
-const description =
-  "「真の楽しさを追求する」知的活動団体、in-factoの公式サイトです。";
+const description = "「真の楽しさを追求する」in-factoの公式サイトです。";
 
 export const generateSharedMetadata = ({
   title,
