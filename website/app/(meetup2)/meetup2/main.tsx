@@ -78,9 +78,9 @@ export const Main = () => {
           <iframe
             src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3242.880344949493!2d139.6869769!3d35.63067619999999!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x6018f55d0a352d8b%3A0x88cb6077dc850f1a!2z6Lev5Zyw6KOP5paH5YyW5Lya6aSoIEMvTkUgKOOCt-ODvOODjSk!5e0!3m2!1sja!2sjp!4v1731822713639!5m2!1sja!2sjp"
             style={{ border: 0 }}
-            allowfullscreen=""
+            allowFullScreen={false}
             loading="lazy"
-            referrerpolicy="no-referrer-when-downgrade"
+            referrerPolicy="no-referrer-when-downgrade"
           />
           <br />
           <br />
