@@ -1,6 +1,6 @@
 import { Redirect } from "./redirect";
 
-export const siteUrl =
+const siteUrl =
   "https://coubic.com/ifm/3262180/book/event_type/detail?express=true";
 
 const Page = () => {
