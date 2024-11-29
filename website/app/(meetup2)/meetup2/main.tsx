@@ -54,7 +54,7 @@ export const Main = () => {
           <br />
           2024年12月14日(土) 18:00〜
           <br />
-          参加費 3000円
+          参加費 2000円
           <br />
           <br />
           <div className="">
