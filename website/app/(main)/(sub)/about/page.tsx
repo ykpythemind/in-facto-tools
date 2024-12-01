@@ -44,7 +44,7 @@ const Page = () => {
 
         <div className="mt-16 pt-10 md:pt-5">
           <h3 className="text-lg font-serif mb-10">
-            § Community &quot;in-facto&quot;
+            § Team &quot;in-facto&quot;
           </h3>
 
           <Member

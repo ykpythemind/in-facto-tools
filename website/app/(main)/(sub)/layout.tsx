@@ -38,7 +38,7 @@ const Layout = ({ children }: { children: React.ReactElement }) => {
             </Link>
           </div>
         </div>
-        <div className="mt-5">{children}</div>
+        <div className="mt-7">{children}</div>
 
         <footer className="mt-10 mb-12 text-gray-600 text-sm font-serif font-light tracking-wider">
           <div className="flex">
@@ -99,7 +99,7 @@ const Navigation = (props: { isVisible: boolean }) => {
         // console.log(state);
         return (
           <div
-            className={clsx("invisible md:visible", "fixed", "py-5", "pl-5")}
+            className={clsx("invisible md:visible", "fixed", "py-7", "pl-5")}
             style={{
               ...defaultStyle,
               ...transitionStyles[state],

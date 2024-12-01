@@ -64,8 +64,8 @@ export function getAllPosts(fields: string[] = []) {
 }
 
 export function getAllVideos(fields: string[] = []) {
-  const options = { columns: true };
-  const content = fs.readFileSync(join(process.cwd(), `video.csv`)).toString();
+  const options = { columns: true, delimiter: "\t" };
+  const content = fs.readFileSync(join(process.cwd(), `video.tsv`)).toString();
   const records = csv.parse(content, options);
   const videos = records.reverse();
 
