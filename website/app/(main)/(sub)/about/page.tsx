@@ -1,24 +1,23 @@
 import Link from "next/link";
 import { PageTitle } from "../../components/PageTitle";
 import { A } from "../../components/A";
-import { contactUrl } from "../layout";
 import { Metadata } from "next";
 import { generateSharedMetadata } from "../../../../lib/generateSharedMetadata";
 
 const Page = () => {
   return (
     <div>
-      <PageTitle title={"About"} />
+      <PageTitle title={"チームについて"} />
 
       <div className="mt-5">
         <p className="align-middle">
-          「真の楽しさを追求する」制作コミュニティ、
+          「おもしろいホラーをつくる」をコンセプトに、2022年から
           <img
             src={"/in-facto-black.png"}
             alt={"in-facto"}
-            className={"w-[50px] inline align-middle -mt-1 ml-0.5 mr-0.5"}
+            className={"w-[50px] inline align-middle -mt-1.5 ml-0.5 mr-0.5"}
           />
-          から映像制作チームが発足。「自分たちのホラー」を追求するべく活動中。
+          として活動中。
         </p>
         <div className="mt-5 flex space-x-3">
           <A
@@ -35,10 +34,6 @@ const Page = () => {
             rel={"noopener noreferrer"}
           >
             X
-          </A>
-
-          <A href={contactUrl} target="_blank" rel={"noopener noreferrer"}>
-            Contact
           </A>
         </div>
 
@@ -148,7 +143,7 @@ const X = () => {
 };
 
 export const metadata: Metadata = generateSharedMetadata({
-  title: "About",
+  title: "チームについて",
 });
 
 export default Page;

@@ -10,7 +10,7 @@ function Page() {
 
   return (
     <div>
-      <PageTitle title={"Posts"} />
+      <PageTitle title={"記事"} />
 
       <div className="mt-6">
         {allPosts.map((p, i) => (
@@ -28,7 +28,7 @@ function Page() {
   );
 }
 
-export const metadata = generateSharedMetadata({ title: "Posts" });
+export const metadata = generateSharedMetadata({ title: "記事" });
 
 const PostIndex = ({
   title,

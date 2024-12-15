@@ -23,7 +23,7 @@ function Page() {
 
   return (
     <div>
-      <PageTitle title={"Videos"} />
+      <PageTitle title={"動画"} />
 
       <div className="mt-2">
         <A
@@ -57,6 +57,6 @@ function Page() {
   );
 }
 
-export const metadata = generateSharedMetadata({ title: "Videos" });
+export const metadata = generateSharedMetadata({ title: "動画" });
 
 export default Page;
