@@ -1,0 +1,62 @@
+require 'fileutils'
+require 'optparse'
+
+source_dir = nil
+
+OptionParser.new do |opts|
+  opts.banner = "Usage: flatten_directory.rb [options]"
+
+  opts.on("-s", "--source SOURCE", "Source directory to flatten") do |source|
+    source_dir = source
+  end
+end.parse!
+
+if source_dir.nil?
+  abort "Error: Source directory is required. use --source option"
+end
+
+if !Dir.exist?(source_dir)
+  abort "Error: directory #{source_dir} does not exist"
+end
+
+moves = []
+
+Dir.glob("#{source_dir}/**/*").each do |file|
+  if File.file?(file)
+    filename = File.basename(file)
+
+    destination_file = File.join(source_dir, filename)
+
+    if File.exist?(destination_file)
+      puts "ignored: #{destination_file} already exists"
+    else
+      puts "will move: #{file} -> #{destination_file}"
+      moves << [file, destination_file]
+    end
+  end
+end
+
+if moves.empty?
+  puts "No files to move."
+  exit
+end
+
+puts "Do you want to continue? (y/N)"
+answer = gets.chomp
+
+if answer.downcase == 'y'
+  moves.each do |move|
+    FileUtils.mv(move[0], move[1])
+  end
+
+  puts "Directory flattening completed."
+
+  Dir.glob("#{source_dir}/**/*").each do |file|
+    if File.directory?(file) && Dir.empty?(file)
+      Dir.rmdir(file)
+      puts "Removed empty directory: #{file}"
+    end
+  end
+else
+  puts "aborted."
+end
