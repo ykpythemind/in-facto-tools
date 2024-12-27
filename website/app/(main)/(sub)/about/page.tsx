@@ -11,7 +11,7 @@ const Page = () => {
 
       <div className="mt-5">
         <p className="align-middle">
-          「おもしろいホラーをつくる」をコンセプトに、2022年から
+          「おもしろいホラーをつくる」をコンセプトに、2022年から映像制作チーム
           <img
             src={"/in-facto-black.png"}
             alt={"in-facto"}
