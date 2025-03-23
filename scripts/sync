@@ -70,6 +70,8 @@ dest_dir = dest_dir.chomp("/") if dest_dir.end_with?("/")
 # first, dry run
 run_rsync("--dry-run", source_dir, dest_dir)
 
+puts
+puts "rsync : #{source_dir} -> #{dest_dir}"
 if ask("Do you want to continue? (y/N)")
   run_rsync(source_dir, dest_dir)
   puts "Sync completed."
