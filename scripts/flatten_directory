@@ -6,9 +6,9 @@ require 'optparse'
 source_dir = nil
 
 OptionParser.new do |opts|
-  opts.banner = "Usage: flatten_directory.rb [options]"
+  opts.banner = "Usage: flatten_directory[options]"
 
-  opts.on("-s", "--source SOURCE", "Source directory to flatten") do |source|
+  opts.on("-s", "--src SOURCE", "Source directory to flatten") do |source|
     source_dir = source
   end
 end.parse!

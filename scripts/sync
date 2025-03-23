@@ -1,0 +1,78 @@
+#!/usr/bin/env ruby
+
+require 'fileutils'
+require 'optparse'
+
+source_dir = nil
+dest_dir = nil
+
+OptionParser.new do |opts|
+  opts.banner = "Usage: sync [options]"
+
+  opts.on("-s", "--src SOURCE", "Source directory") do |source|
+    source_dir = source
+  end
+
+  opts.on("-d", "--dest DEST", "Destination directory") do |d|
+    dest_dir = d
+  end
+end.parse!
+
+run = true
+
+if source_dir.nil?
+  run = false
+  warn "Error: Source directory is required. use --src option"
+end
+
+if dest_dir.nil?
+  run = false
+  warn "Error: Destination directory is required. use --dest option"
+end
+
+if source_dir && !Dir.exist?(source_dir)
+  run = false
+  warn "Error: directory #{source_dir} does not exist"
+end
+
+args = ARGV
+if args[0] == 'push'
+  mode = :push
+elsif args[0] == 'pull'
+  mode = :pull
+else
+  run = false
+  warn "Error: Invalid argument. Use 'push' or 'pull'"
+end
+
+exit 1 unless run
+
+if mode == :pull
+  source_dir, dest_dir = dest_dir, source_dir
+end
+
+def run_rsync(*args)
+  default_options = ["-a", "-v", "--update", "--progress", "--partial",  "--human-readable", "--exclude=.DS_Store"]
+  system("rsync", *default_options, *args, exception: true)
+end
+
+def ask(question)
+  puts question
+  answer = $stdin.gets.chomp
+  answer.downcase == 'y'
+end
+
+# add trailing slash to source_dir if not present
+source_dir = source_dir + "/" unless source_dir.end_with?("/")
+# remove trailing slash from dest_dir if present
+dest_dir = dest_dir.chomp("/") if dest_dir.end_with?("/")
+
+# first, dry run
+run_rsync("--dry-run", source_dir, dest_dir)
+
+if ask("Do you want to continue? (y/N)")
+  run_rsync(source_dir, dest_dir)
+  puts "Sync completed."
+else
+  abort "aborted."
+end
