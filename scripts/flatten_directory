@@ -14,7 +14,7 @@ OptionParser.new do |opts|
 end.parse!
 
 if source_dir.nil?
-  abort "Error: Source directory is required. use --source option"
+  abort "Error: Source directory is required. use --src option"
 end
 
 if !Dir.exist?(source_dir)

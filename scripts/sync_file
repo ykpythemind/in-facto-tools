@@ -7,7 +7,7 @@ source_dir = nil
 dest_dir = nil
 
 OptionParser.new do |opts|
-  opts.banner = "Usage: sync [options]"
+  opts.banner = "Usage: sync_file [options]"
 
   opts.on("-s", "--src SOURCE", "Source directory") do |source|
     source_dir = source
