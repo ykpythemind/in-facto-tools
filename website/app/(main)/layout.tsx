@@ -52,7 +52,7 @@ const Layout = ({ children }: { children: React.ReactElement }) => {
           <li className="md:block hidden">
             <A href="./posts">記事</A>
           </li>
-          <li className="">
+          <li className="md:hidden">
             <Menu>
               <MenuButton className="data-[open]:scale-110">
                 <BiDotsVerticalRounded size={20} className="mb-[-4px] " />
@@ -61,7 +61,7 @@ const Layout = ({ children }: { children: React.ReactElement }) => {
               <MenuItems
                 transition
                 anchor="bottom end"
-                className="flex flex-col gap-2 p-4 bg-slate-200 mt-2 rounded-sm"
+                className="flex flex-col gap-2 p-4 bg-zinc-200 mt-2 rounded-sm"
               >
                 <MenuItem>
                   <Link
@@ -74,7 +74,7 @@ const Layout = ({ children }: { children: React.ReactElement }) => {
                 <MenuItem>
                   <Link
                     href="./videos"
-                    className="underline hover:text-blue-400 block md:hidden"
+                    className="underline hover:text-blue-400 block"
                   >
                     動画
                   </Link>
@@ -82,7 +82,7 @@ const Layout = ({ children }: { children: React.ReactElement }) => {
                 <MenuItem>
                   <Link
                     href="./posts"
-                    className="underline hover:text-blue-400 block md:hidden"
+                    className="underline hover:text-blue-400 block"
                   >
                     記事
                   </Link>

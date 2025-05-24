@@ -7,13 +7,16 @@ export const Component = () => {
     <>
       <div>
         <div className="iframeOuter">
-          <YouTube videoId={"xk2cEUaeQIQ"} opts={{}} />
+          <YouTube videoId={"OrgGOeS5yBk"} opts={{}} />
         </div>
       </div>
       <div className="mt-2">
-        2024/12/29更新
+        2025/5/24更新
         <br />
-        関連する記事： <A href="/posts/collector">体の藤本、再び</A>
+        関連する記事：{" "}
+        <A href="/posts/mindcrasher">
+          おもしろいホラーとおもしろくないバラエティ
+        </A>
         <h2 className="mt-6 font-bold mb-2">コンテンツ</h2>
         <ul className="list-disc ml-6">
           <li>
