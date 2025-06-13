@@ -116,10 +116,6 @@
                 <i class="fas fa-skull"></i>
                 <span id="score" class="ml-2">0</span>
             </div>
-            <div class="text-yellow-400 text-xl">
-                <i class="fas fa-bolt"></i>
-                <span id="ammo" class="ml-2">10</span>/10
-            </div>
         </div>
         <div class="flex items-center space-x-4">
             <div class="text-green-400 text-xl">
@@ -138,19 +134,9 @@
             <div class="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-8 h-8 border-2 border-red-500 rounded-full"></div>
             <div class="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-2 h-2 bg-red-500 rounded-full"></div>
         </div>
-
-        <div class="absolute bottom-4 left-1/2 transform -translate-x-1/2 flex space-x-8 z-50">
-            <button id="reloadBtn" class="bg-gray-800 hover:bg-gray-700 text-white px-6 py-3 rounded-lg text-lg flex items-center">
-                <i class="fas fa-redo mr-2"></i> Reload
-            </button>
-            <button id="startBtn" class="bg-red-700 hover:bg-red-600 text-white px-8 py-3 rounded-lg text-lg flex items-center">
-                <i class="fas fa-play mr-2"></i> Start Game
-            </button>
-        </div>
     </div>
 
     <audio id="gunshot" src="https://assets.mixkit.co/sfx/preview/mixkit-short-gun-shot-1670.mp3" preload="auto"></audio>
-    <audio id="reloadSound" src="https://assets.mixkit.co/sfx/preview/mixkit-gun-reload-2291.mp3" preload="auto"></audio>
     <audio id="scream1" src="https://assets.mixkit.co/sfx/preview/mixkit-horror-scream-2838.mp3" preload="auto"></audio>
     <audio id="scream2" src="https://assets.mixkit.co/sfx/preview/mixkit-female-horror-scream-1938.mp3" preload="auto"></audio>
     <audio id="scream3" src="https://assets.mixkit.co/sfx/preview/mixkit-creature-scream-2208.mp3" preload="auto"></audio>
@@ -159,8 +145,6 @@
     <script>
         // Game variables
         let score = 0;
-        let ammo = 10;
-        let maxAmmo = 10;
         let health = 100;
         let timeLeft = 60;
         let gameActive = false;
@@ -174,25 +158,18 @@
         // DOM elements
         const gameContainer = document.getElementById('gameContainer');
         const scoreElement = document.getElementById('score');
-        const ammoElement = document.getElementById('ammo');
         const healthElement = document.getElementById('health');
         const timeElement = document.getElementById('time');
-        const startBtn = document.getElementById('startBtn');
-        const reloadBtn = document.getElementById('reloadBtn');
         const gunSight = document.getElementById('gunSight');
         const flash = document.getElementById('flash');
         const touchCounter = document.getElementById('touchCounter');
 
         // Audio elements
         const gunshot = document.getElementById('gunshot');
-        const reloadSound = document.getElementById('reloadSound');
         const ambientSound = document.getElementById('ambient');
 
-        // Start game
-        startBtn.addEventListener('click', startGame);
-
-        // Reload gun
-        reloadBtn.addEventListener('click', reloadGun);
+        // Start game automatically when page loads
+        window.onload = startGame;
 
         // Mouse movement for gun sight
         document.addEventListener('mousemove', (e) => {
@@ -232,20 +209,17 @@
 
             // Reset game state
             score = 0;
-            ammo = maxAmmo;
             health = 100;
             timeLeft = 60;
             gameActive = true;
 
             // Update UI
             scoreElement.textContent = score;
-            ammoElement.textContent = `${ammo}/${maxAmmo}`;
             healthElement.textContent = health;
             timeElement.textContent = timeLeft;
 
             // Start game loop
             ambientSound.play();
-            startBtn.disabled = true;
 
             // Spawn targets
             targetInterval = setInterval(spawnTarget, 1500);
@@ -275,7 +249,6 @@
             clearInterval(timeInterval);
             ambientSound.pause();
             ambientSound.currentTime = 0;
-            startBtn.disabled = false;
 
             // Remove all targets
             document.querySelectorAll('.target').forEach(target => target.remove());
@@ -375,7 +348,7 @@
         }
 
         function shoot(e) {
-            if (!gameActive || ammo <= 0) return;
+            if (!gameActive) return;
 
             // Play gunshot sound
             gunshot.currentTime = 0;
@@ -387,10 +360,6 @@
             setTimeout(() => {
                 flash.style.opacity = 0;
             }, 50 + (touchCount * 20));
-
-            // Reduce ammo
-            ammo--;
-            ammoElement.textContent = `${ammo}/${maxAmmo}`;
 
             // Get click position
             let x, y;
@@ -449,26 +418,6 @@
                 const multiTouchBonus = touchCount * 20;
                 createBloodSplatter(x, y, baseSize + multiTouchBonus);
             }
-
-            // Check if out of ammo
-            if (ammo <= 0) {
-                setTimeout(() => {
-                    if (ammo <= 0) {
-                        reloadBtn.classList.add('animate-pulse');
-                    }
-                }, 500);
-            }
-        }
-
-        function reloadGun() {
-            if (!gameActive || ammo === maxAmmo) return;
-
-            reloadBtn.classList.remove('animate-pulse');
-            reloadSound.currentTime = 0;
-            reloadSound.play();
-
-            ammo = maxAmmo;
-            ammoElement.textContent = `${ammo}/${maxAmmo}`;
         }
 
         function createBloodSplatter(x, y, size) {
