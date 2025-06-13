@@ -2,8 +2,8 @@
   "name": "Nightmare Shooter",
   "short_name": "NightmareShooter",
   "description": "A horror-themed shooting game",
-  "start_url": "./index.html",
-  "display": "fullscreen",
+  "start_url": "/",
+  "display": "standalone",
   "background_color": "#000000",
   "theme_color": "#8B0000",
   "orientation": "any",
@@ -12,13 +12,25 @@
       "src": "icon-192.png",
       "sizes": "192x192",
       "type": "image/png",
-      "purpose": "any maskable"
+      "purpose": "any"
+    },
+    {
+      "src": "icon-192.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "maskable"
     },
     {
       "src": "icon-512.png",
       "sizes": "512x512",
       "type": "image/png",
-      "purpose": "any maskable"
+      "purpose": "any"
+    },
+    {
+      "src": "icon-512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "maskable"
     }
   ],
   "categories": ["games", "entertainment"],
