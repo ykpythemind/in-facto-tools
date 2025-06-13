@@ -310,7 +310,7 @@
             // Add target to DOM
             gameContainer.appendChild(target);
 
-            // Animate target movement
+            // Animate target movement - reduced frequency for better performance
             let directionX = Math.random() > 0.5 ? 1 : -1;
             let directionY = Math.random() > 0.5 ? 1 : -1;
 
@@ -333,7 +333,7 @@
 
                 target.style.left = `${currentX + (speed * directionX)}px`;
                 target.style.top = `${currentY + (speed * directionY)}px`;
-            }, 20);
+            }, 33); // 30fps instead of 50fps
 
             // Store target data
             targets.push({
@@ -370,12 +370,14 @@
             gunshot.currentTime = 0;
             gunshot.play();
 
-            // Screen flash - intensity based on touch count
-            const flashIntensity = Math.min(0.3 + (touchCount * 0.2), 0.9);
+                        // Screen flash - reduced intensity for better performance
+            const flashIntensity = Math.min(0.15 + (touchCount * 0.05), 0.4);
+            const flashDuration = 25;
+
             flash.style.opacity = flashIntensity;
             setTimeout(() => {
                 flash.style.opacity = 0;
-            }, 50 + (touchCount * 20));
+            }, flashDuration);
 
             // Get click position
             let x, y;
@@ -456,13 +458,13 @@
 
             gameContainer.appendChild(splatter);
 
-            // Fade out blood splatter
+            // Fade out blood splatter - faster cleanup for performance
             setTimeout(() => {
                 splatter.style.opacity = '0';
                 setTimeout(() => {
                     splatter.remove();
-                }, 1000);
-            }, 3000);
+                }, 500);
+            }, 2000);
         }
     </script>
 </body>
