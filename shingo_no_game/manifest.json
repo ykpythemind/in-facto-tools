@@ -2,7 +2,7 @@
   "name": "Nightmare Shooter",
   "short_name": "NightmareShooter",
   "description": "A horror-themed shooting game",
-  "start_url": "/",
+  "start_url": "https://ykpythemind.github.io/in-facto-tools/shingo_no_game/",
   "display": "standalone",
   "background_color": "#000000",
   "theme_color": "#8B0000",
