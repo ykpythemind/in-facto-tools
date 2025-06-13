@@ -133,6 +133,9 @@
     </div>
 
     <div class="game-container relative w-full h-screen bg-black overflow-hidden" id="gameContainer">
+        <!-- Canvas for blood splatters -->
+        <canvas id="bloodCanvas" class="absolute top-0 left-0 w-full h-full pointer-events-none" style="z-index: 5;"></canvas>
+
         <div class="gun-sight" id="gunSight">
             <div class="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-8 h-8 border-2 border-red-500 rounded-full"></div>
             <div class="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-2 h-2 bg-red-500 rounded-full"></div>
@@ -159,6 +162,7 @@
         let targetInterval;
         let timeInterval;
         let targets = [];
+        let bloodSplatters = [];
         const screams = ['scream1', 'scream2', 'scream3', 'scream4'];
 
         // DOM elements
@@ -168,6 +172,8 @@
         const timeElement = document.getElementById('time');
         const gunSight = document.getElementById('gunSight');
         const touchCounter = document.getElementById('touchCounter');
+        const bloodCanvas = document.getElementById('bloodCanvas');
+        const bloodCtx = bloodCanvas.getContext('2d');
 
         // Audio elements
         const gunshot = document.getElementById('gunshot');
@@ -187,8 +193,23 @@
             });
         }
 
-        // Start game automatically when page loads
-        window.onload = startGame;
+        // Initialize canvas and start game
+        window.onload = () => {
+            // Set canvas size
+            bloodCanvas.width = window.innerWidth;
+            bloodCanvas.height = window.innerHeight;
+
+            // Handle window resize
+            window.addEventListener('resize', () => {
+                bloodCanvas.width = window.innerWidth;
+                bloodCanvas.height = window.innerHeight;
+            });
+
+            // Start blood animation loop
+            animateBlood();
+
+            startGame();
+        };
 
         // Mouse movement for gun sight
         document.addEventListener('mousemove', (e) => {
@@ -281,10 +302,11 @@
             ambientSound.pause();
             ambientSound.currentTime = 0;
 
-            // Remove all targets
+            // Remove all targets and clear blood
             document.querySelectorAll('.target').forEach(target => target.remove());
-            document.querySelectorAll('.blood-splatter').forEach(splatter => splatter.remove());
             targets = [];
+            bloodSplatters = [];
+            bloodCtx.clearRect(0, 0, bloodCanvas.width, bloodCanvas.height);
 
             // Show game over message
             const gameOver = document.createElement('div');
@@ -460,32 +482,138 @@
         }
 
         function createBloodSplatter(x, y, size) {
-            const splatter = document.createElement('div');
-            splatter.className = 'blood-splatter';
+            // Create blood splatter object for canvas rendering
+            const splatter = {
+                x: x,
+                y: y,
+                size: size,
+                opacity: 0.8,
+                rotation: Math.random() * 360,
+                scale: Math.random() * 0.5 + 0.5,
+                type: Math.floor(Math.random() * 3), // 3 different splatter types
+                createdAt: Date.now(),
+                lifetime: 3000 // 3 seconds
+            };
 
-            // Random blood splatter shape
-            const splatters = [
-                'radial-gradient(circle, transparent 20%, rgba(150, 0, 0, 0.8) 20%, rgba(150, 0, 0, 0.8) 35%, transparent 35%)',
-                'radial-gradient(circle, transparent 10%, rgba(150, 0, 0, 0.7) 10%, rgba(150, 0, 0, 0.7) 20%, transparent 20%)',
-                'radial-gradient(ellipse, transparent 15%, rgba(150, 0, 0, 0.6) 15%, rgba(150, 0, 0, 0.6) 30%, transparent 30%)'
-            ];
+            bloodSplatters.push(splatter);
+        }
 
-            splatter.style.left = `${x - size/2}px`;
-            splatter.style.top = `${y - size/2}px`;
-            splatter.style.width = `${size}px`;
-            splatter.style.height = `${size}px`;
-            splatter.style.backgroundImage = splatters[Math.floor(Math.random() * splatters.length)];
-            splatter.style.transform = `rotate(${Math.random() * 360}deg) scale(${Math.random() * 0.5 + 0.5})`;
+        function animateBlood() {
+            // Clear canvas
+            bloodCtx.clearRect(0, 0, bloodCanvas.width, bloodCanvas.height);
 
-            gameContainer.appendChild(splatter);
+            const currentTime = Date.now();
 
-            // Fade out blood splatter - faster cleanup for performance
-            setTimeout(() => {
-                splatter.style.opacity = '0';
-                setTimeout(() => {
-                    splatter.remove();
-                }, 500);
-            }, 2000);
+            // Update and draw blood splatters
+            bloodSplatters = bloodSplatters.filter(splatter => {
+                const age = currentTime - splatter.createdAt;
+
+                if (age > splatter.lifetime) {
+                    return false; // Remove expired splatters
+                }
+
+                // Calculate fade out
+                const fadeStart = splatter.lifetime * 0.6; // Start fading at 60% of lifetime
+                if (age > fadeStart) {
+                    splatter.opacity = 0.8 * (1 - (age - fadeStart) / (splatter.lifetime - fadeStart));
+                }
+
+                // Draw splatter
+                drawBloodSplatter(splatter);
+
+                return true;
+            });
+
+            // Continue animation loop
+            requestAnimationFrame(animateBlood);
+        }
+
+        function drawBloodSplatter(splatter) {
+            bloodCtx.save();
+
+            // Move to splatter position
+            bloodCtx.translate(splatter.x, splatter.y);
+            bloodCtx.rotate(splatter.rotation * Math.PI / 180);
+            bloodCtx.scale(splatter.scale, splatter.scale);
+
+            // Set opacity
+            bloodCtx.globalAlpha = splatter.opacity;
+
+            // Draw different splatter types
+            const halfSize = splatter.size / 2;
+
+            switch(splatter.type) {
+                case 0: // Circular splatter
+                    drawCircularSplatter(halfSize);
+                    break;
+                case 1: // Star-like splatter
+                    drawStarSplatter(halfSize);
+                    break;
+                case 2: // Irregular splatter
+                    drawIrregularSplatter(halfSize);
+                    break;
+            }
+
+            bloodCtx.restore();
+        }
+
+        function drawCircularSplatter(radius) {
+            const gradient = bloodCtx.createRadialGradient(0, 0, radius * 0.2, 0, 0, radius);
+            gradient.addColorStop(0, 'rgba(150, 0, 0, 0.9)');
+            gradient.addColorStop(0.7, 'rgba(150, 0, 0, 0.6)');
+            gradient.addColorStop(1, 'rgba(150, 0, 0, 0)');
+
+            bloodCtx.fillStyle = gradient;
+            bloodCtx.beginPath();
+            bloodCtx.arc(0, 0, radius, 0, Math.PI * 2);
+            bloodCtx.fill();
+        }
+
+        function drawStarSplatter(radius) {
+            bloodCtx.fillStyle = 'rgba(150, 0, 0, 0.7)';
+            bloodCtx.beginPath();
+
+            const spikes = 8;
+            const outerRadius = radius;
+            const innerRadius = radius * 0.4;
+
+            for (let i = 0; i < spikes * 2; i++) {
+                const angle = (i * Math.PI) / spikes;
+                const r = i % 2 === 0 ? outerRadius : innerRadius;
+                const x = Math.cos(angle) * r;
+                const y = Math.sin(angle) * r;
+
+                if (i === 0) {
+                    bloodCtx.moveTo(x, y);
+                } else {
+                    bloodCtx.lineTo(x, y);
+                }
+            }
+
+            bloodCtx.closePath();
+            bloodCtx.fill();
+        }
+
+        function drawIrregularSplatter(radius) {
+            bloodCtx.fillStyle = 'rgba(150, 0, 0, 0.6)';
+            bloodCtx.beginPath();
+
+            const points = 12;
+            for (let i = 0; i < points; i++) {
+                const angle = (i * Math.PI * 2) / points;
+                const r = radius * (0.5 + Math.random() * 0.5);
+                const x = Math.cos(angle) * r;
+                const y = Math.sin(angle) * r;
+
+                if (i === 0) {
+                    bloodCtx.moveTo(x, y);
+                } else {
+                    bloodCtx.lineTo(x, y);
+                }
+            }
+
+            bloodCtx.closePath();
+            bloodCtx.fill();
         }
     </script>
 </body>
