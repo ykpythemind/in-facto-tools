@@ -140,7 +140,9 @@
     <audio id="scream1" src="./audio/ghost1.m4a" preload="auto"></audio>
     <audio id="scream2" src="./audio/Up.m4a" preload="auto"></audio>
     <audio id="scream3" src="./audio/ghost2.m4a" preload="auto"></audio>
-    <audio id="ambient" src="https://assets.mixkit.co/sfx/preview/mixkit-horror-ambience-2668.mp3" loop preload="auto"></audio>
+    <audio id="scream4" src="./audio/scream.m4a" preload="auto"></audio>
+    <audio id="gamedown" src="./audio/gamedown.m4a" preload="auto"></audio>
+    <audio id="ambient" src="" loop preload="auto"></audio>
     <audio id="up" src="./audio/Up.m4a" preload="auto"></audio>
 
     <script>
@@ -154,7 +156,7 @@
         let targetInterval;
         let timeInterval;
         let targets = [];
-        const screams = ['scream1', 'scream2', 'scream3'];
+        const screams = ['scream1', 'scream2', 'scream3', 'scream4'];
 
         // DOM elements
         const gameContainer = document.getElementById('gameContainer');
@@ -168,6 +170,7 @@
         // Audio elements
         const gunshot = document.getElementById('gunshot');
         const ambientSound = document.getElementById('ambient');
+        const gamedownSound = document.getElementById('gamedown');
 
         // Start game automatically when page loads
         window.onload = startGame;
@@ -242,6 +245,18 @@
                     targetInterval = setInterval(spawnTarget, 500);
                 }
             }, 20000);
+
+            // Play gamedown sound randomly
+            const playRandomGamedown = () => {
+                if (gameActive && Math.random() < 0.3) { // 30% chance
+                    gamedownSound.currentTime = 0;
+                    gamedownSound.play();
+                }
+                if (gameActive) {
+                    setTimeout(playRandomGamedown, Math.random() * 10000 + 5000); // 5-15秒間隔
+                }
+            };
+            setTimeout(playRandomGamedown, Math.random() * 5000 + 3000); // 3-8秒後に開始
         }
 
         function endGame() {
