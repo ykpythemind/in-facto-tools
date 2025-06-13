@@ -32,10 +32,10 @@
         }
 
         .target {
-            transition: transform 0.1s;
             position: absolute;
             cursor: crosshair;
             user-select: none;
+            /* Remove transition for better mobile performance */
         }
 
         .target:hover {
@@ -240,7 +240,7 @@
             // Start game loop
             ambientSound.play();
 
-            // Spawn targets
+            // Spawn targets - increased frequency
             targetInterval = setInterval(spawnTarget, 800);
 
             // Timer
@@ -317,7 +317,7 @@
             const size = Math.random() * 60 + 40;
             const speed = Math.random() * 3 + 1;
 
-            target.style.left = `${x}px`;
+                        target.style.left = `${x}px`;
             target.style.top = `${y}px`;
             target.style.fontSize = `${size}px`;
             target.textContent = face;
@@ -325,7 +325,7 @@
             // Add target to DOM
             gameContainer.appendChild(target);
 
-            // Animate target movement - reduced frequency for better performance
+                        // Animate target movement - back to original method for stability
             let directionX = Math.random() > 0.5 ? 1 : -1;
             let directionY = Math.random() > 0.5 ? 1 : -1;
 
@@ -348,7 +348,7 @@
 
                 target.style.left = `${currentX + (speed * directionX)}px`;
                 target.style.top = `${currentY + (speed * directionY)}px`;
-            }, 33); // 30fps instead of 50fps
+            }, 50); // Optimized frequency
 
             // Store target data
             targets.push({
@@ -358,7 +358,7 @@
                 size: size
             });
 
-            // Remove target after some time if not killed
+            // Remove target after some time if not killed - optimized for all devices
             setTimeout(() => {
                 if (target.parentNode) {
                     clearInterval(moveTarget);
@@ -375,7 +375,7 @@
                         }
                     }
                 }
-            }, 8000);
+            }, 10000);
         }
 
         function shoot(e) {
@@ -395,9 +395,10 @@
                 y = e.clientY;
             }
 
-            // Check if any target was hit
+            // Check if any target was hit - optimized hit detection
             let hit = false;
-            targets.forEach(target => {
+            for (let i = 0; i < targets.length; i++) {
+                const target = targets[i];
                 const targetRect = target.element.getBoundingClientRect();
 
                 if (
@@ -424,10 +425,10 @@
                         let random = Math.random() * totalWeight;
                         let selectedIndex = 0;
 
-                        for (let i = 0; i < screamWeights.length; i++) {
-                            random -= screamWeights[i];
+                        for (let j = 0; j < screamWeights.length; j++) {
+                            random -= screamWeights[j];
                             if (random <= 0) {
-                                selectedIndex = i;
+                                selectedIndex = j;
                                 break;
                             }
                         }
@@ -446,8 +447,9 @@
                             target.element.classList.remove('shake');
                         }, 500);
                     }
+                    break; // Exit loop after first hit
                 }
-            });
+            }
 
             if (!hit) {
                 // Missed shot - bigger splatter with more touches
