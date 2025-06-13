@@ -59,18 +59,7 @@
             100% { background-position: 0 10px; }
         }
 
-        .flash {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background-color: rgba(255, 255, 255, 0.7);
-            pointer-events: none;
-            opacity: 0;
-            z-index: 20;
-            transition: opacity 0.1s;
-        }
+
 
         .touch-counter {
             position: fixed;
@@ -107,7 +96,6 @@
 </head>
 <body class="text-white select-none">
     <div class="blood-drip"></div>
-    <div class="flash" id="flash"></div>
     <div class="touch-counter" id="touchCounter">0</div>
 
     <div class="fixed top-0 left-0 w-full bg-black bg-opacity-70 z-50 p-4 flex justify-between items-center">
@@ -164,7 +152,6 @@
         const healthElement = document.getElementById('health');
         const timeElement = document.getElementById('time');
         const gunSight = document.getElementById('gunSight');
-        const flash = document.getElementById('flash');
         const touchCounter = document.getElementById('touchCounter');
 
         // Audio elements
@@ -366,18 +353,9 @@
         function shoot(e) {
             if (!gameActive) return;
 
-            // Play gunshot sound
+                        // Play gunshot sound
             gunshot.currentTime = 0;
             gunshot.play();
-
-                        // Screen flash - reduced intensity for better performance
-            const flashIntensity = Math.min(0.15 + (touchCount * 0.05), 0.4);
-            const flashDuration = 25;
-
-            flash.style.opacity = flashIntensity;
-            setTimeout(() => {
-                flash.style.opacity = 0;
-            }, flashDuration);
 
             // Get click position
             let x, y;
