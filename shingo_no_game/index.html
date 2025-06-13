@@ -222,7 +222,7 @@
             ambientSound.play();
 
             // Spawn targets
-            targetInterval = setInterval(spawnTarget, 1500);
+            targetInterval = setInterval(spawnTarget, 800);
 
             // Timer
             timeInterval = setInterval(() => {
@@ -238,9 +238,9 @@
             setTimeout(() => {
                 if (gameActive) {
                     clearInterval(targetInterval);
-                    targetInterval = setInterval(spawnTarget, 1000);
+                    targetInterval = setInterval(spawnTarget, 500);
                 }
-            }, 30000);
+            }, 20000);
         }
 
         function endGame() {
