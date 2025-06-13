@@ -390,8 +390,21 @@
                         target.element.remove();
                         targets = targets.filter(t => t !== target);
 
-                        // Play random scream
-                        const scream = document.getElementById(screams[Math.floor(Math.random() * screams.length)]);
+                        // Play random scream with weighted selection (scream4 less frequent)
+                        const screamWeights = [1, 1, 1, 0.3]; // scream4 has 30% weight
+                        const totalWeight = screamWeights.reduce((sum, weight) => sum + weight, 0);
+                        let random = Math.random() * totalWeight;
+                        let selectedIndex = 0;
+
+                        for (let i = 0; i < screamWeights.length; i++) {
+                            random -= screamWeights[i];
+                            if (random <= 0) {
+                                selectedIndex = i;
+                                break;
+                            }
+                        }
+
+                        const scream = document.getElementById(screams[selectedIndex]);
                         scream.currentTime = 0;
                         scream.play();
 
