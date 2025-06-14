@@ -234,11 +234,11 @@
             }
         });
 
-        // Click/touch to shoot
-        document.addEventListener('click', shoot);
+        // Click/touch to shoot (for missed shots only)
+        document.addEventListener('click', shootMiss);
         document.addEventListener('touchstart', (e) => {
             touchCount = e.touches.length;
-            shoot(e);
+            shootMiss(e);
         });
         document.addEventListener('touchend', () => {
             touchCount = 0;
@@ -344,6 +344,17 @@
             target.style.fontSize = `${size}px`;
             target.textContent = face;
 
+            // Add click/touch event listeners to target for hit detection
+            target.addEventListener('click', (e) => {
+                e.stopPropagation(); // Prevent document click
+                shootHit(e, target);
+            });
+
+            target.addEventListener('touchstart', (e) => {
+                e.stopPropagation(); // Prevent document touch
+                shootHit(e, target);
+            });
+
             // Add target to DOM
             gameContainer.appendChild(target);
 
@@ -400,10 +411,11 @@
             }, 10000);
         }
 
-        function shoot(e) {
+        // Handle target hit (called by target's event listener)
+        function shootHit(e, targetElement) {
             if (!gameActive) return;
 
-                        // Play gunshot sound
+            // Play gunshot sound
             gunshot.currentTime = 0;
             gunshot.play();
 
@@ -417,68 +429,67 @@
                 y = e.clientY;
             }
 
-            // Check if any target was hit - optimized hit detection
-            let hit = false;
-            for (let i = 0; i < targets.length; i++) {
-                const target = targets[i];
-                const targetRect = target.element.getBoundingClientRect();
+            // Find target data
+            const targetData = targets.find(t => t.element === targetElement);
+            if (!targetData) return;
 
-                if (
-                    x >= targetRect.left &&
-                    x <= targetRect.right &&
-                    y >= targetRect.top &&
-                    y <= targetRect.bottom
-                ) {
-                    hit = true;
-                    target.health--;
+            targetData.health--;
 
-                    // Create blood splatter
-                    createBloodSplatter(x, y, target.size);
+            // Create blood splatter
+            createBloodSplatter(x, y, targetData.size);
 
-                    if (target.health <= 0) {
-                        // Target killed
-                        clearInterval(target.moveInterval);
-                        target.element.remove();
-                        targets = targets.filter(t => t !== target);
+            if (targetData.health <= 0) {
+                // Target killed
+                clearInterval(targetData.moveInterval);
+                targetData.element.remove();
+                targets = targets.filter(t => t !== targetData);
 
-                        // Play random scream with weighted selection (scream4 less frequent)
-                        const screamWeights = [1, 1, 1, 0.3]; // scream4 has 30% weight
-                        const totalWeight = screamWeights.reduce((sum, weight) => sum + weight, 0);
-                        let random = Math.random() * totalWeight;
-                        let selectedIndex = 0;
+                // Play random scream with weighted selection (scream4 less frequent)
+                const screamWeights = [1, 1, 1, 0.3]; // scream4 has 30% weight
+                const totalWeight = screamWeights.reduce((sum, weight) => sum + weight, 0);
+                let random = Math.random() * totalWeight;
+                let selectedIndex = 0;
 
-                        for (let j = 0; j < screamWeights.length; j++) {
-                            random -= screamWeights[j];
-                            if (random <= 0) {
-                                selectedIndex = j;
-                                break;
-                            }
-                        }
-
-                        const scream = document.getElementById(screams[selectedIndex]);
-                        scream.currentTime = 0;
-                        scream.play();
-
-                        // Add score
-                        score += 10;
-                        scoreElement.textContent = score;
-                    } else {
-                        // Target hit but not killed
-                        // target.element.classList.add('shake');
-                        // setTimeout(() => {
-                        //     target.element.classList.remove('shake');
-                        // }, 500);
+                for (let j = 0; j < screamWeights.length; j++) {
+                    random -= screamWeights[j];
+                    if (random <= 0) {
+                        selectedIndex = j;
+                        break;
                     }
-                    break; // Exit loop after first hit
                 }
+
+                const scream = document.getElementById(screams[selectedIndex]);
+                scream.currentTime = 0;
+                scream.play();
+
+                // Add score
+                score += 10;
+                scoreElement.textContent = score;
+            }
+        }
+
+        // Handle missed shots (called by document event listener)
+        function shootMiss(e) {
+            if (!gameActive) return;
+
+            // Play gunshot sound
+            gunshot.currentTime = 0;
+            gunshot.play();
+
+            // Get click position
+            let x, y;
+            if (e.type === 'touchstart') {
+                x = e.touches[0].clientX;
+                y = e.touches[0].clientY;
+            } else {
+                x = e.clientX;
+                y = e.clientY;
             }
 
-            if (!hit) {
-                // Missed shot - bigger splatter with more touches
-                const baseSize = 30;
-                const multiTouchBonus = touchCount * 20;
-                createBloodSplatter(x, y, baseSize + multiTouchBonus);
-            }
+            // Create missed shot blood splatter
+            const baseSize = 30;
+            const multiTouchBonus = touchCount * 20;
+            createBloodSplatter(x, y, baseSize + multiTouchBonus);
         }
 
         function createBloodSplatter(x, y, size) {
