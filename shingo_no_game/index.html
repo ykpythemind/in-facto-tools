@@ -150,6 +150,7 @@
     <audio id="gamedown" src="./audio/gamedown.m4a" preload="auto"></audio>
     <audio id="ambient" src="" loop preload="auto"></audio>
     <audio id="up" src="./audio/Up.m4a" preload="auto"></audio>
+    <audio id="bgm" src="./audio/oyasumi_game_song.mp3" loop preload="auto"></audio>
 
     <script>
         // Game variables
@@ -179,6 +180,7 @@
         const gunshot = document.getElementById('gunshot');
         const ambientSound = document.getElementById('ambient');
         const gamedownSound = document.getElementById('gamedown');
+        const bgm = document.getElementById('bgm');
 
         // Register service worker for PWA
         if ('serviceWorker' in navigator) {
@@ -261,6 +263,10 @@
             // Start game loop
             ambientSound.play();
 
+            bgm.volume = 0.8;
+            bgm.currentTime = 0;
+            bgm.play();
+
             // Spawn targets - increased frequency
             targetInterval = setInterval(spawnTarget, 800);
 
@@ -301,6 +307,10 @@
             clearInterval(timeInterval);
             ambientSound.pause();
             ambientSound.currentTime = 0;
+
+            // BGM停止
+            bgm.pause();
+            bgm.currentTime = 0;
 
             // Remove all targets and clear blood
             document.querySelectorAll('.target').forEach(target => target.remove());
