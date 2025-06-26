@@ -9,6 +9,7 @@ const urlsToCache = [
   "./audio/ghost2.m4a",
   "./audio/scream.m4a",
   "./audio/gamedown.m4a",
+  "./audio/oyasumi_game_song.mp3",
   "https://cdn.tailwindcss.com",
   "https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css",
   "https://fonts.googleapis.com/css2?family=Creepster&display=swap",
