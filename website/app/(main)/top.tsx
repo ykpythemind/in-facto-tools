@@ -2,21 +2,26 @@
 import YouTube from "react-youtube";
 import { A } from "./components/A";
 
-export const Component = () => {
+export const Component = ({
+  date,
+  posttitle,
+  path,
+  videoId,
+}: {
+  videoId: string;
+  date: string;
+  posttitle: string;
+  path: string;
+}) => {
   return (
     <>
       <div>
         <div className="iframeOuter">
-          <YouTube videoId={"OrgGOeS5yBk"} opts={{}} />
+          <YouTube videoId={videoId} opts={{}} />
         </div>
       </div>
       <div className="mt-2">
-        2025/5/24更新
-        <br />
-        関連する記事：{" "}
-        <A href="/posts/mindcrasher">
-          おもしろいホラーとおもしろくないバラエティ
-        </A>
+        {date} <A href={`/posts/${path}`}>{posttitle}</A>
         <h2 className="mt-6 font-bold mb-2">コンテンツ</h2>
         <ul className="list-disc ml-6">
           <li>
