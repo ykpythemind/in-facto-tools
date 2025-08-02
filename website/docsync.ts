@@ -67,6 +67,8 @@ async function fetchDoc(auth: A, documentID: string) {
   res.data.body?.content?.forEach((content) => {
     content.paragraph?.elements?.forEach((element) => {
       if (element.inlineObjectElement?.inlineObjectId) {
+        // console.debug(element);
+
         return; // ignore inline object (like image)
       }
 
