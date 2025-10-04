@@ -2,8 +2,7 @@ import fs from "fs/promises";
 import path from "path";
 import process from "process";
 import { authenticate } from "@google-cloud/local-auth";
-import { google } from "googleapis";
-import type { OAuth2Client } from "google-auth-library";
+import { docs_v1, google } from "googleapis";
 
 const SCOPES = [
   "https://www.googleapis.com/auth/documents.readonly",
@@ -26,7 +25,9 @@ async function loadSavedCredentialsIfExist() {
   }
 }
 
-async function saveCredentials(client: OAuth2Client) {
+async function saveCredentials(
+  client: Awaited<ReturnType<typeof authenticate>>
+) {
   const content = await fs.readFile(CREDENTIALS_PATH, { encoding: "utf-8" });
   const keys = JSON.parse(content);
   const key = keys.installed || keys.web;
@@ -39,26 +40,22 @@ async function saveCredentials(client: OAuth2Client) {
   await fs.writeFile(TOKEN_PATH, payload);
 }
 
-async function authorize(): Promise<A> {
-  let client: A | null = await loadSavedCredentialsIfExist();
+async function authorize() {
+  let client = await loadSavedCredentialsIfExist();
   if (client) {
     return client;
   }
-  client = await authenticate({
+  const oauth2Client = await authenticate({
     scopes: SCOPES,
     keyfilePath: CREDENTIALS_PATH,
   });
-  if (client.credentials) {
-    await saveCredentials(client);
+  if (oauth2Client.credentials) {
+    await saveCredentials(oauth2Client);
   }
-  return client;
+  return oauth2Client;
 }
 
-type A = Parameters<typeof google.docs>[0]["auth"];
-
-async function fetchDoc(auth: A, documentID: string) {
-  const docs = google.docs({ version: "v1", auth });
-
+async function fetchDoc(docs: docs_v1.Docs, documentID: string) {
   const res = await docs.documents.get({
     documentId: documentID,
   });
@@ -138,9 +135,13 @@ async function fetchDoc(auth: A, documentID: string) {
   return buf;
 }
 
-async function saveDoc(auth: A, filename: string, documentID: string) {
+async function saveDoc(
+  doc: docs_v1.Docs,
+  filename: string,
+  documentID: string
+) {
   console.log(`processing... ${filename}(${documentID})`);
-  const r = await fetchDoc(auth, documentID);
+  const r = await fetchDoc(doc, documentID);
   fs.writeFile(path.join(process.cwd(), "_posts", filename), r);
   const dirname = filename.replace(/\.md$/, "");
   await fs.mkdir(path.join(process.cwd(), "public", "post_assets", dirname), {
@@ -175,9 +176,10 @@ authorize()
           continue;
         }
       }
-      const r = await saveDoc(auth, filename, docId);
+      // @ts-expect-error
+      const docs = google.docs({ version: "v1", auth });
+      await saveDoc(docs, filename, docId);
       processOne = true;
-      // console.log(r);
     }
   })
   .catch(console.error);

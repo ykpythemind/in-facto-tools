@@ -8,7 +8,7 @@
     "start": "next start",
     "lint": "next lint",
     "typecheck": "tsc --noEmit",
-    "preinstall": "typesync || :",
+    "docsync": "ts-node docsync.ts",
     "test": "vitest",
     "auth": "op read 'op://z5y3wu5bo5fzjgqiv5dk7xghaa/uiwehtjrslt5bddd53tpg5hpfi/add more/client_secret_163350424381-10lqmoqi1t50ambc2dp8jit1sabve9fa.apps.googleusercontent.com.json' > credentials.json"
   },
@@ -48,7 +48,7 @@
     "autoprefixer": "^10.4.20",
     "eslint": "7.32.0",
     "eslint-config-next": "^13.4.3",
-    "googleapis": "105",
+    "googleapis": "^105.0.0",
     "postcss": "^8.4.49",
     "tailwindcss": "^3.4.16",
     "ts-node": "^10.9.1",

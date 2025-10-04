@@ -16,16 +16,20 @@ jobs:
     steps:
       - uses: actions/checkout@v3
 
+      - uses: pnpm/action-setup@v4.1.0
+        with:
+          version: 10.18.0
+
       - name: setup node
         uses: actions/setup-node@v4
         with:
           node-version-file: '.node-version'
-          cache: 'yarn'
+          cache: 'pnpm'
 
-      - run: yarn install
+      - run: pnpm install
 
       - name: typecheck
-        run: yarn tsc --noEmit
+        run: pnpm tsc --noEmit
 
       - name: test
-        run: yarn run vitest
+        run: pnpm run test
