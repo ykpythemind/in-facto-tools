@@ -91,13 +91,19 @@ async function fetchDoc(auth: A, documentID: string) {
             await fs.mkdir(downloadDir, { recursive: true });
             const filePath = require("path").join(downloadDir, fileName);
             console.log(`filePath: ${filePath}`);
-            // create blank file for filepath
-            await fs.writeFile(filePath, "");
 
-            if ((await fs.stat(filePath)).isFile()) {
+            if (
+              await fs
+                .access(filePath)
+                .then(() => true)
+                .catch(() => false)
+            ) {
               console.log(`file already exists: ${filePath}`);
               continue;
             }
+
+            // create blank file for filepath
+            await fs.writeFile(filePath, "");
 
             await new Promise((resolve, reject) => {
               const file = require("fs").createWriteStream(filePath);
@@ -106,6 +112,7 @@ async function fetchDoc(auth: A, documentID: string) {
                   response.pipe(file);
                   file.on("finish", async () => {
                     file.close(resolve);
+                    resolve(undefined);
                   });
                 })
                 .on("error", (err: any) => {
