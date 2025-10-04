@@ -1,5 +1,5 @@
 "use client";
 
 export const PageTitle = ({ title }: { title: string }) => {
-  return <h2 className="text-xl font-serif">{title}</h2>;
+  return <h2 className="text-2xl font-bold tracking-tight">{title}</h2>;
 };

@@ -22,15 +22,11 @@ export const PostComponent = ({
   return (
     <>
       <div className="mt-1 text-left mb-2 text-sm flex items-center gap-2">
-        <A href={`/posts/${slug}`}>{format(parseISO(date), "yyyy/MM/dd")}</A>
-
-        {withPostLinkOnTop && (
-          <div className="bg-white text-black border-gray-600 border-[1px] inline-block rounded-lg text-[11px] font-serif tracking-wider px-1">
-            <Link href={"/posts"}>記事</Link>
-          </div>
-        )}
+        <span className="text-xs text-gray-500">
+          {format(parseISO(date), "yyyy/MM/dd")}
+        </span>
       </div>
-      <h2 className="text-2xl font-serif">{title}</h2>
+      <h2 className="text-2xl font-bold tracking-tight">{title}</h2>
 
       <article
         className="mb-12"

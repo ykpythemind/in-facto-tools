@@ -13,6 +13,11 @@ div#__next > div {
 height: 100%;
 }
 
+/* tracking-tight */
+body {
+  letter-spacing: -0.02em;
+}
+
 
 #postContent {
   font-size: 0.97rem;
@@ -37,6 +42,8 @@ height: 100%;
   font-size: 1.2rem;
   margin-top: 6rem;
   margin-bottom: 3rem;
+
+  letter-spacing: -0.03em;
 }
 
 #postContent h2:first-child {

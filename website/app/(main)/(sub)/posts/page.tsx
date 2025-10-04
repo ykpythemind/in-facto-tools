@@ -45,10 +45,15 @@ const PostIndex = ({
     <div className="inline-flex flex-col">
       {isNew && (
         <div className="inline-flex text-xs text-red-500">
-          {format(parseISO(date), "yyyy/MM/dd")} 更新
+          {format(parseISO(date), "yyyy/MM/dd")} New!
         </div>
       )}
 
+      {!isNew && (
+        <div className="inline-flex text-xs text-gray-500">
+          {format(parseISO(date), "yyyy/MM/dd")}
+        </div>
+      )}
       <A isInlineFlex href={`/posts/${slug}`}>
         {title}
       </A>

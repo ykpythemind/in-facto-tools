@@ -39,7 +39,7 @@ function Page() {
         {videos
           .filter((v: VideoType) => !!v.published_at) // published_atがないものは表示しない.
           .map((v: VideoType) => (
-            <div key={v.id} className="mb-7">
+            <div key={v.id} className="mb-10">
               <VideoComponent
                 id={v.id}
                 title={v.title}

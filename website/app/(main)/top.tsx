@@ -21,9 +21,11 @@ export const Component = ({
         </div>
       </div>
       <div className="mt-2">
-        {date} <A href={`/posts/${path}`}>{posttitle}</A>
-        <h2 className="mt-6 font-bold mb-2">コンテンツ</h2>
-        <ul className="list-disc ml-6">
+        <div className="my-3">
+          <div className="text-xs text-gray-500">{date}</div>
+          <A href={`/posts/${path}`}>{posttitle}</A>
+        </div>
+        <ul className="list-disc mt-5 list-inside">
           <li>
             <A href="/about">チーム</A>
           </li>

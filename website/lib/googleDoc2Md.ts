@@ -78,9 +78,9 @@ class MarkdownGenerator {
         this.nextLine();
         this.appendLine("</div>");
 
-        const info = this.currentLine().match(/^:info: (.*)/);
-        if (info && info[1]) {
-          const infoText = info[1];
+        const info = this.currentLine().match(/^:(info|caption): (.*)/);
+        if (info && info[2]) {
+          const infoText = info[2];
           this.nextLine();
           this.appendLine(
             `<div style="margin-top: 0.4rem; text-align: center;"><div class="postInfo">${infoText}</div></div>`

@@ -7,41 +7,37 @@ import { generateSharedMetadata } from "../../../../lib/generateSharedMetadata";
 const Page = () => {
   return (
     <div>
-      <PageTitle title={"チームについて"} />
+      <PageTitle title={"チーム"} />
 
       <div className="mt-5">
         <p className="align-middle">
-          「おもしろいホラーをつくる」をコンセプトに、2022年から映像制作チーム
-          <img
-            src={"/in-facto-black.png"}
-            alt={"in-facto"}
-            className={"w-[50px] inline align-middle -mt-1.5 ml-0.5 mr-0.5"}
-          />
-          として活動中。
+          「おもしろいホラーをつくる」をコンセプトに、2022年から映像制作チームin-factoとして活動中。
         </p>
-        <div className="mt-5 flex space-x-3">
-          <A
-            href={"https://www.youtube.com/@in-facto"}
-            target="_blank"
-            rel={"noopener noreferrer"}
-          >
-            Youtube
-          </A>
+        <div className="mt-5">
+          <ul className="list-inside list-disc">
+            <li>
+              <A
+                href={"https://www.youtube.com/@in-facto"}
+                target="_blank"
+                rel={"noopener noreferrer"}
+              >
+                Youtube
+              </A>
+            </li>
 
-          <A
-            href={"https://twitter.com/in_facto_jp"}
-            target="_blank"
-            rel={"noopener noreferrer"}
-          >
-            X
-          </A>
+            <li>
+              <A
+                href={"https://twitter.com/in_facto_jp"}
+                target="_blank"
+                rel={"noopener noreferrer"}
+              >
+                X
+              </A>
+            </li>
+          </ul>
         </div>
 
         <div className="mt-16 pt-10 md:pt-5">
-          <h3 className="text-lg font-serif mb-10">
-            § Team &quot;in-facto&quot;
-          </h3>
-
           <Member
             name={"トモヒロツジ"}
             imgSrc="/members/tomo_at_mini.jpg"
@@ -59,7 +55,7 @@ const Page = () => {
             name={"ykpythemind"}
             imgSrc="/members/ykpythemind2.png"
             description={
-              "ソフトウェアエンジニア。in-factoを設立し、撮影・編集・音声を担当。別プロジェクトで猫を堕ろすなどの音楽活動も。"
+              "in-factoを設立し、代表を務める。撮影・編集・音声を担当。別プロジェクトで猫を堕ろすなどの音楽活動も。"
             }
             twitter={"ykpythemind"}
             horror={"好きなホラー映画「グレイヴ・エンカウンターズ」「ノロイ」"}
