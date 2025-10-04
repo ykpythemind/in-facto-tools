@@ -12,6 +12,9 @@
     "test": "vitest",
     "auth": "op read 'op://z5y3wu5bo5fzjgqiv5dk7xghaa/uiwehtjrslt5bddd53tpg5hpfi/add more/client_secret_163350424381-10lqmoqi1t50ambc2dp8jit1sabve9fa.apps.googleusercontent.com.json' > credentials.json"
   },
+  "ts-node": {
+    "esm": true
+  },
   "dependencies": {
     "@headlessui/react": "^2.2.0",
     "@icons-pack/react-simple-icons": "^9.5.0",

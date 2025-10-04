@@ -64,12 +64,59 @@ async function fetchDoc(auth: A, documentID: string) {
   });
   let buf = ``;
 
-  res.data.body?.content?.forEach((content) => {
-    content.paragraph?.elements?.forEach((element) => {
+  for (const content of res.data.body?.content ?? []) {
+    for (const element of content.paragraph?.elements ?? []) {
       if (element.inlineObjectElement?.inlineObjectId) {
-        // console.debug(element);
+        const inlineObjectId = element.inlineObjectElement?.inlineObjectId;
+        if (
+          inlineObjectId &&
+          res.data.inlineObjects &&
+          res.data.inlineObjects[inlineObjectId]
+        ) {
+          console.log(`downloading image: ${inlineObjectId}`);
 
-        return; // ignore inline object (like image)
+          const inlineObj = res.data.inlineObjects[inlineObjectId];
+          const embeddedObj = inlineObj.inlineObjectProperties?.embeddedObject;
+          const imageProps = embeddedObj?.imageProperties;
+          if (imageProps && embeddedObj?.imageProperties?.contentUri) {
+            const https = require("https");
+            const os = require("os");
+            const url = embeddedObj.imageProperties.contentUri;
+            const fileName = `${inlineObjectId}.jpg`; // 仮ぎめでjpg
+            const downloadDir = require("path").join(
+              os.homedir(),
+              "Downloads",
+              "in-facto-posts"
+            );
+            await fs.mkdir(downloadDir, { recursive: true });
+            const filePath = require("path").join(downloadDir, fileName);
+            console.log(`filePath: ${filePath}`);
+            // create blank file for filepath
+            await fs.writeFile(filePath, "");
+
+            if ((await fs.stat(filePath)).isFile()) {
+              console.log(`file already exists: ${filePath}`);
+              continue;
+            }
+
+            await new Promise((resolve, reject) => {
+              const file = require("fs").createWriteStream(filePath);
+              https
+                .get(url, (response: any) => {
+                  response.pipe(file);
+                  file.on("finish", async () => {
+                    file.close(resolve);
+                  });
+                })
+                .on("error", (err: any) => {
+                  console.error(err);
+                  reject(err);
+                });
+            });
+          }
+        }
+
+        continue; // ignore inline object (like image)
       }
 
       const text = element.textRun?.content;
@@ -78,9 +125,8 @@ async function fetchDoc(auth: A, documentID: string) {
         throw "unexpected undefined";
       }
       buf += text;
-    });
-    // buf += `\n`;
-  });
+    }
+  }
 
   return buf;
 }
