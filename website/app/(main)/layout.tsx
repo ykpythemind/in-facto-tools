@@ -83,7 +83,7 @@ const Layout = ({ children }: { children: React.ReactElement }) => {
                 >
                   <MenuItem>
                     <Link
-                      href="./about"
+                      href="/about"
                       className="underline hover:text-blue-400 block"
                     >
                       チーム
@@ -91,7 +91,7 @@ const Layout = ({ children }: { children: React.ReactElement }) => {
                   </MenuItem>
                   <MenuItem>
                     <Link
-                      href="./videos"
+                      href="/videos"
                       className="underline hover:text-blue-400 block"
                     >
                       動画
@@ -99,7 +99,7 @@ const Layout = ({ children }: { children: React.ReactElement }) => {
                   </MenuItem>
                   <MenuItem>
                     <Link
-                      href="./posts"
+                      href="/posts"
                       className="underline hover:text-blue-400 block"
                     >
                       記事
@@ -107,7 +107,7 @@ const Layout = ({ children }: { children: React.ReactElement }) => {
                   </MenuItem>
                   <MenuItem>
                     <Link
-                      href="./archives"
+                      href="/archives"
                       className="underline hover:text-blue-400 "
                     >
                       アーカイブ
@@ -115,7 +115,7 @@ const Layout = ({ children }: { children: React.ReactElement }) => {
                   </MenuItem>
                   <MenuItem>
                     <Link
-                      href="./contact"
+                      href="/contact"
                       className="underline hover:text-blue-400 "
                     >
                       問い合わせ
