@@ -96,6 +96,9 @@ const Home = () => {
       console.log("demon end");
       const demon = findDemonById(1);
       setSearchResult((prev) => [...prev, demon!]);
+      setLoading(true);
+      await sleep(300);
+      setLoading(false);
       ref.current++;
       addCreepyCounter(counter + 1);
       return;
@@ -127,7 +130,7 @@ const Home = () => {
 
   const handleSearch = async () => {
     if (search.length === 0) return;
-    if (search === "creepy photo" || search === "a") {
+    if (search === "creepy" || search === "a") {
       setLoading(true);
       await sleep(1500);
       setLoading(false);
@@ -150,10 +153,14 @@ const Home = () => {
           type="text"
           value={search}
           onChange={(e) => setSearch(e.target.value)}
+          style={{ height: "40px", fontSize: "20px", textAlign: "center" }}
         />
         <br />
-        <button style={{ marginTop: "10px" }} onClick={handleSearch}>
-          Search
+        <button
+          style={{ marginTop: "30px", fontWeight: "bold" }}
+          onClick={handleSearch}
+        >
+          検索
         </button>
       </div>
 
