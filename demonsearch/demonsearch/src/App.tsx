@@ -20,8 +20,8 @@ type SearchResult = {
   id?: number;
 };
 
-const lists = [4, 12, 16, 17, 11, 3, 19, 15, 13, 23, 6, 2, 9, 10, 25, 18];
-// 5, 20, 24, 14, 21, 22
+const lists = [4, 12, 16, 17, 11, 3, 19, 15, 6, 2, 9, 10, 25, 18];
+// 5, 20, 24, 14, 21, 22, 13, 23,
 
 const findDemonById = (id: number) => {
   return demonsList.find((demon) => demon.id === id);
