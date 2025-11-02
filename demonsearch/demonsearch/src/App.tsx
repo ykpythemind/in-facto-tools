@@ -182,7 +182,9 @@ const Home = () => {
                   alt={result.title}
                 />
               </center>
-              <div style={{ marginTop: "1px" }}>{result.title}</div>
+              <div style={{ marginTop: "1px", fontSize: "1.2rem" }}>
+                {result.title}
+              </div>
               {debug && <div style={{ marginTop: "1px" }}>{result.id}</div>}
             </div>
           ))}
