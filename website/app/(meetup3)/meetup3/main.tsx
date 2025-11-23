@@ -44,7 +44,8 @@ export const Main = () => {
               </a>
             </span>
             <br />
-            参加費：2000円 (フリーフード・ドリンク付き)
+            参加費：<span className="font-bold">2000円</span>{" "}
+            フリーフード・ドリンク付き
           </div>
         </div>
 
