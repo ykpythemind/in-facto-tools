@@ -71,6 +71,22 @@ export const Main = () => {
               ジャンプスケアの忌避感やその本質についてin-factoチームとゲストで議論します。
               <div className="flex my-5">
                 <div>
+                  <img src="kondo-ryota.jpg" className="max-w-48" />
+                </div>
+                <div className="px-2">
+                  <h4 className="font-bold text-md">ゲスト：近藤亮太</h4>
+                  <div className="text-xs mt-3">
+                    映画監督。
+                    1988年北海道生まれ。大学在学時より映画制作現場のスタッフとして働き始め、上京後、映画美学校にて高橋洋に師事。同時に自主制作を開始し、一貫して恐怖を追求した作風が評価を受ける。2023年に「第2回日本ホラー映画大賞」で大賞を受賞。『ミッシング・チャイルド・ビデオテープ』(25)で長編映画監督デビュー。
+                    <br />
+                    その他、同年にNOTHING
+                    NEW製作『◯◯式』を（25）、テレビ東京「TXQ
+                    FICTION／UFO山」（25）でも監督を務めた。
+                  </div>
+                </div>
+              </div>
+              <div className="flex my-5">
+                <div>
                   <img src="muramatsu.jpg" className="max-w-48" />
                 </div>
                 <div className="px-2">
