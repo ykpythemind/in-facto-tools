@@ -8,6 +8,7 @@ type PostType = {
   //   url: string
   // }
   content: string;
+  autoParagraphWrap?: boolean | string;
 };
 
 export default PostType;

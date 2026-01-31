@@ -15,8 +15,11 @@ const Page = async ({ params }: { params: Params }) => {
     "date",
     "slug",
     "content",
+    "autoParagraphWrap",
   ]) as PostType;
-  const md = await googleDoc2Md(_post.content || "", params.slug + "/");
+
+  const autoParagraphWrap = _post.autoParagraphWrap === true || _post.autoParagraphWrap === "true";
+  const md = await googleDoc2Md(_post.content || "", params.slug + "/", autoParagraphWrap);
   const content = await markdownToHtml(md || "");
 
   const allPosts = getAllPosts(["title", "date", "slug", "content"]);

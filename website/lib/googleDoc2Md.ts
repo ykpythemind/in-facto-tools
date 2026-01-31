@@ -3,10 +3,11 @@ import { partialMarkdownToHtml } from "./markdownToHtml";
 /* google docsで書いたオレオレmarkdown formatを正式なmarkdownにしつつ装飾する */
 export const googleDoc2Md = async (
   doc: string,
-  assetPrefix: string
+  assetPrefix: string,
+  autoParagraphWrap: boolean = false
 ): Promise<string> => {
   const lines = doc.split(/\r\n|\n/);
-  const gen = new MarkdownGenerator(lines, assetPrefix);
+  const gen = new MarkdownGenerator(lines, assetPrefix, autoParagraphWrap);
 
   return gen.generate();
 };
@@ -18,14 +19,15 @@ class MarkdownGenerator {
   private annotationCounter: number;
   private annotationMarkCounter: number;
   private assetPrefix: string;
+  private autoParagraphWrap: boolean;
 
-  constructor(originalLines: string[], assetPrefix: string) {
+  constructor(originalLines: string[], assetPrefix: string, autoParagraphWrap: boolean) {
     this.result = [];
     this.pointer = 0;
     this.annotationCounter = 1;
     this.annotationMarkCounter = 1;
     this.assetPrefix = assetPrefix;
-
+    this.autoParagraphWrap = autoParagraphWrap;
     this.originalLines = originalLines;
   }
 
@@ -193,6 +195,25 @@ class MarkdownGenerator {
       }
 
       if (this.currentLine()) {
+        if (this.autoParagraphWrap && !this.isNonParagraphLine(this.currentLine())) {
+          // autoBreakモード: 連続する通常テキスト行を収集して<p>と<br>で整形
+          const paragraphLines: string[] = [];
+          while (
+            this.currentLine() &&
+            this.currentLine().trim() !== "" &&
+            !this.isSpecialLine(this.currentLine()) &&
+            !this.isNonParagraphLine(this.currentLine())
+          ) {
+            paragraphLines.push(this.currentLine());
+            this.nextLine();
+          }
+
+          if (paragraphLines.length > 0) {
+            this.appendLine("<p>" + paragraphLines.join("<br>") + "</p>\n");
+          }
+          continue;
+        }
+
         this.appendLine(this.currentLine());
       }
 
@@ -200,5 +221,25 @@ class MarkdownGenerator {
     }
 
     return this.result.join("\n");
+  }
+
+  // 特殊な処理が必要な行（上のwhileループで処理される行）
+  private isSpecialLine(line: string): boolean {
+    if (line.startsWith("<<*>>")) return true;
+    if (line.startsWith("//")) return true;
+    if (line.startsWith("<iframe")) return true;
+    if (line.match(/^(トモヒロツジ|ykpythemind|藤本薪|osd)(.?)/)) return true;
+    if (line.match(/^:info: (.*)/)) return true;
+    if (line.match(/^:image: (.*)/)) return true;
+    return false;
+  }
+
+  // <p>タグで囲むべきでない行（Markdown構文など）
+  private isNonParagraphLine(line: string): boolean {
+    if (line.startsWith("#")) return true; // ヘッダー
+    if (line.startsWith("```")) return true; // コードブロック
+    if (line.startsWith(">")) return true; // 引用
+    if (line.startsWith("-") || line.startsWith("*") || line.match(/^\d+\./)) return true; // リスト
+    return false;
   }
 }

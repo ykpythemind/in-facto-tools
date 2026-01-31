@@ -1,8 +1,10 @@
-// "use client";
+"use client";
 
 import { format, parseISO } from "date-fns";
-import Link from "next/link";
 import { A } from "./A";
+import { useEffect } from "react";
+
+let done = false;
 
 export const PostComponent = ({
   date,
@@ -19,6 +21,28 @@ export const PostComponent = ({
   slug: string;
   withPostLinkOnTop?: boolean;
 }) => {
+  useEffect(() => {
+    if (done) return;
+    (window as any).twttr = (function (d, s, id) {
+      var js,
+        fjs = d.getElementsByTagName(s)[0],
+        t = (window as any).twttr || {};
+      if (d.getElementById(id)) return t;
+      js = d.createElement(s);
+      js.id = id;
+      (js as any).src = "https://platform.twitter.com/widgets.js";
+      fjs?.parentNode?.insertBefore(js, fjs);
+
+      t._e = [];
+      t.ready = function (f: any) {
+        t._e.push(f);
+      };
+
+      return t;
+    })(document, "script", "twitter-wjs");
+    done = true;
+  }, [])
+
   return (
     <>
       <div className="mt-1 text-left mb-2 text-sm flex items-center gap-2">

@@ -5,12 +5,14 @@ import rehypeExternalLinks from "rehype-external-links";
 import rehypeStringify from "rehype-stringify";
 
 export default async function markdownToHtml(markdown: string) {
-  const result = await unified()
+  let rm = unified()
     .use(remarkParse) // markdown -> mdast の変換
-    .use(remark2rehype, { allowDangerousHtml: true }) // mdast -> hast の変換
+
+  const wip = rm.use(remark2rehype, { allowDangerousHtml: true }) // mdast -> hast の変換
     .use(rehypeExternalLinks, { target: "_blank", rel: ["nofollow"] })
     .use(rehypeStringify, { allowDangerousHtml: true }) // hast -> html の変換
-    .process(markdown);
+
+  const result = await wip.process(markdown);
 
   return result.toString();
 }
