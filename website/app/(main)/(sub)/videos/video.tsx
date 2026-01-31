@@ -64,9 +64,9 @@ export const VideoComponent = (props: Props) => {
 const nl2br = (summary: string) => {
   const regex = /(\n)/g;
 
-  return summary.split(regex).map((line) => {
+  return summary.split(regex).map((line, index) => {
     if (line.match(regex)) {
-      return React.createElement("br");
+      return React.createElement("br", { key: index });
     } else {
       return line;
     }
