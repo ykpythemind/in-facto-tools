@@ -6,7 +6,7 @@ autoParagraphWrap: true
 
 ## はじめに
 
-先日1/10（土）in-factoによる交流イベント <a href=”https://in-facto.jp/meetup3”>in-facto meet-up vol.3</a> の開催を無事終えました。
+先日1/10（土）in-factoによる交流イベント <a href=https://in-facto.jp/meetup3>in-facto meet-up vol.3</a> の開催を無事終えました。
 このイベントは、各シーズンごとに開催しているもので、in-factoの活動も3年経っているということです。
 僕らのようなYouTubeが拠点になるチームは、映像を見てくださっているファンの方々と実際にお話しできる機会が少なく、そういった背景から”交流”をイベントの趣旨としています。
 
