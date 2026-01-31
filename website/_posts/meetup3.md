@@ -1,5 +1,5 @@
 ---
-title: meet-up vol.3 開催レポート「予感と戦慄のジャンプスケア」
+title: meet-up vol.3 開催レポート「恐怖と戦慄のジャンプスケア」
 date: '2026-01-31T22:00:00.000+09:00'
 autoParagraphWrap: true
 ---
