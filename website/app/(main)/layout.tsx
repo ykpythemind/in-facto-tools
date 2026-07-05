@@ -35,7 +35,10 @@ const Layout = ({ children }: { children: React.ReactElement }) => {
   };
 
   return (
-    <div className="overflow-x-hidden">
+    // overflow-x-clip: 横方向のはみ出し(トップの全幅セクション)はクリップしつつ、
+    // overflow-yをvisibleのまま保ち、フッターのbox-shadow(下端の黒塗り)が縦に伸びるようにする。
+    // (overflow-x-hiddenだとoverflow-yが暗黙的にautoになりbox-shadowが切れてしまう)
+    <div className="overflow-x-clip">
       <ScrollToTop />
       <header
         className={clsx(
