@@ -90,6 +90,7 @@ const Layout = ({ children }: { children: React.ReactElement }) => {
                   className="z-50 mt-2 flex min-w-[200px] flex-col bg-black py-3 font-serif text-white shadow-xl outline-none"
                 >
                   {[
+                    { href: "/", label: "トップページ" },
                     { href: "/about", label: "チーム" },
                     { href: "/videos", label: "映像" },
                     { href: "/posts", label: "記事" },
