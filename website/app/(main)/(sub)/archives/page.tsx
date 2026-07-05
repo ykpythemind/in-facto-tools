@@ -9,6 +9,9 @@ function Page() {
 
       <ul className="mt-10 flex flex-col gap-5 text-[16px] leading-[1.9]">
         <li>
+          <A href="/meetup3">in-facto meet-up vol.3</A>
+        </li>
+        <li>
           <A
             target="_blank"
             rel="noopener noreferrer"

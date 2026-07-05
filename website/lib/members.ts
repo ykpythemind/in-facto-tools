@@ -9,7 +9,7 @@ export type Member = {
 export const members: Member[] = [
   {
     name: "トモヒロツジ",
-    imgSrc: "/members/tomo_at_mini.jpg",
+    imgSrc: "/members/tomo_at2_mini.jpg",
     description:
       "ウェブディレクター。ディスクレビューサイトcllctv.の運営を行いつつ、たまにライブイベントを開催。主に演出と脚本、小道具を担当。",
     twitter: "Tomo_at",
