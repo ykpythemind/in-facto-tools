@@ -33,7 +33,10 @@ body {
 }
 
 #postContent p {
-  margin-bottom: 1.3rem;
+  /* 本文(地の文・発言)はサマリ文と同じゴシックにして可読性を上げる。見出し(h2)は明朝のまま */
+  @apply font-sans;
+  /* 段落間隔は発言ブロック(.postBodyComment)と揃える */
+  margin-bottom: 1em;
 }
 
 #postContent .postBodyComment {
