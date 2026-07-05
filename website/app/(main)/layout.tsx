@@ -8,6 +8,7 @@ import { useEffect, useRef, useState } from "react";
 import { A } from "./components/A";
 import { BiDotsVerticalRounded, BiDotsHorizontalRounded } from "react-icons/bi";
 import { Menu, MenuButton, MenuItem, MenuItems } from "@headlessui/react";
+import { ScrollToTop } from "./components/ScrollToTop";
 
 const Layout = ({ children }: { children: React.ReactElement }) => {
   // const { ref, inView, entry } = useInView({
@@ -24,14 +25,18 @@ const Layout = ({ children }: { children: React.ReactElement }) => {
   };
   const HeaderLink = ({ href, text }: { href: string; text: string }) => {
     return (
-      <a href={href} className=" hover:text-blue-400 font-bold tracking-tight">
+      <a
+        href={href}
+        className="font-serif tracking-wider hover:text-blue-400"
+      >
         {text}
       </a>
     );
   };
 
   return (
-    <div className="overflow-y-auto">
+    <div className="overflow-x-hidden">
+      <ScrollToTop />
       <header
         className={clsx(
           /*sticky top-0 left-0 right-0 */
@@ -46,7 +51,7 @@ const Layout = ({ children }: { children: React.ReactElement }) => {
               <img
                 src={"/in-facto-black.png"}
                 alt={"in-facto"}
-                className={"max-w-[120px]"}
+                className={"w-[140px] md:w-[200px]"}
               />
             </Link>
           </h1>
@@ -57,7 +62,7 @@ const Layout = ({ children }: { children: React.ReactElement }) => {
               </li>
               <Sep />
               <li>
-                <HeaderLink href="/videos" text="動画" />
+                <HeaderLink href="/videos" text="映像" />
               </li>
               <Sep />
               <li>
@@ -65,62 +70,38 @@ const Layout = ({ children }: { children: React.ReactElement }) => {
               </li>
               <Sep />
               <li>
-                <HeaderLink href="/archives" text="..." />
+                <HeaderLink href="/archives" text="アーカイブ" />
               </li>
             </ul>
           </div>
           <ul className="flex md:hidden ml-auto h-full gap-3 list-none text-md">
             <li className="">
               <Menu>
-                <MenuButton className="transition-transform active:scale-90">
-                  <HiMiniBars3 size={26} className="mb-[-4px]" />
+                <MenuButton className="bg-black px-5 py-2.5 text-white transition-transform active:scale-90">
+                  <HiMiniBars3 size={22} className="block" />
                 </MenuButton>
 
                 <MenuItems
                   transition
                   anchor="bottom end"
-                  className="flex flex-col text-right justify-end gap-2 bg-zinc-100 p-2 mt-2 rounded-sm shadow-md z-50"
+                  className="z-50 mt-2 flex min-w-[200px] flex-col bg-black py-3 font-serif text-white shadow-xl outline-none"
                 >
-                  <MenuItem>
-                    <Link
-                      href="/about"
-                      className="underline hover:text-blue-400 block"
-                    >
-                      チーム
-                    </Link>
-                  </MenuItem>
-                  <MenuItem>
-                    <Link
-                      href="/videos"
-                      className="underline hover:text-blue-400 block"
-                    >
-                      動画
-                    </Link>
-                  </MenuItem>
-                  <MenuItem>
-                    <Link
-                      href="/posts"
-                      className="underline hover:text-blue-400 block"
-                    >
-                      記事
-                    </Link>
-                  </MenuItem>
-                  <MenuItem>
-                    <Link
-                      href="/archives"
-                      className="underline hover:text-blue-400 "
-                    >
-                      アーカイブ
-                    </Link>
-                  </MenuItem>
-                  <MenuItem>
-                    <Link
-                      href="/contact"
-                      className="underline hover:text-blue-400 "
-                    >
-                      問い合わせ
-                    </Link>
-                  </MenuItem>
+                  {[
+                    { href: "/about", label: "チーム" },
+                    { href: "/videos", label: "映像" },
+                    { href: "/posts", label: "記事" },
+                    { href: "/archives", label: "アーカイブ" },
+                    { href: "/contact", label: "お問い合わせ" },
+                  ].map((item) => (
+                    <MenuItem key={item.href}>
+                      <Link
+                        href={item.href}
+                        className="block px-6 py-2.5 text-right text-[15px] tracking-[0.15em] data-[focus]:bg-white data-[focus]:text-black"
+                      >
+                        {item.label}
+                      </Link>
+                    </MenuItem>
+                  ))}
                 </MenuItems>
               </Menu>
             </li>
@@ -133,9 +114,56 @@ const Layout = ({ children }: { children: React.ReactElement }) => {
           "px-3 md:px-0 md:max-w-xl w-full flex items-center flex-col mx-auto"
         }
       >
-        <main className="w-full mt-5 pb-10">{children}</main>
+        <main className="w-full mt-5">{children}</main>
       </div>
+      <Footer />
     </div>
+  );
+};
+
+const Footer = () => {
+  return (
+    /* box-shadow: iOSのバウンススクロールでページ下端の外が見えたときも黒く塗る */
+    <footer className="bg-black font-serif text-white [box-shadow:0_50vh_0_50vh_#000]">
+      <div className="px-3 md:px-0 md:max-w-xl w-full mx-auto py-16">
+        <Link href={"/"} passHref>
+          <img
+            src={"/in-facto-white.png"}
+            alt={"in-facto"}
+            className={"max-w-[150px]"}
+          />
+        </Link>
+        <div className="mt-10 flex flex-col items-start gap-2.5">
+          <a
+            href="https://x.com/in_facto_jp"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="inline-block border border-white px-4 py-1.5 text-[15px] transition-colors hover:bg-white hover:text-black"
+          >
+            @in_facto_jp
+          </a>
+          <a
+            href="https://www.youtube.com/@in-facto"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="inline-block bg-white px-4 py-1.5 text-[15px] text-black transition-colors hover:bg-neutral-200"
+          >
+            Youtube Channel
+          </a>
+        </div>
+        <div className="mt-16">
+          <Link
+            href="/contact"
+            className="mx-auto block w-[88%] rounded-full border border-white py-4 text-center text-[17px] tracking-[0.2em] [text-indent:0.2em] transition-colors hover:bg-white hover:text-black"
+          >
+            お問い合わせ
+          </Link>
+        </div>
+        <div className="mt-16 text-center text-sm text-neutral-300">
+          in-facto &copy; 2022-
+        </div>
+      </div>
+    </footer>
   );
 };
 

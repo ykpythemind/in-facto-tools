@@ -1,25 +1,38 @@
 import { format, parseISO } from "date-fns";
-import { A } from "../../components/A";
 import { PageTitle } from "../../components/PageTitle";
-import { getAllPosts } from "../../../../lib/api";
-import { Metadata } from "next";
+import { PostCard } from "../../components/PostCard";
+import { getAllPosts, getAllVideos } from "../../../../lib/api";
 import { generateSharedMetadata } from "../../../../lib/generateSharedMetadata";
 
+type VideoType = {
+  youtube?: string;
+  post_id?: string;
+};
+
 function Page() {
-  const allPosts = getAllPosts(["title", "date", "slug"]);
+  const allPosts = getAllPosts(["title", "date", "slug", "content"]);
+
+  // 記事に対応する動画のサムネイルを引く (post_id -> youtube id)
+  const videoByPost = new Map<string, string>();
+  for (const v of getAllVideos() as VideoType[]) {
+    if (v.post_id && v.youtube && !videoByPost.has(v.post_id)) {
+      videoByPost.set(v.post_id, v.youtube);
+    }
+  }
 
   return (
     <div>
       <PageTitle title={"記事"} />
 
-      <div className="mt-6">
-        {allPosts.map((p, i) => (
-          <div key={p.slug} className="mb-3">
-            <PostIndex
-              title={p.title}
+      <div className="divide-y divide-neutral-300">
+        {allPosts.map((p) => (
+          <div key={p.slug} className="py-8">
+            <PostCard
               slug={p.slug}
-              date={p.date}
-              isNew={i === 0}
+              title={p.title}
+              content={p.content}
+              youtubeId={videoByPost.get(p.slug)}
+              date={format(parseISO(p.date), "yyyy/MM/dd")}
             />
           </div>
         ))}
@@ -29,36 +42,5 @@ function Page() {
 }
 
 export const metadata = generateSharedMetadata({ title: "記事" });
-
-const PostIndex = ({
-  title,
-  slug,
-  date,
-  isNew,
-}: {
-  title: string;
-  slug: string;
-  date: string;
-  isNew: boolean;
-}) => {
-  return (
-    <div className="inline-flex flex-col">
-      {isNew && (
-        <div className="inline-flex text-xs text-red-500">
-          {format(parseISO(date), "yyyy/MM/dd")} New!
-        </div>
-      )}
-
-      {!isNew && (
-        <div className="inline-flex text-xs text-gray-500">
-          {format(parseISO(date), "yyyy/MM/dd")}
-        </div>
-      )}
-      <A isInlineFlex href={`/posts/${slug}`}>
-        {title}
-      </A>
-    </div>
-  );
-};
 
 export default Page;

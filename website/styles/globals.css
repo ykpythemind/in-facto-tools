@@ -4,19 +4,28 @@
 
 @import 'animate.css';
 
-/* https://gist.github.com/dmurawsky/d45f068097d181c733a53687edce1919?permalink_comment_id=4215317#gistcomment-4215317 */
+/*
+  html/bodyのみ高さを確保する。
+  body > div:first-child (レイアウトのルートdiv) に height:100% を当てると
+  そのdivがスクロールコンテナになってしまい、ページ遷移時のスクロール位置
+  リセットが効かなくなるので指定しない。
+*/
 html,
-body,
-body > div:first-child,
-div#__next,
-div#__next > div {
-height: 100%;
+body {
+  height: 100%;
 }
 
 /* tracking-tight */
 body {
   letter-spacing: -0.02em;
 }
+
+/*
+  トップページの全幅セクション(100vw)のはみ出しは (main)/layout.tsx の
+  ラッパーdiv (overflow-x-hidden) でクリップしている。
+  html/bodyにoverflow-x:hiddenを指定するとNext.jsのページ遷移時に
+  スクロール位置がトップに戻らなくなるので、ここでは指定しない。
+*/
 
 
 #postContent {
@@ -28,6 +37,8 @@ body {
 }
 
 #postContent .postBodyComment {
+  /* 発言同士の間隔は一般的な段落程度に抑える */
+  margin-bottom: 1em;
 }
 
 #postContent .postBodyCommentBody {

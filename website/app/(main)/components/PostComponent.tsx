@@ -1,7 +1,7 @@
 "use client";
 
 import { format, parseISO } from "date-fns";
-import { A } from "./A";
+import Link from "next/link";
 import { useEffect } from "react";
 
 let done = false;
@@ -45,12 +45,12 @@ export const PostComponent = ({
 
   return (
     <>
-      <div className="mt-1 text-left mb-2 text-sm flex items-center gap-2">
-        <span className="text-xs text-gray-500">
+      <div className="mt-1 text-left mb-2 flex items-center gap-2">
+        <span className="text-sm text-neutral-500">
           {format(parseISO(date), "yyyy/MM/dd")}
         </span>
       </div>
-      <h2 className="text-2xl font-bold tracking-tight">{title}</h2>
+      <h2 className="text-[26px] font-bold leading-snug">{title}</h2>
 
       <article
         className="mb-12"
@@ -58,8 +58,13 @@ export const PostComponent = ({
         dangerouslySetInnerHTML={{ __html: content }}
       ></article>
       {withAllPostsLink && (
-        <div>
-          <A href="/posts">すべての記事を見る</A>
+        <div className="mt-10 text-center">
+          <Link
+            href="/posts"
+            className="mx-auto block w-[88%] rounded-full border border-black py-4 text-[17px] tracking-[0.2em] [text-indent:0.2em] transition-colors hover:bg-black hover:text-white"
+          >
+            全ての記事
+          </Link>
         </div>
       )}
     </>

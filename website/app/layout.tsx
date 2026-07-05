@@ -2,6 +2,13 @@ import { generateSharedMetadata } from "../lib/generateSharedMetadata";
 import "../styles/globals.css";
 
 import { Metadata } from "next";
+import { Noto_Serif_JP } from "next/font/google";
+
+const notoSerif = Noto_Serif_JP({
+  weight: ["400", "700"],
+  preload: false,
+  variable: "--font-noto-serif",
+});
 
 export default function RootLayout({
   children,
@@ -9,7 +16,7 @@ export default function RootLayout({
   children: React.ReactNode;
 }) {
   return (
-    <html lang="ja">
+    <html lang="ja" className={notoSerif.variable}>
       <head>
         <link rel="shortcut icon" href="/favicon.ico" />
         <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
