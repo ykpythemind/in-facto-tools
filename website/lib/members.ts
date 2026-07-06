@@ -35,7 +35,7 @@ export const members: Member[] = [
     imgSrc: "https://github.com/osd-02.png",
     description:
       "ソフトウェアエンジニア。podcast番組 undrcastを配信。わからないものをこねくりまわすことが得意。",
-    twitter: "osd-02",
+    twitter: "osd_02",
     horror: "好きなホラー映画 「来る。」 「呪詛」",
   },
 ];
