@@ -186,7 +186,7 @@ osd 18:05
 ホラー映画の定番だと「調子に乗った大学生グループがひどい目に遭う」みたいなのが多いけど、実際のホラー映画ってそういう関係だけじゃないよね。
 
 
-:image: kuchinikansuruenquete.png
+:image: kuchinikansuruenquete.jpeg
 :caption: 清水崇監督の最新作、口に関するアンケートも定番の設定から始まる。
 
 
@@ -281,7 +281,7 @@ ykpythemind 27:05
 黒沢清監督の『回路』という映画で、登場人物が観葉植物の卸売をやっているんだけど、あの熱帯植物が醸し出すリミナル感というか、湿り気のある独特の質感を表現したくて、今回どうしてもやりたかった。
 
 
-:image: tropical_plants.jpg
+:image: tropical_plants_mini.jpeg
 :caption: 『回路』の不気味なリミナル感を目指し、友人から借り集めてセットを埋め尽くした大量の熱帯植物。
 
 osd 27:55
