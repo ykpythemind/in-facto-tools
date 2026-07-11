@@ -14,6 +14,7 @@ type Props = {
   postTitle?: string;
   postId?: string;
   watchLink?: { label: string; url: string };
+  isMembershipOnly?: boolean;
 };
 
 export const VideoComponent = (props: Props) => {
@@ -21,7 +22,10 @@ export const VideoComponent = (props: Props) => {
 
   return (
     <div>
-      <h3 className="mb-3 text-xl font-bold">{v.title}</h3>
+      <h3 className="mb-3 text-xl font-bold">
+        {v.isMembershipOnly && <MembershipBadge />}
+        {v.title}
+      </h3>
       {v.youtube && <VideoEmbed videoId={v.youtube} title={v.title} />}
       <div className="mt-4 text-[15px] leading-[1.9]">
         {v.summary && v.summary !== "" && (
@@ -48,6 +52,18 @@ export const VideoComponent = (props: Props) => {
     </div>
   );
 };
+
+const MembershipBadge = () => (
+  <span
+    className="mr-2 inline-flex translate-y-[-2px] items-center gap-1 rounded-sm bg-black px-1.5 py-0.5 align-middle text-[11px] font-normal leading-none text-white"
+    title="メンバーシップ限定"
+  >
+    <svg viewBox="0 0 24 24" className="h-3 w-3 fill-current" aria-hidden>
+      <path d="M12 2l2.9 6.3 6.9.8-5.1 4.6 1.4 6.8L12 17.8 5.9 21.5l1.4-6.8L2.2 9.1l6.9-.8z" />
+    </svg>
+    メンバー限定
+  </span>
+);
 
 const nl2br = (text: string) => {
   const regex = /(\n)/g;

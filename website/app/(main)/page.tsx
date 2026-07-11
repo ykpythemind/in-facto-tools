@@ -24,15 +24,25 @@ type VideoType = {
   credit?: string;
   post_id?: string;
   post_title?: string;
+  is_membership_only?: string;
 };
 
 // "2026/01/31" -> "2026.1.31"
 const formatDate = (date: string) => date.split("/").map(Number).join(".");
 
 const Page: NextPage = () => {
-  const videos: VideoType[] = getAllVideos().filter(
-    (v: VideoType) => !!v.published_at && !!v.youtube
-  );
+  const videos: VideoType[] = getAllVideos()
+    .filter(
+      (v: VideoType) =>
+        !!v.published_at && !!v.youtube && v.is_membership_only !== "TRUE"
+    )
+    // 行順ではなく公開日の降順で並べる(映像ページと揃える)。
+    .sort((a: VideoType, b: VideoType) => {
+      if (a.published_at !== b.published_at) {
+        return (a.published_at ?? "") > (b.published_at ?? "") ? -1 : 1;
+      }
+      return a.id > b.id ? 1 : -1;
+    });
   const latestVideo = videos[0];
   const recentVideos = videos.slice(1, 4);
 

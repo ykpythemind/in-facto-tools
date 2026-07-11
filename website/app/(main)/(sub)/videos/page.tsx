@@ -13,6 +13,7 @@ export type VideoType = {
   credit?: string;
   post_id?: string;
   post_title?: string;
+  is_membership_only?: string;
 };
 
 // YouTube以外で公開されている作品の視聴リンク
@@ -24,7 +25,15 @@ const watchLinks: Record<string, { label: string; url: string }> = {
 };
 
 function Page() {
-  const videos = getAllVideos();
+  const videos = (getAllVideos() as VideoType[])
+    .filter((v) => !!v.published_at) // published_atがないものは表示しない.
+    // 行順ではなく公開日の降順で並べる。同日は本編→制作過程になるようid昇順を副キーに。
+    .sort((a, b) => {
+      if (a.published_at !== b.published_at) {
+        return (a.published_at ?? "") > (b.published_at ?? "") ? -1 : 1;
+      }
+      return a.id > b.id ? 1 : -1;
+    });
 
   return (
     <div>
@@ -42,23 +51,22 @@ function Page() {
       </div>
 
       <div className="mt-2 divide-y divide-neutral-300">
-        {videos
-          .filter((v: VideoType) => !!v.published_at) // published_atがないものは表示しない.
-          .map((v: VideoType) => (
-            <div key={v.id} className="py-10">
-              <VideoComponent
-                id={v.id}
-                title={v.title}
-                credit={v.credit}
-                published_at={v.published_at ?? ""}
-                youtube={v.youtube}
-                summary={v.summary}
-                postId={v.post_id}
-                postTitle={v.post_title}
-                watchLink={watchLinks[v.id]}
-              />
-            </div>
-          ))}
+        {videos.map((v) => (
+          <div key={v.id} className="py-10">
+            <VideoComponent
+              id={v.id}
+              title={v.title}
+              credit={v.credit}
+              published_at={v.published_at ?? ""}
+              youtube={v.youtube}
+              summary={v.summary}
+              postId={v.post_id}
+              postTitle={v.post_title}
+              watchLink={watchLinks[v.id]}
+              isMembershipOnly={v.is_membership_only === "TRUE"}
+            />
+          </div>
+        ))}
       </div>
     </div>
   );

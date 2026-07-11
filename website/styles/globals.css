@@ -17,7 +17,7 @@ body {
 
 /* tracking-tight */
 body {
-  letter-spacing: -0.02em;
+  letter-spacing: -0.02rem;
 }
 
 /*
@@ -55,9 +55,10 @@ body {
 #postContent h2 {
   font-size: 1.2rem;
   margin-top: 6rem;
-  margin-bottom: 3rem;
+  margin-bottom: 2rem;
 
   letter-spacing: -0.03em;
+  @apply font-sans;
 }
 
 #postContent h2:first-child {
