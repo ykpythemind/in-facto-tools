@@ -32,7 +32,7 @@ export const members: Member[] = [
   },
   {
     name: "osd",
-    imgSrc: "https://github.com/osd-02.png",
+    imgSrc: "/members/osd.png",
     description:
       "ソフトウェアエンジニア。podcast番組 undrcastを配信。わからないものをこねくりまわすことが得意。",
     twitter: "osd_02",
