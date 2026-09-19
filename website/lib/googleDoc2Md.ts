@@ -53,9 +53,16 @@ class MarkdownGenerator {
 
       const hideLabel = this.parseHideStart(this.currentLine());
       if (hideLabel !== null) {
+        const label = [
+          "",
+          "ここから本編のネタバレです",
+          "本編のネタバレが含まれるセクションです",
+        ].includes(hideLabel)
+          ? "本編のネタバレがあります"
+          : hideLabel;
         this.appendLine('<details class="postHidden">');
         this.appendLine(
-          `<summary class="postHiddenSummary"><span>${this.escapeHtml(hideLabel || "本編のネタバレが含まれるセクションです")}</span><span class="postHiddenAction" aria-hidden="true"></span></summary>`
+          `<summary class="postHiddenSummary"><span class="postHiddenLabel"><span class="postHiddenLabelClosed">${this.escapeHtml(label)}</span><span class="postHiddenLabelOpen">ネタバレを表示しています</span></span><span class="postHiddenAction" aria-hidden="true"></span></summary>`
         );
         this.appendLine('<div class="postHiddenContent">');
         this.nextLine();

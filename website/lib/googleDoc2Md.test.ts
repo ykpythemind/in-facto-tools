@@ -56,14 +56,14 @@ test("googleDoc2Md", async () => {
 
 test("hideタグを折りたたみ要素に変換する", async () => {
   const markdown = await googleDoc2Md(
-    `<hide message=”本編のネタバレが含まれるセクションです”>\n\nosd\n秘密です。\n\n</hide>`,
+    `<hide message=”ここから本編のネタバレです”>\n\nosd\n秘密です。\n\n</hide>`,
     "a/"
   );
   const result = await markdownToHtml(markdown);
 
   expect(result).toContain('<details class="postHidden">');
   expect(result).toContain(
-    '<summary class="postHiddenSummary"><span>本編のネタバレが含まれるセクションです</span><span class="postHiddenAction" aria-hidden="true"></span></summary>'
+    '<span class="postHiddenLabelClosed">本編のネタバレがあります</span><span class="postHiddenLabelOpen">ネタバレを表示しています</span>'
   );
   expect(result).toContain("秘密です。");
   expect(result).toContain("</details>");
@@ -74,7 +74,7 @@ test("ラベルなしのhideタグにはデフォルト文言を表示する", a
   const result = await googleDoc2Md("<hide>\n秘密です。\n</hide>", "a/");
 
   expect(result).toContain(
-    '<summary class="postHiddenSummary"><span>本編のネタバレが含まれるセクションです</span><span class="postHiddenAction" aria-hidden="true"></span></summary>'
+    '<span class="postHiddenLabelClosed">本編のネタバレがあります</span><span class="postHiddenLabelOpen">ネタバレを表示しています</span>'
   );
 });
 
