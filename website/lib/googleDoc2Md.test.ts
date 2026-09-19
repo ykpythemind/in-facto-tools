@@ -1,5 +1,6 @@
 import { expect, test } from "vitest";
 import { googleDoc2Md } from "./googleDoc2Md";
+import markdownToHtml from "./markdownToHtml";
 import * as fs from "fs";
 
 const doc = `
@@ -51,4 +52,39 @@ test("googleDoc2Md", async () => {
   console.debug("---result---");
   console.debug(result);
   expect(result).toBe(fs.readFileSync("lib/__test__/expect.md", "utf-8"));
+});
+
+test("hideタグを折りたたみ要素に変換する", async () => {
+  const markdown = await googleDoc2Md(
+    `<hide message=”本編のネタバレが含まれるセクションです”>\n\nosd\n秘密です。\n\n</hide>`,
+    "a/"
+  );
+  const result = await markdownToHtml(markdown);
+
+  expect(result).toContain('<details class="postHidden">');
+  expect(result).toContain(
+    '<summary class="postHiddenSummary"><span>本編のネタバレが含まれるセクションです</span><span class="postHiddenAction" aria-hidden="true"></span></summary>'
+  );
+  expect(result).toContain("秘密です。");
+  expect(result).toContain("</details>");
+  expect(result).not.toContain("<hide");
+});
+
+test("ラベルなしのhideタグにはデフォルト文言を表示する", async () => {
+  const result = await googleDoc2Md("<hide>\n秘密です。\n</hide>", "a/");
+
+  expect(result).toContain(
+    '<summary class="postHiddenSummary"><span>本編のネタバレが含まれるセクションです</span><span class="postHiddenAction" aria-hidden="true"></span></summary>'
+  );
+});
+
+test("画像のcaption内をMarkdownとして変換する", async () => {
+  const result = await googleDoc2Md(
+    ":image: test.png\n:caption: **強調**と[リンク](https://example.com)\n",
+    "a/"
+  );
+
+  expect(result).toContain(
+    '<div class="postSubContentCaption"><strong>強調</strong>と<a href="https://example.com" target="_blank" rel="nofollow">リンク</a></div>'
+  );
 });

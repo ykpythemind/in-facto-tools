@@ -51,6 +51,24 @@ class MarkdownGenerator {
         continue;
       }
 
+      const hideLabel = this.parseHideStart(this.currentLine());
+      if (hideLabel !== null) {
+        this.appendLine('<details class="postHidden">');
+        this.appendLine(
+          `<summary class="postHiddenSummary"><span>${this.escapeHtml(hideLabel || "本編のネタバレが含まれるセクションです")}</span><span class="postHiddenAction" aria-hidden="true"></span></summary>`
+        );
+        this.appendLine('<div class="postHiddenContent">');
+        this.nextLine();
+        continue;
+      }
+
+      if (this.currentLine().trim() === "</hide>") {
+        this.appendLine("</div>");
+        this.appendLine("</details>");
+        this.nextLine();
+        continue;
+      }
+
       // 独自の注釈
       if (this.currentLine().startsWith("<<*>>")) {
         const rest = this.currentLine().slice(5).trim();
@@ -179,8 +197,9 @@ class MarkdownGenerator {
         this.appendLine(b);
 
         if (caption) {
+          const renderedCaption = await this.renderInlineMarkdown(caption);
           this.appendLine(
-            `<div class="postSubContentCaption">${caption}</div>`
+            `<div class="postSubContentCaption">${renderedCaption}</div>`
           );
         }
         if (!alt && !caption) {
@@ -225,6 +244,7 @@ class MarkdownGenerator {
 
   // 特殊な処理が必要な行（上のwhileループで処理される行）
   private isSpecialLine(line: string): boolean {
+    if (this.parseHideStart(line) !== null || line.trim() === "</hide>") return true;
     if (line.startsWith("<<*>>")) return true;
     if (line.startsWith("//")) return true;
     if (line.startsWith("<iframe")) return true;
@@ -232,6 +252,30 @@ class MarkdownGenerator {
     if (line.match(/^:info: (.*)/)) return true;
     if (line.match(/^:image: (.*)/)) return true;
     return false;
+  }
+
+  private parseHideStart(line: string): string | null {
+    const match = line.trim().match(
+      /^<hide(?:(?:\s+message)?\s*=\s*(?:"([^"]*)"|'([^']*)'|[“”]([^”]*)”))?\s*>$/
+    );
+    if (!match) return null;
+
+    return match[1] ?? match[2] ?? match[3] ?? "";
+  }
+
+  private escapeHtml(value: string): string {
+    return value
+      .replaceAll("&", "&amp;")
+      .replaceAll("<", "&lt;")
+      .replaceAll(">", "&gt;")
+      .replaceAll('"', "&quot;")
+      .replaceAll("'", "&#039;");
+  }
+
+  private async renderInlineMarkdown(value: string): Promise<string> {
+    return (await partialMarkdownToHtml(value))
+      .replace(/^<p>/, "")
+      .replace(/<\/p>\n?$/, "");
   }
 
   // <p>タグで囲むべきでない行（Markdown構文など）
